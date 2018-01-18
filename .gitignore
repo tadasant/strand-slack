@@ -1,0 +1,4 @@
+*.pyc
+workspace.xml
+*.iml
+venv
