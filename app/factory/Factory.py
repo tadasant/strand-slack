@@ -15,8 +15,10 @@ class Factory:
         self.bots.append(bot)
 
     def get_bots(self):
+        bots = []
         for bot in self.bots:
-            yield {'bot': bot.name, 'is_alive': bot.is_alive()}
+            bots.append({'bot': bot.slack_team_name, 'is_alive': bot.is_alive()})
+        return bots
 
     def start_bots(self):
         app.logger.info(f'Starting {len(self.bots)} bots')

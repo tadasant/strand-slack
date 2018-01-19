@@ -4,9 +4,9 @@ import time
 from app import app
 
 
-class EventMonitorThread(threading.Thread):
+class BotThread(threading.Thread):
     def __init__(self):
-        super(EventMonitorThread, self).__init__()
+        super(BotThread, self).__init__()
         self._stop_event = threading.Event()
         self.daemon = True
 

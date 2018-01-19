@@ -15,10 +15,11 @@ class Bot:
     def start(self):
         if not self.bot_thread:
             self.bot_thread = BotThread()
+            self.bot_thread.start()
             app.logger.debug(f'Bot in team "{self.slack_team_name}" started')
         else:
             if self.bot_thread.is_stopped:
-                self.bot_thread.run()
+                self.bot_thread.start()
                 app.logger.debug(f'Bot in team "{self.slack_team_name}" started')
             else:
                 app.logger.debug(f'Bot in team "{self.slack_team_name}" already started')
