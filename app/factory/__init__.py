@@ -23,7 +23,7 @@ class BotList(Resource):
 
     def post(self):
         args = self.post_parser.parse_args()
-        print(args)
+        factory.create_bot(**args)
         return {'created': True}
 
 
