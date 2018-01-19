@@ -1,8 +1,6 @@
 import threading
 import time
 
-from app import app
-
 
 class BotThread(threading.Thread):
     def __init__(self):
@@ -18,7 +16,7 @@ class BotThread(threading.Thread):
         self._stop_event.clear()
         while not self._stop_event.is_set():
             time.sleep(1)
-            app.logger.debug(self.name)
+            print(self.name)
 
     def stop(self):
         self._stop_event.set()
