@@ -16,14 +16,13 @@ class Factory:
             bots.append({'bot': bot.slack_team_name, 'is_alive': bot.is_alive()})
         return bots
 
-    def start_bots(self):
+    def resume_bots(self):
         for bot in self.bots:
-            if bot.is_stopped:
-                bot.start()
+            bot.resume()
 
-    def stop_bots(self):
+    def pause_bots(self):
         for bot in self.bots:
-            bot.stop()
+            bot.pause()
 
     def destroy_bots(self):
         for idx, bot in enumerate(self.bots):
