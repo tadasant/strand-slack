@@ -2,3 +2,4 @@
 workspace.xml
 *.iml
 venv
+.cache
