@@ -1,4 +1,5 @@
 from app.factory.bot.Bot import Bot
+from app.exceptions import BotAlreadyExists
 
 
 class Factory:
@@ -7,7 +8,7 @@ class Factory:
 
     def create_bot(self, bot_settings):
         if self.bots.get(bot_settings.slack_team_id):
-            return None
+            raise BotAlreadyExists
 
         bot = Bot(bot_settings)
         bot.start()

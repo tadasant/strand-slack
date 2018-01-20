@@ -28,9 +28,6 @@ class BotList(Resource):
         bot_settings = BotSettings(**args)
         bot = factory.create_bot(bot_settings)
 
-        if not bot:
-            return {'message': {'slack_team_id': 'Bot already exists for this id'}}, 400
-
         return bot.as_dict(), 201
 
 
