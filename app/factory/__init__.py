@@ -24,13 +24,13 @@ class BotList(Resource):
 
     def post(self):
         args = self.post_parser.parse_args()
-        bot_settings = BotSettings(SLACK_TEAM_NAME=args.get('SLACK_TEAM_NAME'),
-                                   SLACK_TEAM_ID=args.get('SLACK_TEAM_ID'),
-                                   ACCESS_TOKEN=args.get('ACCESS_TOKEN'),
-                                   INSTALLER_ID=args.get('INSTALLER_ID'),
-                                   BOT_USER_ID=args.get('BOT_USER_ID'),
-                                   BOT_ACCESS_TOKEN=args.get('BOT_ACCESS_TOKEN'))
+
+        bot_settings = BotSettings(**args)
         bot = factory.create_bot(bot_settings)
+
+        if not bot:
+            return {'message': {'slack_team_id': 'Bot already exists for this id'}}, 400
+
         return bot.as_dict(), 201
 
 

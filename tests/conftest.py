@@ -3,9 +3,10 @@ from pytest_factoryboy import register
 
 from app import app as myapp
 from app.factory.Factory import Factory
-from tests.factories import BotFactory
+from tests.factories import BotFactory, BotSettingsFactory
 
 register(BotFactory)
+register(BotSettingsFactory)
 
 
 @pytest.fixture

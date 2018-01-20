@@ -6,20 +6,16 @@ class Factory:
         self.bots = {}
 
     def create_bot(self, bot_settings):
-        if self.bots.get(bot_settings.SLACK_TEAM_ID):
-            raise Exception('Bot already exists')
+        if self.bots.get(bot_settings.slack_team_id):
+            return None
 
         bot = Bot(bot_settings)
         bot.start()
-        self.bots[bot.slack_team_id] = bot
-
+        self.bots.update({bot.slack_team_id: bot})
         return bot
 
     def get_bots(self):
-        bots = []
-        for slack_team_id, bot in self.bots.items():
-            bots.append(bot.as_dict())
-        return bots
+        return [bot.as_dict() for slack_team_id, bot in self.bots.items()]
 
     def resume_bots(self):
         for slack_team_id, bot in self.bots.items():
