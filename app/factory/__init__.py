@@ -20,7 +20,7 @@ class BotList(Resource):
         self.post_parser.add_argument('bot_access_token', type=str, required=True)
 
     def get(self):
-        return []
+        return factory.get_bots(), 200
 
     def post(self):
         args = self.post_parser.parse_args()
