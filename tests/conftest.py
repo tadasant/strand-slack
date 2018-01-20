@@ -12,24 +12,17 @@ register(BotSettingsFactory)
 @pytest.fixture
 def app():
     app = create_app()
+    app.config.update(TESTING=True)
     return app
+
+
+@pytest.fixture()
+def client(app):
+    client = app.test_client()
+    return client
 
 
 @pytest.fixture
 def factory():
     factory = Factory()
-    return factory
-
-
-@pytest.fixture
-def factory_with_bots(bot_factory):
-    factory = Factory()
-    bot_one = bot_factory.build()
-    factory.create_bot(bot_one.slack_team_name, bot_one.slack_team_id,
-                       bot_one.access_token, bot_one.installer_id,
-                       bot_one.bot_user_id, bot_one.bot_access_token)
-    bot_two = bot_factory.build()
-    factory.create_bot(bot_two.slack_team_name, bot_two.slack_team_id,
-                       bot_two.access_token, bot_two.installer_id,
-                       bot_two.bot_user_id, bot_two.bot_access_token)
     return factory

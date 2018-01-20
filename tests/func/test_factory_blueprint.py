@@ -1,3 +1,4 @@
+import json
 import threading
 
 import factory
@@ -6,15 +7,15 @@ import factory
 class TestFactoryBlueprint:
     def test_get_bots(self, client):
         res = client.get('/factory/bots')
-        assert res.json == []
+        assert json.loads(res.data) == []
 
     def test_create_bot_missing_params(self, client):
         thread_count = threading.active_count()
 
         res = client.post('/factory/bots')
 
-        assert res.json == dict(message=dict(slack_team_id='Missing required parameter in the JSON body or the post '
-                                                           'body or the query string'))
+        assert json.loads(res.data) == {'message': {'slack_team_id': 'Missing required parameter in the JSON body or '
+                                                                     'the post body or the query string'}}
         assert res.status_code == 400
         assert threading.active_count() == thread_count
 
@@ -27,7 +28,7 @@ class TestFactoryBlueprint:
         res = client.post('/factory/bots', data=bot_two_data)
 
         assert res.status_code == 400
-        assert res.json == {'message': 'Bot already exists for this id'}
+        assert json.loads(res.data) == {'message': 'Bot already exists for this slack team'}
 
     def test_create_bot(self, client, bot_settings_factory):
         thread_count = threading.active_count()
@@ -35,8 +36,8 @@ class TestFactoryBlueprint:
         data = factory.build(dict, FACTORY_CLASS=bot_settings_factory)
         res = client.post('/factory/bots', data=data)
 
-        assert res.json == {'is_alive': True,
-                            'slack_team_id': data['slack_team_id'],
-                            'slack_team_name': data['slack_team_name']}
+        assert json.loads(res.data) == {'is_alive': True,
+                                        'slack_team_id': data['slack_team_id'],
+                                        'slack_team_name': data['slack_team_name']}
         assert res.status_code == 201
         assert threading.active_count() == thread_count + 1
