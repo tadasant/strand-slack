@@ -1,3 +1,6 @@
+from flask import jsonify
+
+
 class BotAlreadyExists(Exception):
     status_code = 400
 
@@ -12,3 +15,9 @@ class BotAlreadyExists(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
+
+
+def handle_bot_already_exists_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response

@@ -23,11 +23,11 @@ class TestFactoryBlueprint:
         bot_two_data = factory.build(dict, FACTORY_CLASS=bot_settings_factory)
         bot_two_data['slack_team_id'] = bot_one_data['slack_team_id']
 
-        res = client.post('/factory/bots', data=bot_one_data)
+        client.post('/factory/bots', data=bot_one_data)
         res = client.post('/factory/bots', data=bot_two_data)
 
         assert res.status_code == 400
-        assert res.json == dict(message=dict(slack_team_id='Bot already exists for this id'))
+        assert res.json == {'message': 'Bot already exists for this id'}
 
     def test_create_bot(self, client, bot_settings_factory):
         thread_count = threading.active_count()
