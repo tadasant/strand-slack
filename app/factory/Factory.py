@@ -15,17 +15,17 @@ class Factory:
         return bot
 
     def get_bots(self):
-        return [bot.as_dict() for slack_team_id, bot in self.bots.items()]
+        return [bot.as_dict() for bot in self.bots.values()]
 
     def resume_bots(self):
-        for slack_team_id, bot in self.bots.items():
+        for bot in self.bots.values():
             bot.resume()
 
     def pause_bots(self):
-        for slack_team_id, bot in self.bots.items():
+        for bot in self.bots.values():
             bot.pause()
 
     def destroy_bots(self):
-        for slack_team_id, bot in enumerate(self.bots):
+        for slack_team_id, bot in self.bots.items():
             bot.destroy()
             self.bots.pop(slack_team_id)
