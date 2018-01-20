@@ -40,4 +40,5 @@ class Bot:
         else:
             self.bot_thread.stop()
             self.bot_thread.join()
+
         print(f'Bot in team "{self.slack_team_name}" destroyed')

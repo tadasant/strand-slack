@@ -31,4 +31,6 @@ class BotThread(threading.Thread):
                 print(self.name)
 
     def stop(self):
+        if not self._pause_event.is_set():
+            self._pause_event.set()
         self._stop_event.set()
