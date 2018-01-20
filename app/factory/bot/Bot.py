@@ -2,13 +2,13 @@ from app.factory.bot.BotThread import BotThread
 
 
 class Bot:
-    def __init__(self, slack_team_name, slack_team_id, access_token, installer_id, bot_user_id, bot_access_token):
-        self.slack_team_name = slack_team_name
-        self.slack_team_id = slack_team_id
-        self.access_token = access_token
-        self.installer_id = installer_id
-        self.bot_user_id = bot_user_id
-        self.bot_access_token = bot_access_token
+    def __init__(self, bot_settings):
+        self.slack_team_name = bot_settings.SLACK_TEAM_NAME
+        self.slack_team_id = bot_settings.SLACK_TEAM_ID
+        self.access_token = bot_settings.ACCESS_TOKEN
+        self.installer_id = bot_settings.INSTALLER_ID
+        self.bot_user_id = bot_settings.BOT_USER_ID
+        self.bot_access_token = bot_settings.BOT_ACCESS_TOKEN
         self.bot_thread = BotThread()
 
     def start(self):
@@ -42,3 +42,6 @@ class Bot:
             self.bot_thread.join()
 
         print(f'Bot in team "{self.slack_team_name}" destroyed')
+
+    def as_dict(self):
+        return {'slack_team_name': self.slack_team_name,}
