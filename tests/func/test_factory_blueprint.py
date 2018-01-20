@@ -11,12 +11,13 @@ class TestFactoryBlueprint:
         res = client.get('/factory/bots')
         assert json.loads(res.data) == []
 
-        client.post('/factory/bots', data=bot_one_data)
+        res = client.post('/factory/bots', data=bot_one_data)
+        assert res.status_code == 201
 
         res = client.get('/factory/bots')
-        assert res.json == [{'slack_team_id': bot_one_data['slack_team_id'],
-                             'slack_team_name': bot_one_data['slack_team_name'],
-                             'is_alive': True}]
+        assert json.loads(res.data) == [{'slack_team_id': bot_one_data['slack_team_id'],
+                                         'slack_team_name': bot_one_data['slack_team_name'],
+                                         'is_alive': True}]
 
     def test_create_bot_missing_params(self, client):
         thread_count = threading.active_count()
