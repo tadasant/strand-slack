@@ -6,8 +6,9 @@ from src.common.logging import get_logger
 class SlackClientWrapper:
     """Manages all outgoing interaction with Slack APIs"""
 
-    def __init__(self, tokens_by_team_id, log_file):
+    def __init__(self, tokens_by_team_id, SlackClientClass, log_file):
         self.tokens_by_team_id = tokens_by_team_id if tokens_by_team_id else {}
+        self.SlackClientClass = SlackClientClass
         self.logger = get_logger('SlackClientWrapper', log_file)
 
     def set_tokens(self, tokens, team_id):
@@ -19,5 +20,5 @@ class SlackClientWrapper:
         if team_id not in self.tokens_by_team_id:
             raise Exception  # TODO make a custom error type
         # TODO retry logic
-        client = SlackClient(token=self.tokens_by_team_id[team_id].bot_access_token)
+        client = self.SlackClientClass(token=self.tokens_by_team_id[team_id].bot_access_token)
         # client.api_call....

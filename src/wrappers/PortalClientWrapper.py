@@ -7,8 +7,8 @@ from src.models.namedtuples import SlackTokens
 
 
 class PortalClientWrapper:
-    def __init__(self, log_file, host, endpoint):
-        self.portal_client = PortalClient(host=host, endpoint=endpoint)
+    def __init__(self, log_file, portal_client):
+        self.portal_client = portal_client
         self.logger = get_logger('PortalClientWrapper', log_file)
         self.standard_retrier = Retrying(
             reraise=True,
