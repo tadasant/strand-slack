@@ -1,7 +1,6 @@
-from tenacity import Retrying, wait_fixed, stop_after_attempt
+from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClient, PortalClientException
-from src.common.log_retry_failure import log_retry_failure
 from src.common.logging import get_logger
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.namedtuples import SlackTokens
@@ -26,16 +25,16 @@ class PortalClientWrapper:
             reraise=True,
             wait=wait_fixed(2),
             stop=stop_after_attempt(5),
-            after=log_retry_failure(logger=self.logger,
-                                    level='ERROR',
-                                    message=f'Failed to call PortalClientWrapper.get_slack_tokens.'
-                                            f'{operation_definition}')
+            after=after_log(logger=self.logger, log_level=self.logger.getEffectiveLevel()),
+            retry=retry_if_exception_type(PortalClientException)
         )
+        retrier.call(lambda: self.portal_client.query(operation_definition=operation_definition))
         try:
             slack_installations = retrier.call(self.portal_client.query(operation_definition=operation_definition))
         except PortalClientException as e:
-            self.logger.error(f'Failed when calling PortalClient. Error: {e}')
-            raise WrapperException(wrapper_name='PortalClient', message='Failed when calling PortalClient')
+            self.logger.error(f'Failed when calling PortalClient. Error: {str(e)}')
+            raise WrapperException(wrapper_name='PortalClient',
+                                   message=f'Failed when calling PortalClient Error: {str(e)}')
         return {
             x['slackTeam']: SlackTokens(bot_access_token=x['botAccessToken'], access_token=x['accessToken'])
             for x in slack_installations

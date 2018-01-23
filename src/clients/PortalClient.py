@@ -8,6 +8,7 @@ class PortalClient:
 
     def query(self, operation_definition):
         full_definition = f'query {operation_definition}'
+        # response = requests.post(url=self.url, data={'query': full_definition})
         response = requests.post(url=self.url, data=full_definition)
         if response.status_code != 200:
             raise PortalClientException('Query failed.', response)
@@ -20,4 +21,5 @@ class PortalClientException(Exception):
         self.response = response
 
     def __str__(self):
-        return f'PortalClientException: {message}\nresponse: repr(self.response)'
+        return f'{self.message}\n\tStatus: {self.response.status_code}\n\t'\
+               f'Reason: {self.response.reason}\n\tText: {self.response.text}'

@@ -4,4 +4,4 @@ class WrapperException(Exception):
         self.message = message
 
     def __str__(self):
-        return f'WrapperException by {self.wrapper_name}: {message}'
+        return f'{self.wrapper_name}\n\t{self.message}'
