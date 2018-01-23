@@ -1,7 +1,7 @@
 import factory
 
-from src.blueprints.factory.bot.Bot import Bot
-from src.blueprints.factory.bot.BotSettings import BotSettings
+from src.blueprints.slackapps.bot.Bot import Bot
+from src.blueprints.slackapps.bot.BotSettings import BotSettings
 
 
 class BotSettingsFactory(factory.Factory):

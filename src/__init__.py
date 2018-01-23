@@ -1,6 +1,6 @@
 from flask import Flask, g
 
-from src.blueprints import slack, factory
+from src.blueprints import hooks, slackapps
 from src.exceptions import BotAlreadyExists, handle_bot_already_exists_usage
 from src.wrappers.PortalClientWrapper import PortalClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
@@ -10,8 +10,8 @@ from src.config import config
 def create_app(portal_client, SlackClientClass):
     app = Flask(__name__)
 
-    app.register_blueprint(factory.blueprint, url_prefix='/factory')
-    app.register_blueprint(slack.blueprint, url_prefix='/slack')
+    app.register_blueprint(slackapps.blueprint, url_prefix='/slackapps')
+    app.register_blueprint(hooks.blueprint, url_prefix='/hooks')
 
     app.register_error_handler(BotAlreadyExists, handle_bot_already_exists_usage)
 

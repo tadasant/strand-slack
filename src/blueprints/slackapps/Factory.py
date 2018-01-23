@@ -1,4 +1,4 @@
-from src.blueprints.factory.bot.Bot import Bot
+from src.blueprints.slackapps.bot.Bot import Bot
 from src.exceptions import BotAlreadyExists
 
 
