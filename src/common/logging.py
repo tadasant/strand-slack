@@ -3,8 +3,9 @@ import logging
 from src.config import config
 
 
-def get_logger(caller_name, output_file):
+def get_logger(caller_name):
     log_level = config['LOG_LEVEL'] if 'LOG_LEVEL' in config else logging.DEBUG
+    output_file = config['LOG_FILE'] if 'LOG_FILE' in config else 'log.txt'
     logger = logging.getLogger(caller_name)
     logger.setLevel(log_level)
 

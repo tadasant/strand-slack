@@ -6,10 +6,10 @@ from src.common.logging import get_logger
 class SlackClientWrapper:
     """Manages all outgoing interaction with Slack APIs"""
 
-    def __init__(self, tokens_by_team_id, SlackClientClass, log_file):
+    def __init__(self, tokens_by_team_id, SlackClientClass):
         self.tokens_by_team_id = tokens_by_team_id if tokens_by_team_id else {}
         self.SlackClientClass = SlackClientClass
-        self.logger = get_logger('SlackClientWrapper', log_file)
+        self.logger = get_logger('SlackClientWrapper')
 
     def set_tokens(self, tokens, team_id):
         """Register tokens for a new team that the wrapper can leverage (new or updated)"""

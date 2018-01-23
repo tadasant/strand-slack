@@ -9,9 +9,9 @@ from src.models.namedtuples import SlackTokens
 # TODO [CCS-26] Add authentication
 
 class PortalClientWrapper:
-    def __init__(self, log_file, portal_client):
+    def __init__(self, portal_client):
         self.portal_client = portal_client
-        self.logger = get_logger('PortalClientWrapper', log_file)
+        self.logger = get_logger('PortalClientWrapper')
         self.standard_retrier = Retrying(
             reraise=True,
             wait=wait_fixed(2),
