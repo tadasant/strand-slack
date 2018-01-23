@@ -12,8 +12,8 @@ register(BotSettingsFactory)
 
 
 @pytest.fixture
-def app():
-    app = create_app()
+def app(portal_client, slack_client_class):
+    app = create_app(portal_client=portal_client, SlackClientClass=slack_client_class)
     app.config.update(TESTING=True)
     return app
 

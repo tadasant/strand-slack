@@ -18,4 +18,6 @@ class TestPortalClient:
             result = self.next_response
             self.next_response = None
             return result
+        elif 'slackTeamInstallations' in operation_definition:
+            return {'slackTeamInstallations': []}
         return None

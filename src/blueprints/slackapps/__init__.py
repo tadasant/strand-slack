@@ -8,7 +8,6 @@ blueprint = Blueprint('slackapps', __name__)
 api = Api(blueprint)
 factory = Factory()
 
-
 class BotList(Resource):
     def __init__(self):
         self.post_parser = reqparse.RequestParser()

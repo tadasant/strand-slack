@@ -3,8 +3,8 @@ import os
 from slackclient import SlackClient
 
 from src import create_app
-from src.config import config
 from src.clients.PortalClient import PortalClient
+from src.config import config
 
 
 def create_logs_dir_if_not_exists():
