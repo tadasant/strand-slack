@@ -1,21 +1,25 @@
-from flask import g, Flask
+from factory import Faker
 
 from src import create_app
 
 
 class TestInitializingSlackTokens:
-    def test_slack_tokens_used_in_requests(self, mocker, portal_client, slack_client_class):
+    def test_slack_tokens_used_in_requests(self, mocker, portal_client, slack_client_class, slack_tokens_factory):
         mocker.spy(portal_client, 'query')
+        fake_slack_team_id = Faker('ean8')
+        fake_tokens = slack_tokens_factory.build()
 
         # set up SlackInstallations from portal
         portal_client.set_next_response({
-            'slackTeamInstallations': [{
-                'botAccessToken': 'token',
-                'accessToken': 'token',
-                'slackTeam': {
-                    'id': 1
-                }
-            }]
+            'data': {
+                'slackTeamInstallations': [{
+                    'botAccessToken': fake_tokens.bot_access_token,
+                    'accessToken': fake_tokens.access_token,
+                    'slackTeam': {
+                        'id': fake_slack_team_id
+                    }
+                }]
+            }
         })
         app = create_app(portal_client=portal_client, SlackClientClass=slack_client_class)
         assert portal_client.query.call_count == 1

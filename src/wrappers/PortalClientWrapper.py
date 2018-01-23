@@ -32,13 +32,11 @@ class PortalClientWrapper:
                 }
             }
         '''
-        try:
-            data = self.standard_retrier.call(self.portal_client.query, operation_definition=operation_definition)
-        except PortalClientException as e:
-            self.logger.error(f'Failed when calling PortalClient. Error: {str(e)}')
+        response_body = self.standard_retrier.call(self.portal_client.query, operation_definition=operation_definition)
+        if 'errors' in response_body:
             raise WrapperException(wrapper_name='PortalClient',
-                                   message=f'Failed when calling PortalClient Error: {str(e)}')
+                                   message=f'Errors when calling PortalClient. Body: {response_body}')
         return {
             x['slackTeam']['id']: SlackTokens(bot_access_token=x['botAccessToken'], access_token=x['accessToken'])
-            for x in data['slackTeamInstallations']
+            for x in response_body['data']['slackTeamInstallations']
         }

@@ -11,7 +11,7 @@ class PortalClient:
         response = requests.post(url=self.url, data={'query': full_definition})
         if response.status_code != 200:
             raise PortalClientException('Query failed.', response)
-        return response.json()['data']
+        return response.json()
 
 
 class PortalClientException(Exception):
