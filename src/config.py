@@ -6,11 +6,12 @@ from collections import defaultdict
 
 bucket = os.getenv('CONFIG_S3_BUCKET')
 key = os.getenv('CONFIG_S3_KEY')
+config = None
 if bucket and key:
     resp = boto3.client('s3').get_object(Bucket=bucket, Key=key)
     config = json.load(resp['Body'])
-elif 'MODE' in os.environ:
-    mode = os.environ['MODE']
+else:
+    mode = os.environ['MODE'] if 'MODE' in os.environ else 'development'
     config_file_location = defaultdict(lambda: 'config/development.config.json')
     config_file_location = {
         'test': 'config/test.config.json',
