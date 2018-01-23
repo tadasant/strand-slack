@@ -1,10 +1,12 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
-from src.clients.PortalClient import PortalClient, PortalClientException
+from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.namedtuples import SlackTokens
 
+
+# TODO [CCS-26] Add authentication
 
 class PortalClientWrapper:
     def __init__(self, log_file, portal_client):

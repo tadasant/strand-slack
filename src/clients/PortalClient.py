@@ -1,4 +1,4 @@
-# TODO [CCS-26] Add authentication
+# TODO eventually test this / effectively treat it as an independent package (or use an existing graphql client?)
 import requests
 
 
