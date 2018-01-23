@@ -16,6 +16,7 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 mccabe==0.6.1
+monotonic==1.4
 pep8==1.7.1
 pluggy==0.6.0
 py==1.5.2
@@ -31,6 +32,7 @@ pytz==2017.3
 requests==2.18.4
 six==1.11.0
 slackclient==1.1.0
+tenacity==4.8.0
 text-unidecode==1.1
 urllib3==1.22
 websocket-client==0.46.0
