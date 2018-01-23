@@ -4,7 +4,6 @@ from src.blueprints import hooks, slackapps
 from src.exceptions import BotAlreadyExists, handle_bot_already_exists_usage
 from src.wrappers.PortalClientWrapper import PortalClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
-from src.config import config
 
 
 def create_app(portal_client, SlackClientClass):

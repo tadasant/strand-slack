@@ -1,7 +1,7 @@
 import pytest
 from pytest_factoryboy import register
 
-from src import create_app, SlackClientWrapper, PortalClientWrapper
+from src import create_app
 from src.blueprints.slackapps.Factory import Factory
 from tests.factories import BotFactory, BotSettingsFactory, SlackTokensFactory
 from tests.testresources import TestSlackClient
@@ -45,4 +45,3 @@ def portal_client_factory():
 def portal_client(portal_client_factory):
     yield portal_client_factory
     portal_client_factory.clear_response()
-

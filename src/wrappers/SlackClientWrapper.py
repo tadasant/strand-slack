@@ -1,5 +1,3 @@
-from slackclient import SlackClient
-
 from src.common.logging import get_logger
 
 
@@ -20,5 +18,5 @@ class SlackClientWrapper:
         if team_id not in self.tokens_by_team_id:
             raise Exception  # TODO make a custom error type
         # TODO retry logic
-        client = self.SlackClientClass(token=self.tokens_by_team_id[team_id].bot_access_token)
+        self.SlackClientClass(token=self.tokens_by_team_id[team_id].bot_access_token)
         # client.api_call....
