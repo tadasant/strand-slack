@@ -1,8 +1,8 @@
 import pytest
 from pytest_factoryboy import register
 
-from app import create_app
-from app.factory.Factory import Factory
+from src import create_app
+from src.blueprints.factory.Factory import Factory
 from tests.factories import BotFactory, BotSettingsFactory
 
 register(BotFactory)

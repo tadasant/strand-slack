@@ -1,6 +1,6 @@
 from flask import Flask
-from app import factory, slack
-from app.exceptions import BotAlreadyExists, handle_bot_already_exists_usage
+from src.blueprints import slack, factory
+from src.exceptions import BotAlreadyExists, handle_bot_already_exists_usage
 
 
 def create_app():

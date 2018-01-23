@@ -1,7 +1,7 @@
 import factory
 
-from app.factory.bot.Bot import Bot
-from app.factory.bot.BotSettings import BotSettings
+from src.blueprints.factory.bot.Bot import Bot
+from src.blueprints.factory.bot.BotSettings import BotSettings
 
 
 class BotSettingsFactory(factory.Factory):
