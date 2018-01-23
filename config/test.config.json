@@ -1,0 +1,5 @@
+{
+  "LOG_LEVEL": "DEBUG",
+  "PORTAL_HOST": "http://localhost:8000/",
+  "PORTAL_GRAPHQL_ENDPOINT": "graphql"
+}
