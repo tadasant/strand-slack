@@ -1,5 +1,3 @@
-import json
-
 from flask import current_app
 from flask_restful import Resource, reqparse, abort
 
@@ -15,6 +13,16 @@ class SlackTeamInstallation(Resource):
     # TODO we'll want a put() for updating -- then post() should raise error if exists
     def post(self):
         # TODO flask restful's request parsing is deprecated. Migrate to marshmallow.
+        args = self._parse_post_args()
+        tokens = SlackTokens(bot_access_token=args['bot_access_token'], access_token=args['access_token'])
+        current_app.slack_client_wrapper.set_tokens(tokens=tokens, team_id=args['slack_team_id'])
+        if not args['is_active']:
+            OnboardTeam(slack_client_wrapper=current_app.slack_client_wrapper,
+                        team_id=args['slack_team_id'],
+                        installer_id=args['installer_id']).execute()
+        return tokens._asdict()
+
+    def _parse_post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('bot_access_token', required=True, help='Need bot_access_token')
         parser.add_argument('access_token', required=True, help='Need access_token')
@@ -24,10 +32,4 @@ class SlackTeamInstallation(Resource):
         args = parser.parse_args()
         if not args['is_active'] and not args['installer_id']:
             abort(400, message=['Installation is not active: we need installer_id'])
-        tokens = SlackTokens(bot_access_token=args['bot_access_token'], access_token=args['access_token'])
-        current_app.slack_client_wrapper.set_tokens(tokens=tokens, team_id=args['slack_team_id'])
-        if not args['is_active']:
-            OnboardTeam(slack_client_wrapper=current_app.slack_client_wrapper,
-                        team_id=args['slack_team_id'],
-                        installer_id=args['installer_id']).execute()
-        return tokens._asdict()
+        return args
