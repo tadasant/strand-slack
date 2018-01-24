@@ -25,6 +25,6 @@ class TestInitializingSlackTokens:
         app = create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
         assert portal_client.query.call_count == 1
 
-        assert len(app._slack_client_wrapper.tokens_by_team_id.values()) == 1
+        assert len(app.slack_client_wrapper.tokens_by_team_id.values()) == 1
         # TODO replace brittle assert above with a call to some flask endpoint that kicks off a slack api call
         # TODO (assert that the call uses the appropriate token)
