@@ -6,3 +6,5 @@ venv
 config/development.config.json
 logs/*
 misc.xml
+.coverage
+pytest-tmp/*

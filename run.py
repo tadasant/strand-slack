@@ -18,4 +18,4 @@ if __name__ == '__main__':
         portal_client=PortalClient(host=config['PORTAL_HOST'], endpoint=config['PORTAL_GRAPHQL_ENDPOINT']),
         SlackClientClass=SlackClient
     )
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=config['FLASK_DEBUG'], host='0.0.0.0')

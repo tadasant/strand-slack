@@ -1,4 +1,5 @@
 {
+  "FLASK_DEBUG": true,
   "LOG_LEVEL": "DEBUG",
   "LOG_FILE": "pytest-tmp/log.txt",
   "PORTAL_HOST": "http://localhost:8000/",
