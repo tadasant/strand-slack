@@ -1,10 +1,10 @@
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse
 
-from app.factory.Factory import Factory
-from app.factory.bot.BotSettings import BotSettings
+from src.blueprints.slackapps.Factory import Factory
+from src.blueprints.slackapps.bot.BotSettings import BotSettings
 
-blueprint = Blueprint('factory', __name__)
+blueprint = Blueprint('slackapps', __name__)
 api = Api(blueprint)
 factory = Factory()
 

@@ -1,0 +1,6 @@
+{
+  "LOG_LEVEL": "DEBUG",
+  "LOG_FILE": "pytest-tmp/log.txt",
+  "PORTAL_HOST": "http://localhost:8000/",
+  "PORTAL_GRAPHQL_ENDPOINT": "graphql"
+}

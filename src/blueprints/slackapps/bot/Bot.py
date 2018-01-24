@@ -1,4 +1,4 @@
-from app.factory.bot.BotThread import BotThread
+from src.blueprints.slackapps.bot.BotThread import BotThread
 
 
 class Bot:

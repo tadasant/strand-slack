@@ -1,17 +1,25 @@
 import pytest
 from pytest_factoryboy import register
 
-from app import create_app
-from app.factory.Factory import Factory
-from tests.factories import BotFactory, BotSettingsFactory
+from src import create_app
+from src.blueprints.slackapps.Factory import Factory
+from tests.factories import BotFactory, BotSettingsFactory, SlackTokensFactory
+from tests.testresources import TestSlackClient
+from tests.testresources.TestPortalClient import TestPortalClient
 
 register(BotFactory)
 register(BotSettingsFactory)
+register(SlackTokensFactory)
+
+
+@pytest.fixture(scope='session', autouse=True)
+def init_tempdir(tmpdir_factory):
+    assert tmpdir_factory.getbasetemp()
 
 
 @pytest.fixture
-def app():
-    app = create_app()
+def app(portal_client):
+    app = create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
     app.config.update(TESTING=True)
     return app
 
@@ -26,3 +34,14 @@ def client(app):
 def factory():
     factory = Factory()
     return factory
+
+
+@pytest.fixture(scope='session')
+def portal_client_factory():
+    return TestPortalClient()
+
+
+@pytest.fixture
+def portal_client(portal_client_factory):
+    yield portal_client_factory
+    portal_client_factory.clear_response()

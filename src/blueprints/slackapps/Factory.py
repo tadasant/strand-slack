@@ -1,5 +1,5 @@
-from app.factory.bot.Bot import Bot
-from app.exceptions import BotAlreadyExists
+from src.blueprints.slackapps.bot.Bot import Bot
+from src.exceptions import BotAlreadyExists
 
 
 class Factory:
