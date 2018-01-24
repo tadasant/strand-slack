@@ -7,6 +7,14 @@ from src.models.namedtuples import SlackTokens
 
 
 class SlackTeamInstallation(Resource):
+    def __init__(self):
+        self.post_parser = reqparse.RequestParser()
+        self.post_parser.add_argument('bot_access_token', required=True, help='Need bot_access_token')
+        self.post_parser.add_argument('access_token', required=True, help='Need access_token')
+        self.post_parser.add_argument('slack_team_id', required=True, help='Need slack_team_id')
+        self.post_parser.add_argument('is_active', type=bool, help='is_active is optional, defaults to false')
+        self.post_parser.add_argument('installer_id', help='If is_active is true, not needed')
+
     def get(self):
         return 'Hello world!'
 
@@ -23,13 +31,7 @@ class SlackTeamInstallation(Resource):
         return tokens._asdict()
 
     def _parse_post_args(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('bot_access_token', required=True, help='Need bot_access_token')
-        parser.add_argument('access_token', required=True, help='Need access_token')
-        parser.add_argument('slack_team_id', required=True, help='Need slack_team_id')
-        parser.add_argument('is_active', type=bool, help='is_active is optional, defaults to false')
-        parser.add_argument('installer_id', help='If is_active is true, not needed')
-        args = parser.parse_args()
+        args = self.post_parser.parse_args()
         if not args['is_active'] and not args['installer_id']:
             abort(400, message=['Installation is not active: we need installer_id'])
         return args
