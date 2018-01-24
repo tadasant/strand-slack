@@ -1,6 +1,9 @@
 {
+  "FLASK_DEBUG": true,
   "LOG_LEVEL": "DEBUG",
   "LOG_FILE": "pytest-tmp/log.txt",
   "PORTAL_HOST": "http://localhost:8000/",
-  "PORTAL_GRAPHQL_ENDPOINT": "graphql"
+  "PORTAL_GRAPHQL_ENDPOINT": "graphql",
+  "HOST": "0.0.0.0",
+  "PORT": 5004
 }
