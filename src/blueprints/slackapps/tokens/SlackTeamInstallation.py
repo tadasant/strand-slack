@@ -24,10 +24,10 @@ class SlackTeamInstallation(Resource):
         args = parser.parse_args()
         if not args['is_active'] and not args['installer_id']:
             abort(400, message=['Installation is not active: we need installer_id'])
-        tokens = SlackTokens(bot_access_token=args['bot_access_token'], access_token=['access_token'])
+        tokens = SlackTokens(bot_access_token=args['bot_access_token'], access_token=args['access_token'])
         current_app.slack_client_wrapper.set_tokens(tokens=tokens, team_id=args['slack_team_id'])
         if not args['is_active']:
             OnboardTeam(slack_client_wrapper=current_app.slack_client_wrapper,
                         team_id=args['slack_team_id'],
                         installer_id=args['installer_id']).execute()
-        return json.dumps(tokens._asdict())
+        return tokens._asdict()

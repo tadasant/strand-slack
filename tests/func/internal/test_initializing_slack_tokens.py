@@ -1,13 +1,12 @@
-from factory import Faker
-
 from src import create_app
+from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.testresources import TestSlackClient
 
 
 class TestInitializingSlackTokens:
     def test_slack_tokens_used_in_requests(self, mocker, portal_client, slack_tokens_factory):
         mocker.spy(portal_client, 'query')
-        fake_slack_team_id = Faker('ean8')
+        fake_slack_team_id = str(PrimitiveFaker('ean8'))
         fake_tokens = slack_tokens_factory.build()
 
         # set up SlackInstallations from portal

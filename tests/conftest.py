@@ -17,14 +17,14 @@ def init_tempdir(tmpdir_factory):
     assert tmpdir_factory.getbasetemp()
 
 
-@pytest.fixture
-def app(portal_client):
-    app = create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
-    app.config.update(TESTING=True)
+@pytest.fixture(scope='session')
+def app(portal_client_factory):
+    app = create_app(portal_client=portal_client_factory, SlackClientClass=TestSlackClient)
+    app.testing = True
     return app
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def client(app):
     client = app.test_client()
     return client

@@ -1,22 +1,52 @@
+import json
+
+import pytest
+from flask import url_for, current_app
+
+from tests.common.PrimitiveFaker import PrimitiveFaker
+
+
+@pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestReceivingNewInstallations:
-    def test_receive_valid_installation(self, factory, bot_settings_factory):
-        bot_one_settings = bot_settings_factory.build()
-        factory.create_bot(bot_one_settings)
+    # For assertions
+    bot_access_token = str(PrimitiveFaker('md5'))
+    access_token = str(PrimitiveFaker('md5'))
+    slack_team_id = str(PrimitiveFaker('ean8'))
+    installer_id = str(PrimitiveFaker('ean8'))
 
-        assert threading.active_count() == 2
+    # For setup
+    target_endpoint = 'slackapps.slackteaminstallation'
+    default_payload = {
+        'bot_access_token': bot_access_token,
+        'access_token': access_token,
+        'slack_team_id': slack_team_id,
+        'is_active': False,
+        'installer_id': installer_id,
+    }
+    default_headers = {
+        'Content-Type': 'application/json',
+    }
 
-        bot_two_settings = bot_settings_factory.build()
-        factory.create_bot(bot_two_settings)
+    def test_receive_valid_installation(self):
+        assert len(current_app.slack_client_wrapper.tokens_by_team_id) == 0
+        target_url = url_for(endpoint=self.target_endpoint)
 
-        assert threading.active_count() == 3
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=json.dumps(self.default_payload))
 
-    def test_receive_invalid_installation(self, factory, bot_settings_factory):
-        bot_one_settings = bot_settings_factory.build()
-        factory.create_bot(bot_one_settings)
+        data = json.loads(response.data)
+        assert data['bot_access_token'] == self.bot_access_token
+        assert data['access_token'] == self.access_token
+        assert len(current_app.slack_client_wrapper.tokens_by_team_id) == 1
 
-        assert threading.active_count() == 2
+    def test_receive_invalid_installation(self):
+        num_tokens_to_start = len(current_app.slack_client_wrapper.tokens_by_team_id)
+        target_url = url_for(endpoint=self.target_endpoint)
+        payload = self.default_payload.copy()
+        del payload['installer_id']
 
-        bot_two_settings = bot_settings_factory.build()
-        factory.create_bot(bot_two_settings)
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=json.dumps(payload))
 
-        assert threading.active_count() == 3
+        assert response.status_code == 400
+        assert len(current_app.slack_client_wrapper.tokens_by_team_id) == num_tokens_to_start
