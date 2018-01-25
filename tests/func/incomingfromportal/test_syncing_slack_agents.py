@@ -54,6 +54,22 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
 
+    def test_post_valid_installation_extra_params(self, slack_agent_repository):
+        with pytest.raises(RepositoryException):
+            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
+
+        target_url = url_for(endpoint=self.target_endpoint)
+        payload = self.default_payload.copy()
+        payload['group_id'] = str(PrimitiveFaker('ean8'))
+
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=json.dumps(self.default_payload))
+
+        data = json.loads(response.data)
+        assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
+        assert slack_agent_repository.get_slack_bot_access_token(
+            slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
+
     def test_post_invalid_installation(self, slack_agent_repository):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
