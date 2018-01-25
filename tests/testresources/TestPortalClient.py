@@ -18,6 +18,6 @@ class TestPortalClient:
             result = self.next_response
             self.next_response = None
             return result
-        elif 'slackTeamInstallations' in operation_definition:
-            return {'data': {'slackTeamInstallations': []}}
+        elif 'slackApplicationInstallations' in operation_definition:
+            return {'data': {'slackApplicationInstallations': []}}
         return None

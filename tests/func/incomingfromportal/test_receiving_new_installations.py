@@ -15,7 +15,7 @@ class TestReceivingNewInstallations:
     installer_id = str(PrimitiveFaker('ean8'))
 
     # For setup
-    target_endpoint = 'slackapps.slackteaminstallation'
+    target_endpoint = 'slackapps.slackapplicationinstallation'
     default_payload = {
         'bot_access_token': bot_access_token,
         'access_token': access_token,

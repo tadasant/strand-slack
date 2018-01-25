@@ -12,7 +12,7 @@ class TestInitializingSlackTokens:
         # set up SlackInstallations from portal
         portal_client.set_next_response({
             'data': {
-                'slackTeamInstallations': [{
+                'slackApplicationInstallations': [{
                     'botAccessToken': fake_tokens.bot_access_token,
                     'accessToken': fake_tokens.access_token,
                     'slackTeam': {

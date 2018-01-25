@@ -23,7 +23,7 @@ class PortalClientWrapper:
     def get_slack_tokens_by_slack_team_id(self):
         operation_definition = '''
             {
-                slackTeamInstallations {
+                slackApplicationInstallation {
                     botAccessToken
                     accessToken
                     slackTeam {
@@ -38,5 +38,5 @@ class PortalClientWrapper:
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
         return {
             x['slackTeam']['id']: SlackTokens(bot_access_token=x['botAccessToken'], access_token=x['accessToken'])
-            for x in response_body['data']['slackTeamInstallations']
+            for x in response_body['data']['slackApplicationInstallation']
         }

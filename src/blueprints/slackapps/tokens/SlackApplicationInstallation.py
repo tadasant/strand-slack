@@ -1,12 +1,10 @@
 from flask import current_app
 from flask_restful import Resource, reqparse, abort
 
-# TODO consider formally modelling SlackTeamInstallation with e.g. SQLAlchemy (use in-memory DB) -- scrap SlackTokens
 from src.command.OnboardTeam import OnboardTeam
-from src.models.namedtuples import SlackTokens
 
 
-class SlackTeamInstallation(Resource):
+class SlackApplicationInstallation(Resource):
     def __init__(self):
         self.post_parser = reqparse.RequestParser()
         self.post_parser.add_argument('bot_access_token', required=True, help='Need bot_access_token')
@@ -14,9 +12,6 @@ class SlackTeamInstallation(Resource):
         self.post_parser.add_argument('slack_team_id', required=True, help='Need slack_team_id')
         self.post_parser.add_argument('is_active', type=bool, help='is_active is optional, defaults to false')
         self.post_parser.add_argument('installer_id', help='If is_active is true, not needed')
-
-    def get(self):
-        return 'Hello world!'
 
     # TODO we'll want a put() for updating -- then post() should raise error if exists
     def post(self):
