@@ -2,6 +2,7 @@ import json
 
 import pytest
 from flask import url_for
+from marshmallow import ValidationError
 
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.factories import SlackAgentFactory
@@ -52,28 +53,16 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
 
-    # def test_post_invalid_installation(self):
-    #     with pytest.raises(RepositoryException):
-    #         slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
-    #
-    #     target_url = url_for(endpoint=self.target_endpoint)
-    #
-    #     response = self.client.post(path=target_url, headers=self.default_headers,
-    #                                 data=json.dumps(self.default_payload))
-    #
-    #     data = json.loads(response.data)
-    #     assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
-    #     assert slack_agent_repository.get_slack_bot_access_token(
-    #         slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
+    def test_post_invalid_installation(self, slack_agent_repository):
+        with pytest.raises(RepositoryException):
+            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
-    # def test_receive_invalid_installation(self):
-    #     num_installations_to_start = len(current_app.slack_client_wrapper.installations_by_team_id)
-    #     target_url = url_for(endpoint=self.target_endpoint)
-    #     payload = self.default_payload.copy()
-    #     del payload['installer']
-    #
-    #     response = self.client.post(path=target_url, headers=self.default_headers,
-    #                                 data=json.dumps(payload))
-    #
-    #     assert response.status_code == 400
-    #     assert len(current_app.slack_client_wrapper.installations_by_team_id) == num_installations_to_start
+        payload = self.default_payload.copy()
+        del payload['status']
+        target_url = url_for(endpoint=self.target_endpoint)
+
+        with pytest.raises(ValidationError):
+            self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+
+        with pytest.raises(RepositoryException):
+            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
