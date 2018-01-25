@@ -3,13 +3,13 @@ from pytest_factoryboy import register
 
 from src import create_app
 from src.blueprints.slackapps.Factory import Factory
-from tests.factories import BotFactory, BotSettingsFactory, SlackTokensFactory
+from tests.factories import BotFactory, BotSettingsFactory, SlackApplicationInstallationFactory
 from tests.testresources import TestSlackClient
 from tests.testresources.TestPortalClient import TestPortalClient
 
 register(BotFactory)
 register(BotSettingsFactory)
-register(SlackTokensFactory)
+register(SlackApplicationInstallationFactory)
 
 
 @pytest.fixture(scope='session', autouse=True)

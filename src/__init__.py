@@ -21,6 +21,6 @@ def create_app(portal_client, SlackClientClass):
 
 def init_wrappers(app, portal_client, SlackClientClass):
     app.portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
-    tokens_by_team_id = app.portal_client_wrapper.get_slack_tokens_by_slack_team_id()
-    app.slack_client_wrapper = SlackClientWrapper(tokens_by_team_id=tokens_by_team_id,
-                                                   SlackClientClass=SlackClientClass)
+    installations_by_team_id = app.portal_client_wrapper.get_installations_by_slack_team_id()
+    app.slack_client_wrapper = SlackClientWrapper(installations_by_team_id=installations_by_team_id,
+                                                  SlackClientClass=SlackClientClass)

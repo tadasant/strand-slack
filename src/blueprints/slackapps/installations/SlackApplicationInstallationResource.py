@@ -2,9 +2,10 @@ from flask import current_app
 from flask_restful import Resource, reqparse, abort
 
 from src.command.OnboardTeam import OnboardTeam
+from src.models.SlackApplicationInstallation import SlackApplicationInstallation
 
 
-class SlackApplicationInstallation(Resource):
+class SlackApplicationInstallationResource(Resource):
     def __init__(self):
         self.post_parser = reqparse.RequestParser()
         self.post_parser.add_argument('bot_access_token', required=True, help='Need bot_access_token')
@@ -17,13 +18,16 @@ class SlackApplicationInstallation(Resource):
     def post(self):
         # TODO flask restful's request parsing is deprecated. Migrate to marshmallow.
         args = self._parse_post_args()
-        tokens = SlackTokens(bot_access_token=args['bot_access_token'], access_token=args['access_token'])
-        current_app.slack_client_wrapper.set_tokens(tokens=tokens, team_id=args['slack_team_id'])
+        installation = SlackApplicationInstallation(bot_access_token=args['bot_access_token'],
+                                              access_token=args['access_token'],
+
+                                              )
+        current_app.slack_client_wrapper.set_installation(installation=installation, team_id=args['slack_team_id'])
         if not args['is_active']:
             OnboardTeam(slack_client_wrapper=current_app.slack_client_wrapper,
                         team_id=args['slack_team_id'],
                         installer_id=args['installer_id']).execute()
-        return tokens._asdict()
+        return installation._asdict()
 
     def _parse_post_args(self):
         args = self.post_parser.parse_args()

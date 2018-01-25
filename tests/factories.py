@@ -2,7 +2,7 @@ import factory
 
 from src.blueprints.slackapps.bot.Bot import Bot
 from src.blueprints.slackapps.bot.BotSettings import BotSettings
-from src.models.namedtuples import SlackTokens
+from src.models.SlackApplicationInstallation import SlackApplicationInstallation
 
 
 class BotSettingsFactory(factory.Factory):
@@ -24,9 +24,9 @@ class BotFactory(factory.Factory):
     bot_settings = factory.SubFactory(BotSettingsFactory)
 
 
-class SlackTokensFactory(factory.Factory):
+class SlackApplicationInstallationFactory(factory.Factory):
     class Meta:
-        model = SlackTokens
+        model = SlackApplicationInstallation
 
     bot_access_token = factory.Faker('md5')
     access_token = factory.Faker('md5')

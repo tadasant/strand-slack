@@ -20,6 +20,7 @@ itsdangerous==0.24
 Jinja2==2.10
 jmespath==0.9.3
 MarkupSafe==1.0
+marshmallow==2.15.0
 mccabe==0.6.1
 monotonic==1.4
 pep8==1.7.1
