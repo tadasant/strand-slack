@@ -2,7 +2,7 @@ from flask import current_app, request
 from flask_restful import Resource
 
 from src.command.OnboardTeam import OnboardTeam
-from src.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
+from src.domain.models import SlackApplicationInstallationSchema
 
 
 class SlackApplicationInstallationResource(Resource):

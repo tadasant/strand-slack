@@ -2,9 +2,9 @@ import factory
 
 from src.blueprints.slackapps.bot.Bot import Bot
 from src.blueprints.slackapps.bot.BotSettings import BotSettings
-from src.models.SlackApplicationInstallation import SlackApplicationInstallation
-from src.models.SlackTeam import SlackTeam
-from src.models.SlackUser import SlackUser
+from src.domain.models import SlackApplicationInstallation
+from src.domain.models import SlackTeam
+from src.domain.models import SlackUser
 
 
 class BotSettingsFactory(factory.Factory):

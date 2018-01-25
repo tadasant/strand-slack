@@ -10,7 +10,7 @@ class SlackClientWrapper:
         self.logger = get_logger('SlackClientWrapper')
 
     def set_installation(self, installation, team_id):
-        """Register installations for a new team that the wrapper can leverage (new or updated)"""
+        """Register agents for a new team that the wrapper can leverage (new or updated)"""
         self.installations_by_team_id[team_id] = installation
 
     def do_some_action(self, team_id):
