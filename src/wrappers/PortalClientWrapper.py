@@ -5,8 +5,9 @@ from src.common.logging import get_logger
 from src.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
 from src.models.exceptions.WrapperException import WrapperException
 
-
 # TODO [CCS-26] Add authentication
+from src.models.utils import dict_keys_camel_case_to_underscores
+
 
 class PortalClientWrapper:
     def __init__(self, portal_client):
@@ -40,7 +41,7 @@ class PortalClientWrapper:
         if 'errors' in response_body:
             raise WrapperException(wrapper_name='PortalClient',
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
-        return {
-            x['slackTeam']['id']: SlackApplicationInstallationSchema().load(x).data
-            for x in response_body['data']['slackApplicationInstallations']
-        }
+        installations_dicts = response_body['data']['slackApplicationInstallations']
+        installations = [SlackApplicationInstallationSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in
+                         installations_dicts]
+        return {x.slack_team.id: x for x in installations}
