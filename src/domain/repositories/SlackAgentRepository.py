@@ -24,5 +24,8 @@ class SlackAgentRepository:
     def add_slack_agent(self, slack_agent):
         self.set_slack_agent(slack_agent)
 
+    def clear(self):
+        self._slack_agents_by_team_id = {}
+
 
 slack_agent_repository = SlackAgentRepository()
