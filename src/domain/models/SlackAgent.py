@@ -19,7 +19,7 @@ class SlackAgentSchema(Schema):
     status = EnumField(SlackAgentStatus, required=True)
     help_channel_id = fields.String()
     slack_team = fields.Nested(SlackTeamSchema, required=True)
-    slack_application_installation = fields.Nested(SlackApplicationInstallationSchema, required=True)
+    slack_application_installation = fields.Nested(SlackApplicationInstallationSchema)
 
     @post_load
     def make_slack_agent(self, data):
