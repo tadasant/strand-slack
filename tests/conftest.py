@@ -2,14 +2,11 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src.blueprints.portal.Factory import Factory
-from tests.factories import BotFactory, BotSettingsFactory, SlackApplicationInstallationFactory
+from tests.factories import SlackAgentFactory
 from tests.testresources import TestSlackClient
 from tests.testresources.TestPortalClient import TestPortalClient
 
-register(BotFactory)
-register(BotSettingsFactory)
-register(SlackApplicationInstallationFactory)
+register(SlackAgentFactory)
 
 
 @pytest.fixture(scope='session', autouse=True)
@@ -28,12 +25,6 @@ def app(portal_client_factory):
 def client(app):
     client = app.test_client()
     return client
-
-
-@pytest.fixture
-def factory():
-    factory = Factory()
-    return factory
 
 
 @pytest.fixture(scope='session')

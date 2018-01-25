@@ -3,9 +3,9 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exceptio
 from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
 from src.domain.models.SlackAgent import SlackAgentSchema
-from src.domain.models.exceptions import WrapperException
 
 # TODO [CCS-26] Add authentication
+from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 

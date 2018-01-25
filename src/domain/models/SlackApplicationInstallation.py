@@ -1,7 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from src.domain.models import SlackTeamSchema
-from src.domain.models import SlackUserSchema
+from src.domain.models.SlackUser import SlackUserSchema
 
 
 class SlackApplicationInstallation:
@@ -12,7 +11,6 @@ class SlackApplicationInstallation:
 
 
 class SlackApplicationInstallationSchema(Schema):
-    slack_team = fields.Nested(SlackTeamSchema, required=True)
     access_token = fields.String(required=True)
     installer = fields.Nested(SlackUserSchema, required=True)
     bot_access_token = fields.String(required=True)
