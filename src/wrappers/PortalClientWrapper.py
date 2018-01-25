@@ -2,7 +2,7 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exceptio
 
 from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
-from src.models.SlackApplicationInstallation import SlackApplicationInstallation
+from src.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
 from src.models.exceptions.WrapperException import WrapperException
 
 
@@ -41,7 +41,6 @@ class PortalClientWrapper:
             raise WrapperException(wrapper_name='PortalClient',
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
         return {
-            x['slackTeam']['id']: SlackApplicationInstallation(bot_access_token=x['botAccessToken'],
-                                                               access_token=x['accessToken'])
+            x['slackTeam']['id']: SlackApplicationInstallationSchema().load(x).data
             for x in response_body['data']['slackApplicationInstallations']
         }

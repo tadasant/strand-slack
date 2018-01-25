@@ -3,7 +3,8 @@ from flask_restful import Api, Resource, reqparse
 
 from src.blueprints.slackapps.Factory import Factory
 from src.blueprints.slackapps.bot.BotSettings import BotSettings
-from src.blueprints.slackapps.installations.SlackApplicationInstallationResource import SlackApplicationInstallationResource
+from src.blueprints.slackapps.installations.SlackApplicationInstallationResource import \
+    SlackApplicationInstallationResource
 
 blueprint = Blueprint('slackapps', __name__)
 api = Api(blueprint)
