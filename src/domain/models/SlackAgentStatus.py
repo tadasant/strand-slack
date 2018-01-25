@@ -7,4 +7,3 @@ class SlackAgentStatus(Enum):
     ACTIVE = 'ACTIVE'
     PAUSED = 'PAUSED'
     INACTIVE = 'INACTIVE'
-

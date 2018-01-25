@@ -1,8 +1,6 @@
 from flask import Flask
 
 from src.blueprints import slack, portal
-from src.domain.models.exceptions.WrapperException import WrapperException
-
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.wrappers.PortalClientWrapper import PortalClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
