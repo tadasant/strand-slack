@@ -20,7 +20,8 @@ class SlackAgentRepository:
 
     def set_slack_agent(self, slack_agent):
         if slack_agent.slack_team.id not in self._slack_agents_by_team_id:
-            raise RepositoryException(object_name='SlackAgent', message=f'set: No slack agent for team {slack_team_id}')
+            raise RepositoryException(object_name='SlackAgent',
+                                      message=f'set: No slack agent for team {slack_agent.slack_team.id}')
         self._slack_agents_by_team_id[slack_agent.slack_team.id] = slack_agent
 
     def add_slack_agent(self, slack_agent):

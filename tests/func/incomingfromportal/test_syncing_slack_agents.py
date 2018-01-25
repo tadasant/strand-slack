@@ -103,19 +103,14 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
         assert slack_agent_repository.get_slack_access_token(
             slack_team_id=self.fake_slack_team_id) == new_fake_access_token
 
-    # def test_put_valid_new_installation(self, slack_agent_repository):
-    #     with pytest.raises(RepositoryException):
-    #         slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
-    #
-    #     target_url = url_for(endpoint=self.target_endpoint)
-    #
-    #     response = self.client.put(path=target_url, headers=self.default_headers,
-    #                                 data=json.dumps(self.default_payload))
-    #
-    #     data = json.loads(response.data)
-    #     assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
-    #     assert slack_agent_repository.get_slack_bot_access_token(
-    #         slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
+    def test_put_valid_new_installation(self, slack_agent_repository):
+        with pytest.raises(RepositoryException):
+            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
+
+        target_url = url_for(endpoint=self.target_endpoint)
+
+        with pytest.raises(RepositoryException):
+            self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(self.default_payload))
     #
     # def test_put_invalid_installation(self, slack_agent_repository):
     #     with pytest.raises(RepositoryException):
