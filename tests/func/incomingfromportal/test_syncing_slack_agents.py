@@ -81,9 +81,6 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         with pytest.raises(ValidationError):
             self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
-        with pytest.raises(RepositoryException):
-            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
-
 
 class TestPuttingSlackAgents(TestSyncingSlackAgents):
     def test_put_valid_existing_installation(self, slack_agent_repository):
@@ -111,17 +108,14 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
 
         with pytest.raises(RepositoryException):
             self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(self.default_payload))
-    #
-    # def test_put_invalid_installation(self, slack_agent_repository):
-    #     with pytest.raises(RepositoryException):
-    #         slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
-    #
-    #     payload = self.default_payload.copy()
-    #     del payload['status']
-    #     target_url = url_for(endpoint=self.target_endpoint)
-    #
-    #     with pytest.raises(ValidationError):
-    #         self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(payload))
-    #
-    #     with pytest.raises(RepositoryException):
-    #         slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
+
+    def test_put_invalid_installation(self, slack_agent_repository):
+        with pytest.raises(RepositoryException):
+            slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
+
+        payload = self.default_payload.copy()
+        del payload['status']
+        target_url = url_for(endpoint=self.target_endpoint)
+
+        with pytest.raises(ValidationError):
+            self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(payload))
