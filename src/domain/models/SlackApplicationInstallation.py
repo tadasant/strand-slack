@@ -5,8 +5,7 @@ from src.domain.models import SlackUserSchema
 
 
 class SlackApplicationInstallation:
-    def __init__(self, slack_team, access_token, bot_access_token, installer):
-        self.slack_team = slack_team
+    def __init__(self, access_token, bot_access_token, installer):
         self.access_token = access_token
         self.installer = installer
         self.bot_access_token = bot_access_token
