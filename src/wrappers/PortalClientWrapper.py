@@ -2,11 +2,12 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exceptio
 
 from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
+from src.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
 from src.models.exceptions.WrapperException import WrapperException
-from src.models.namedtuples import SlackTokens
-
 
 # TODO [CCS-26] Add authentication
+from src.models.utils import dict_keys_camel_case_to_underscores
+
 
 class PortalClientWrapper:
     def __init__(self, portal_client):
@@ -20,13 +21,17 @@ class PortalClientWrapper:
             retry=retry_if_exception_type(PortalClientException)
         )
 
-    def get_slack_tokens_by_slack_team_id(self):
+    def get_installations_by_slack_team_id(self):
         operation_definition = '''
             {
-                slackTeamInstallations {
+                slackApplicationInstallations {
                     botAccessToken
                     accessToken
+                    isActive
                     slackTeam {
+                        id
+                    }
+                    installer {
                         id
                     }
                 }
@@ -36,7 +41,7 @@ class PortalClientWrapper:
         if 'errors' in response_body:
             raise WrapperException(wrapper_name='PortalClient',
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
-        return {
-            x['slackTeam']['id']: SlackTokens(bot_access_token=x['botAccessToken'], access_token=x['accessToken'])
-            for x in response_body['data']['slackTeamInstallations']
-        }
+        installations_dicts = response_body['data']['slackApplicationInstallations']
+        installations = [SlackApplicationInstallationSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in
+                         installations_dicts]
+        return {x.slack_team.id: x for x in installations}
