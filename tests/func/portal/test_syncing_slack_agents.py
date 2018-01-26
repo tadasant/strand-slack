@@ -7,6 +7,7 @@ from marshmallow import ValidationError
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories import SlackAgentFactory
+from tests.testresources.TestSlackClient import TestSlackClient
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
@@ -40,10 +41,11 @@ class TestSyncingSlackAgents:
 
 
 class TestPostingSlackAgents(TestSyncingSlackAgents):
-    def test_post_valid_installation(self, slack_agent_repository):
+    def test_post_valid_installation(self, slack_agent_repository, mocker):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
+        mocker.spy(TestSlackClient, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
@@ -53,6 +55,7 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
+        # TODO assert that TestSlackClient was called
 
     def test_post_valid_installation_extra_params(self, slack_agent_repository):
         with pytest.raises(RepositoryException):
