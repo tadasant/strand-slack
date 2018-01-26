@@ -7,7 +7,6 @@ from marshmallow import ValidationError
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories import SlackAgentFactory
-from tests.testresources.TestSlackClient import TestSlackClient
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
@@ -41,21 +40,24 @@ class TestSyncingSlackAgents:
 
 
 class TestPostingSlackAgents(TestSyncingSlackAgents):
-    def test_post_valid_installation(self, slack_agent_repository, mocker):
+    def test_post_valid_installation(self, slack_agent_repository, test_slack_client_class, mocker):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
-        mocker.spy(TestSlackClient, 'api_call')
+        mocker.spy(test_slack_client_class, 'api_call')
+        mocker.spy(test_slack_client_class, '__init__')
         target_url = url_for(endpoint=self.target_endpoint)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=json.dumps(self.default_payload))
 
+        # Some data is returned, bot token is stored in repo, and onboarding DM was called w/ correct token
         data = json.loads(response.data)
         assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
-        # TODO assert that TestSlackClient was called
+        assert test_slack_client_class.api_call.call_count == 2
+        assert test_slack_client_class.__init__.call_args[1]['token'] == self.fake_slack_bot_access_token
 
     def test_post_valid_installation_extra_params(self, slack_agent_repository):
         with pytest.raises(RepositoryException):

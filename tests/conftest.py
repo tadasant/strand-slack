@@ -26,8 +26,8 @@ def client(app):
 # Core
 
 @pytest.fixture(scope='session')
-def app(portal_client_factory):
-    app = create_app(portal_client=portal_client_factory, SlackClientClass=TestSlackClient)
+def app(portal_client_factory, test_slack_client_class):
+    app = create_app(portal_client=portal_client_factory, SlackClientClass=test_slack_client_class)
     app.testing = True
     return app
 
@@ -49,3 +49,8 @@ def portal_client_factory():
 def portal_client(portal_client_factory):
     yield portal_client_factory
     portal_client_factory.clear_response()
+
+
+@pytest.fixture(scope='session')
+def test_slack_client_class():
+    return TestSlackClient

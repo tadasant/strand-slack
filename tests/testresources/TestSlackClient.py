@@ -1,6 +1,6 @@
 class TestSlackClient:
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, token, *args, **kwargs):
+        self.token = token
 
     def api_call(self, method, *args, **kwargs):
         if method == 'im.open':
