@@ -1,4 +1,6 @@
-from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type, retry_if_result
+import requests
+from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type, retry_if_result, \
+    RetryError
 
 from src import slack_agent_repository
 from src.common.logging import get_logger
@@ -33,3 +35,8 @@ class SlackClientWrapper:
         slack_channel_id = response['channel']['id']
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments)
+
+    def post_to_response_url(self, response_url, payload):
+        response_retrier = self.standard_retrier.copy(wait=wait_fixed(0.5), stop=stop_after_attempt(4))
+        response_retrier.call(fn=requests.post, url=response_url, headers={'Content-Type': 'application/json'},
+                              data=payload)
