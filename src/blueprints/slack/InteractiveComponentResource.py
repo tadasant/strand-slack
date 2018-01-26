@@ -3,7 +3,7 @@ import json
 from flask import current_app, request
 from flask_restful import Resource
 
-from src.command.messages.onboarding_dm import ONBOARDING_DM
+from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.command.InitiateAgentOnboarding import InitiateAgentOnboarding
 from src.domain.models.portal.SlackAgent import SlackAgentSchema
@@ -15,7 +15,7 @@ class InteractiveComponentResource(Resource):
     def post(self):
         """Receiving an interactive menu payload"""
         payload = json.loads(request.form['payload'])
-        if payload['type'] == 'interactive_message' and payload['callback_id'] == ONBOARDING_DM.callback_id:
+        if payload['type'] == 'interactive_message' and payload['callback_id'] == INITIAL_ONBOARDING_DM.callback_id:
             # TODO validate that this request is coming from Slack (payload['token'])
             slack_team_id = payload['team']['id']
             channel_id = payload['channel']['id']

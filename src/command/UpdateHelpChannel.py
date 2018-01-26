@@ -1,4 +1,4 @@
-from src.command.messages.onboarding_dm import ONBOARDING_DM
+from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.common.logging import get_logger
 
 
@@ -15,4 +15,4 @@ class UpdateHelpChannel:
 
         self.logger.info(f'Executing UpdateHelpChannel for {self.team_id} with user {self.installer_id}')
         self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.team_id, slack_user_id=self.installer_id,
-                                                  text=ONBOARDING_DM.text, attachments=[ONBOARDING_DM.attachment])
+                                                  text=INITIAL_ONBOARDING_DM.text, attachments=[INITIAL_ONBOARDING_DM.attachment])
