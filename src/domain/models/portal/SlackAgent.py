@@ -1,13 +1,13 @@
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
 
-from src.domain.models.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
-from src.domain.models.SlackTeam import SlackTeamSchema
+from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallationSchema
+from src.domain.models.portal.SlackTeam import SlackTeamSchema
 
 
 class SlackAgent:
-    def __init__(self, status, help_channel_id, slack_team, slack_application_installation):
+    def __init__(self, status, slack_team, slack_application_installation, help_channel_id=None):
         self.status = status
         self.help_channel_id = help_channel_id
 

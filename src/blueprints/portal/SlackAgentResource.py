@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.command.OnboardTeam import OnboardTeam
-from src.domain.models.SlackAgent import SlackAgentSchema
+from src.domain.models.portal.SlackAgent import SlackAgentSchema
 
 
 class SlackAgentResource(Resource):
