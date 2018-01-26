@@ -2,7 +2,6 @@ import json
 
 import pytest
 from flask import url_for
-from marshmallow import ValidationError
 
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
@@ -83,8 +82,8 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         del payload['status']
         target_url = url_for(endpoint=self.target_endpoint)
 
-        with pytest.raises(ValidationError):
-            self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+        response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+        assert 'error' in response.json
 
 
 class TestPuttingSlackAgents(TestSyncingSlackAgents):
@@ -111,8 +110,8 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
 
         target_url = url_for(endpoint=self.target_endpoint)
 
-        with pytest.raises(RepositoryException):
-            self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(self.default_payload))
+        response = self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(self.default_payload))
+        assert 'error' in response.json
 
     def test_put_invalid_installation(self, slack_agent_repository):
         with pytest.raises(RepositoryException):
@@ -122,5 +121,5 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
         del payload['status']
         target_url = url_for(endpoint=self.target_endpoint)
 
-        with pytest.raises(ValidationError):
-            self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+        response = self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+        assert 'error' in response.json

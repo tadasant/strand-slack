@@ -5,7 +5,7 @@ from factory import Faker
 
 class PrimitiveFaker(Faker):
     def __init__(self, provider, **kwargs):
-        super()
+        super().__init__(provider, **kwargs)
         self.value = self.generate({})
 
     def __str__(self):

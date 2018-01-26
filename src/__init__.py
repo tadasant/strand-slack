@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from src.blueprints import slack, portal
-from src.domain.models.exceptions import UnexpectedSlackException
+from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
