@@ -54,9 +54,10 @@ class PortalClientWrapper:
             {{
                 updateSlackAgentHelpChannelAndActivate(input: {{slackTeamId: "{slack_team_id}",
                                                                 helpChannelId: "{help_channel_id}"}}) {{
-                slackAgent {{
-                    helpChannelId
-                    status
+                    slackAgent {{
+                        helpChannelId
+                        status
+                    }}
                 }}
             }}
         '''

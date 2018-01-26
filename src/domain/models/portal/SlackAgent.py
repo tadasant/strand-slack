@@ -17,7 +17,7 @@ class SlackAgent:
 
 class SlackAgentSchema(Schema):
     status = EnumField(SlackAgentStatus, required=True)
-    help_channel_id = fields.String()
+    help_channel_id = fields.String(allow_none=True)
     slack_team = fields.Nested(SlackTeamSchema, required=True)
     slack_application_installation = fields.Nested(SlackApplicationInstallationSchema)
 

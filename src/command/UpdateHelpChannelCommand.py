@@ -1,23 +1,22 @@
+from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.messages.update_help_channel_dm import UPDATE_HELP_CHANNEL_DM
 from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class UpdateHelpChannelCommand:
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, original_message_text,
-                 help_channel_id, response_url):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, help_channel_id, response_url):
         self.slack_client_wrapper = slack_client_wrapper
         self.portal_client_wrapper = portal_client_wrapper
         self.slack_team_id = slack_team_id
-        self.original_message_text = original_message_text
         self.help_channel_id = help_channel_id
         self.response_url = response_url
         self.logger = get_logger('UpdateHelpChannel')
 
     def execute(self):
-        self.logger.info(f'Executing UpdateHelpChannel for {self.team_id} with user {self.installer_id}')
+        self.logger.info(f'Executing UpdateHelpChannel for {self.slack_team_id} with channel {self.help_channel_id}')
         response_payload = {
-            'text': self.original_message_text,
+            'text': INITIAL_ONBOARDING_DM.text,
             'attachments': [UPDATE_HELP_CHANNEL_DM.attachment_generator(help_channel_id=self.help_channel_id)]
         }
         try:
