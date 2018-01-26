@@ -12,6 +12,4 @@ class OnboardTeam:
     def execute(self):
         self.logger.info(f'Executing OnboardTeam for {self.team_id} with user {self.installer_id}')
         self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.team_id, slack_user_id=self.installer_id,
-                                                  text=ONBOARDING_DM['text'], attachments=[ONBOARDING_DM['attachment']])
-        # send DM
-        pass
+                                                  text=ONBOARDING_DM.text, attachments=[ONBOARDING_DM.attachment])
