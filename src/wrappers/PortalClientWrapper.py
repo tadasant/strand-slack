@@ -43,8 +43,9 @@ class PortalClientWrapper:
         '''
         response_body = self.standard_retrier.call(self.portal_client.query, operation_definition=operation_definition)
         if 'errors' in response_body:
-            raise WrapperException(wrapper_name='PortalClient',
-                                   message=f'Errors when calling PortalClient. Body: {response_body}')
+            message = f'Errors when calling PortalClient. Body: {response_body}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='PortalClient', message=message)
         slack_agent_dicts = response_body['data']['slackAgents']
         return [SlackAgentSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in slack_agent_dicts]
 
@@ -61,8 +62,9 @@ class PortalClientWrapper:
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         if 'errors' in response_body:
-            raise WrapperException(wrapper_name='PortalClient',
-                                   message=f'Errors when calling PortalClient. Body: {response_body}')
+            message = f'Errors when calling PortalClient. Body: {response_body}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='PortalClient', message=message)
         slack_agent = response_body['data']['updateSlackAgentHelpChannelAndActivate']['slackAgent']
         result = SlackAgentSchema().load(slack_agent)
         assert result.status == SlackAgentStatus.ACTIVE.name, 'Call to activate Slack Agent oddly did not transition'
