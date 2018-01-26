@@ -1,7 +1,7 @@
 from flask import Flask
 
-from src.blueprints import hooks, slackapps
-from src.exceptions import BotAlreadyExists, handle_bot_already_exists_usage
+from src.blueprints import slack, portal
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.wrappers.PortalClientWrapper import PortalClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
 
@@ -9,10 +9,10 @@ from src.wrappers.SlackClientWrapper import SlackClientWrapper
 def create_app(portal_client, SlackClientClass):
     app = Flask(__name__)
 
-    app.register_blueprint(slackapps.blueprint, url_prefix='/slackapps')
-    app.register_blueprint(hooks.blueprint, url_prefix='/hooks')
+    app.register_blueprint(portal.blueprint, url_prefix='/portal')
+    app.register_blueprint(slack.blueprint, url_prefix='/slack')
 
-    app.register_error_handler(BotAlreadyExists, handle_bot_already_exists_usage)
+    # app.register_error_handler(WrapperException, handle_wrapper_exception)
 
     init_wrappers(app=app, portal_client=portal_client, SlackClientClass=SlackClientClass)
 
@@ -21,6 +21,6 @@ def create_app(portal_client, SlackClientClass):
 
 def init_wrappers(app, portal_client, SlackClientClass):
     app.portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
-    installations_by_team_id = app.portal_client_wrapper.get_installations_by_slack_team_id()
-    app.slack_client_wrapper = SlackClientWrapper(installations_by_team_id=installations_by_team_id,
-                                                  SlackClientClass=SlackClientClass)
+    slack_agents = app.portal_client_wrapper.get_slack_agents()
+    slack_agent_repository.set_slack_agents(slack_agents=slack_agents)
+    app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)

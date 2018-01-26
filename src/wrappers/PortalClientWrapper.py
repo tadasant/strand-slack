@@ -2,11 +2,11 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exceptio
 
 from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
-from src.models.SlackApplicationInstallation import SlackApplicationInstallationSchema
-from src.models.exceptions.WrapperException import WrapperException
+from src.domain.models.SlackAgent import SlackAgentSchema
 
 # TODO [CCS-26] Add authentication
-from src.models.utils import dict_keys_camel_case_to_underscores
+from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
 class PortalClientWrapper:
@@ -21,18 +21,21 @@ class PortalClientWrapper:
             retry=retry_if_exception_type(PortalClientException)
         )
 
-    def get_installations_by_slack_team_id(self):
+    def get_slack_agents(self):
         operation_definition = '''
             {
-                slackApplicationInstallations {
-                    botAccessToken
-                    accessToken
-                    isActive
+                slackAgents {
+                    status
+                    helpChannelId
                     slackTeam {
                         id
                     }
-                    installer {
-                        id
+                    slackApplicationInstallation {
+                        access_token
+                        installer {
+                            id
+                        }
+                        bot_access_token
                     }
                 }
             }
@@ -41,7 +44,5 @@ class PortalClientWrapper:
         if 'errors' in response_body:
             raise WrapperException(wrapper_name='PortalClient',
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
-        installations_dicts = response_body['data']['slackApplicationInstallations']
-        installations = [SlackApplicationInstallationSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in
-                         installations_dicts]
-        return {x.slack_team.id: x for x in installations}
+        slack_agent_dicts = response_body['data']['slackAgents']
+        return [SlackAgentSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in slack_agent_dicts]

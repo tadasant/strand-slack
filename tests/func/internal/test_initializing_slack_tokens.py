@@ -1,29 +1,38 @@
-from src import create_app
-from tests.common.PrimitiveFaker import PrimitiveFaker
+from src import create_app, slack_agent_repository
 from tests.testresources import TestSlackClient
 
 
 class TestInitializingSlackApplicationInstallations:
-    def test_installations_initialized_on_startup(self, mocker, portal_client, slack_application_installation_factory):
+    def test_installations_initialized_on_startup(self, mocker, portal_client, slack_agent_factory):
         mocker.spy(portal_client, 'query')
-        fake_slack_team_id = str(PrimitiveFaker('ean8'))
-        fake_installation = slack_application_installation_factory.build()
+        fake_slack_agent = slack_agent_factory.build()
+        fake_slack_team_id = fake_slack_agent.slack_team.id
+        fake_slack_access_token = fake_slack_agent.slack_application_installation.access_token
+        fake_slack_bot_access_token = fake_slack_agent.slack_application_installation.bot_access_token
 
         # set up SlackInstallations from portal
         portal_client.set_next_response({
             'data': {
-                'slackApplicationInstallations': [{
-                    'botAccessToken': fake_installation.bot_access_token,
-                    'accessToken': fake_installation.access_token,
+                'slackAgents': [{
+                    'status': fake_slack_agent.status,
+                    'helpChannelId': fake_slack_agent.help_channel_id,
                     'slackTeam': {
                         'id': fake_slack_team_id
-                    }
+                    },
+                    'slackApplicationInstallation': {
+                        'accessToken': fake_slack_access_token,
+                        'installer': {
+                            'id': fake_slack_agent.slack_application_installation.installer.id,
+                        },
+                        'botAccessToken': fake_slack_bot_access_token
+                    },
                 }]
             }
         })
-        app = create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
-        assert portal_client.query.call_count == 1
+        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
 
-        assert len(app.slack_client_wrapper.installations_by_team_id.values()) == 1
-        # TODO replace brittle assert above with a call to some flask endpoint that kicks off a slack api call
-        # TODO (assert that the call uses the appropriate token)
+        assert portal_client.query.call_count == 1
+        assert slack_agent_repository.get_slack_access_token(
+            slack_team_id=fake_slack_team_id) == fake_slack_access_token
+        assert slack_agent_repository.get_slack_bot_access_token(
+            slack_team_id=fake_slack_team_id) == fake_slack_bot_access_token
