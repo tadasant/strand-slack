@@ -1,6 +1,6 @@
 class WrapperException(Exception):
     def __init__(self, wrapper_name, message):
-        super(WrapperException, self).__init__(message)
+        super()
 
         self.wrapper_name = wrapper_name
         self.message = message

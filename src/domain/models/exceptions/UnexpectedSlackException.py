@@ -1,6 +1,6 @@
 class UnexpectedSlackException(Exception):
     def __init__(self, message):
-        super(UnexpectedSlackException, self).__init__(message)
+        super()
 
         self.message = message
 
