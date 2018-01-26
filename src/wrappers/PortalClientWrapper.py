@@ -6,6 +6,7 @@ from src.domain.models.portal.SlackAgent import SlackAgentSchema
 
 # TODO [CCS-26] Add authentication
 from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
@@ -46,3 +47,23 @@ class PortalClientWrapper:
                                    message=f'Errors when calling PortalClient. Body: {response_body}')
         slack_agent_dicts = response_body['data']['slackAgents']
         return [SlackAgentSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in slack_agent_dicts]
+
+    def update_help_channel_and_activate_agent(self, slack_team_id, help_channel_id):
+        operation_definition = f'''
+            {{
+                updateSlackAgentHelpChannelAndActivate(input: {{slackTeamId: "{slack_team_id}",
+                                                                helpChannelId: "{help_channel_id}"}}) {{
+                slackAgent {{
+                    helpChannelId
+                    status
+                }}
+            }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        if 'errors' in response_body:
+            raise WrapperException(wrapper_name='PortalClient',
+                                   message=f'Errors when calling PortalClient. Body: {response_body}')
+        slack_agent = response_body['data']['updateSlackAgentHelpChannelAndActivate']['slackAgent']
+        result = SlackAgentSchema().load(slack_agent)
+        assert result.status == SlackAgentStatus.ACTIVE.name, 'Call to activate Slack Agent oddly did not transition'
+        return result
