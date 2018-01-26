@@ -3,7 +3,7 @@ from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
 
 
-class UpdateHelpChannel:
+class UpdateHelpChannelCommand:
     def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, original_message_text,
                  help_channel_id, response_url):
         self.slack_client_wrapper = slack_client_wrapper
