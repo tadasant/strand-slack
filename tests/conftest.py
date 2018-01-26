@@ -3,6 +3,7 @@ from pytest_factoryboy import register
 
 from src import create_app
 from src import slack_agent_repository as slack_agent_repository_global
+from src.config import config
 from tests.factories import SlackAgentFactory
 from tests.testresources.TestSlackClient import TestSlackClient
 from tests.testresources.TestPortalClient import TestPortalClient
@@ -27,7 +28,8 @@ def client(app):
 
 @pytest.fixture(scope='session')
 def app(portal_client_factory, test_slack_client_class):
-    app = create_app(portal_client=portal_client_factory, SlackClientClass=test_slack_client_class)
+    app = create_app(portal_client=portal_client_factory, SlackClientClass=test_slack_client_class,
+                     slack_verification_token=config['SLACK_VERIFICATION_TOKEN'])
     app.testing = True
     return app
 
