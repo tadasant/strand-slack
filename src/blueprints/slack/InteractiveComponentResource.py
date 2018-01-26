@@ -20,6 +20,7 @@ class InteractiveComponentResource(Resource):
             slack_team_id = payload['team']['id']
             channel_id = payload['channel']['id']
             response_url = payload['response_url']
+            original_message_text = payload['original_message']['text']
             filter(lambda x: x['name'] == 'help_channel_list', payload['actions'])
             help_channel_selections = payload['actions'][0]['selected_options']
             selected_channel_id = help_channel_selections[0]['value'] if len(help_channel_selections) > 0 else None
