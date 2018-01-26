@@ -4,8 +4,6 @@ from flask import current_app, request
 from flask_restful import Resource
 
 from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
-# TODO validate that this request is coming from Slack (payload['token'])
-# TODO register errors (marshmallow exceptions, slack exceptions, wrapper exceptions, repository exceptions)
 # TODO write tests
 from src.common.logging import get_logger
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
