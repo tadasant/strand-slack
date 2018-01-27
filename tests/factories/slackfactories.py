@@ -1,5 +1,3 @@
-import itertools
-
 import factory
 
 from src.domain.models.slack.Action import Action

@@ -39,12 +39,12 @@ class TestSyncingSlackAgents:
 
 
 class TestPostingSlackAgents(TestSyncingSlackAgents):
-    def test_post_valid_installation(self, slack_agent_repository, test_slack_client_class, mocker):
+    def test_post_valid_installation(self, slack_agent_repository, slack_client_class, mocker):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
-        mocker.spy(test_slack_client_class, 'api_call')
-        mocker.spy(test_slack_client_class, '__init__')
+        mocker.spy(slack_client_class, 'api_call')
+        mocker.spy(slack_client_class, '__init__')
         target_url = url_for(endpoint=self.target_endpoint)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
@@ -55,8 +55,8 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         assert data['slack_application_installation']['installer']['id'] == self.fake_installer_id
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
-        assert test_slack_client_class.api_call.call_count == 2
-        assert test_slack_client_class.__init__.call_args[1]['token'] == self.fake_slack_bot_access_token
+        assert slack_client_class.api_call.call_count == 2
+        assert slack_client_class.__init__.call_args[1]['token'] == self.fake_slack_bot_access_token
 
     def test_post_valid_installation_extra_params(self, slack_agent_repository):
         with pytest.raises(RepositoryException):
