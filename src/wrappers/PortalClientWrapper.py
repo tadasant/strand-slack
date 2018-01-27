@@ -67,6 +67,6 @@ class PortalClientWrapper:
             self.logger.error(message)
             raise WrapperException(wrapper_name='PortalClient', message=message)
         slack_agent = response_body['data']['updateSlackAgentHelpChannelAndActivate']['slackAgent']
-        result = SlackAgentSchema().load(slack_agent)
-        assert result.status == SlackAgentStatus.ACTIVE.name, 'Call to activate Slack Agent oddly did not transition'
+        result = SlackAgentSchema().load(dict_keys_camel_case_to_underscores(slack_agent)).data
+        assert result.status == SlackAgentStatus.ACTIVE, 'Call to activate Slack Agent oddly did not transition'
         return result

@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 import pytest
 from flask import url_for
 
+from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
 from tests.factories.slackfactories import InteractiveMenuResponseFactory
 
@@ -84,5 +85,18 @@ class TestUpdateHelpChannel:
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert 'error' in response.json
 
-    def test_post_valid_authenticated_slack(self, slack_client_class, portal_client):
+    def test_post_valid_authenticated_slack(self, slack_client_class, portal_client, mocker):
+        mocker.spy(slack_client_class, 'api_call')
+        mocker.spy(portal_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
+        payload = self.default_payload.copy()
+        payload['type'] = 'interactive_message'
+        payload['actions'][0]['name'] = INITIAL_ONBOARDING_DM.action_id
+        payload['callback_id'] = INITIAL_ONBOARDING_DM.callback_id
+
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=urlencode({'payload': json.dumps(payload)}))
+        assert 200 == response.status_code
+        # TODO CCS-38 multithread commands -- we'll need to wait for this to become true, & we'll hit the slack client
+        assert portal_client.mutate.call_count == 1
+        assert 'helpChannelId:' in portal_client.mutate.call_args[1]['operation_definition']

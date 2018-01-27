@@ -21,3 +21,26 @@ class TestPortalClient:
         elif 'slackAgents' in operation_definition:
             return {'data': {'slackAgents': []}}
         return None
+
+    def mutate(self, operation_definition):
+        if self.next_response:
+            result = self.next_response
+            self.next_response = None
+            return result
+        elif 'updateSlackAgentHelpChannelAndActivate' in operation_definition:
+            return {'data': {'updateSlackAgentHelpChannelAndActivate': {
+                'slackAgent': {
+                    'status': 'ACTIVE',
+                    'slackTeam': {
+                        'id': 'unimportant'
+                    },
+                    'slackApplicationInstallation': {
+                        'accessToken': 'unimportant',
+                        'botAccessToken': 'unimportant',
+                        'installer': {
+                            'id': 'unimportant'
+                        }
+                    }
+                }
+            }}}
+        return None
