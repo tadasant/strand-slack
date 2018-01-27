@@ -4,7 +4,6 @@ from flask import current_app, request
 from flask_restful import Resource
 
 from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
-# TODO write tests
 from src.common.logging import get_logger
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.InteractiveMenuResponse import InteractiveMenuResponseSchema

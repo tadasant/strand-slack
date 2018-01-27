@@ -4,11 +4,13 @@ from pytest_factoryboy import register
 from src import create_app
 from src import slack_agent_repository as slack_agent_repository_global
 from src.config import config
-from tests.factories import SlackAgentFactory
-from tests.testresources.TestSlackClient import TestSlackClient
+from tests.factories.portalfactories import SlackAgentFactory
+from tests.factories.slackfactories import InteractiveMenuResponseFactory, ActionFactory, OptionFactory
 from tests.testresources.TestPortalClient import TestPortalClient
+from tests.testresources.TestSlackClient import TestSlackClient
 
 register(SlackAgentFactory)
+register(InteractiveMenuResponseFactory)
 
 
 # Maintenance

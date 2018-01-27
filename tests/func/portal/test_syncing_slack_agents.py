@@ -5,7 +5,7 @@ from flask import url_for
 
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
-from tests.factories import SlackAgentFactory
+from tests.factories.portalfactories import SlackAgentFactory
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
