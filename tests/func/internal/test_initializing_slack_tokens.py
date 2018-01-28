@@ -29,7 +29,7 @@ class TestInitializingSlackApplicationInstallations:
                 }]
             }
         })
-        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient)
+        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient, slack_verification_token='anything')
 
         assert portal_client.query.call_count == 1
         assert slack_agent_repository.get_slack_access_token(

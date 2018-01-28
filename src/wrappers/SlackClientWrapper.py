@@ -1,3 +1,4 @@
+import requests
 from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type, retry_if_result
 
 from src import slack_agent_repository
@@ -15,7 +16,7 @@ class SlackClientWrapper:
             wait=wait_fixed(2),
             stop=stop_after_attempt(5),
             after=after_log(logger=self.logger, log_level=self.logger.getEffectiveLevel()),
-            retry=(retry_if_exception_type(ConnectionError) | retry_if_result(self._is_response_not_ok))
+            retry=(retry_if_exception_type(ConnectionError) | retry_if_result(self._is_response_negative))
         )
 
     def _get_slack_client(self, slack_team_id, is_bot=False):
@@ -24,8 +25,11 @@ class SlackClientWrapper:
             slack_team_id=slack_team_id)
         return self.SlackClientClass(token=token)
 
-    def _is_response_not_ok(self, response):
-        return not response['ok']
+    def _is_response_negative(self, response):
+        is_negative = not response['ok'] if 'ok' in response else response.status_code != 200
+        if is_negative:
+            self.logger.error(f'Negative response from slack: {response["error"] if "error" in response else response}')
+        return is_negative
 
     def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=[]):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
@@ -33,3 +37,8 @@ class SlackClientWrapper:
         slack_channel_id = response['channel']['id']
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments)
+
+    def post_to_response_url(self, response_url, payload):
+        response_retrier = self.standard_retrier.copy(wait=wait_fixed(0.5), stop=stop_after_attempt(4))
+        response_retrier.call(fn=requests.post, url=response_url, headers={'Content-Type': 'application/json'},
+                              json=payload)

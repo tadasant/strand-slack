@@ -5,5 +5,6 @@
   "PORTAL_HOST": "http://localhost:8000/",
   "PORTAL_GRAPHQL_ENDPOINT": "graphql",
   "HOST": "0.0.0.0",
-  "PORT": 5004
+  "PORT": 5004,
+  "SLACK_VERIFICATION_TOKEN": "sOmERAndOMComBoOfLettERSAND7UMB3rs"
 }
