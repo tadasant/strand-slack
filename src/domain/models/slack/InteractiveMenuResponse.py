@@ -15,6 +15,7 @@ class InteractiveMenuResponse:
         self.original_message = original_message
         self.response_url = response_url
 
+    @property
     def is_help_channel_selection(self):
         if self.type == 'interactive_message' and self.callback_id == INITIAL_ONBOARDING_DM.callback_id:
             help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
@@ -28,7 +29,8 @@ class InteractiveMenuResponse:
             return False
         return True
 
-    def get_selected_help_channel_id(self):
+    @property
+    def selected_help_channel_id(self):
         help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
         help_channel_selections = help_channel_actions[0].selected_options
         return help_channel_selections[0].value

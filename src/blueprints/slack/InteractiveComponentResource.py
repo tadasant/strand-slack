@@ -27,12 +27,12 @@ class InteractiveComponentResource(Resource):
         self._authenticate(payload)
         interactive_menu_response = InteractiveMenuResponseSchema().load(payload).data
         r = interactive_menu_response
-        if r.is_help_channel_selection():
+        if r.is_help_channel_selection:
             # TODO [CCS-38] multithread commands -- should respond to Slack immediately
             response = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                 portal_client_wrapper=current_app.portal_client_wrapper,
                                                 slack_team_id=r.team.id,
-                                                help_channel_id=r.get_selected_help_channel_id(),
+                                                help_channel_id=r.selected_help_channel_id,
                                                 response_url=r.response_url).execute()
         else:
             message = f'Could not interpret slack request: {r}'
