@@ -21,6 +21,7 @@ class SlackAgentResource(Resource):
         slack_agent_repository.add_slack_agent(slack_agent)
 
         InitiateAgentOnboardingCommand(slack_client_wrapper=current_app.slack_client_wrapper,
+                                       portal_client_wrapper=current_app.portal_client_wrapper,
                                        slack_team_id=slack_agent.slack_team.id,
                                        installer_id=slack_agent.slack_application_installation.installer.id).execute()
 
