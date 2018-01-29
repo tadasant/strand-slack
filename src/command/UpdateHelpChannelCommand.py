@@ -23,6 +23,4 @@ class UpdateHelpChannelCommand(Command):
                 help_channel_id=self.help_channel_id)
         except WrapperException:
             response_payload['attachments'] = [{'text': 'Something went wrong! Contact support@solutionloft.com'}]
-        return response_payload
-        # TODO CCS-38 multithread commands -- should respond to Slack immediately
-        # self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
+        self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)

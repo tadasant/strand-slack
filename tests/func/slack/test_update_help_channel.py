@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 from urllib.parse import urlencode
 
 import pytest
@@ -7,6 +8,7 @@ from flask import url_for
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
 from tests.factories.slackfactories import InteractiveMenuResponseFactory
+from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
@@ -96,7 +98,7 @@ class TestUpdateHelpChannel:
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
-        assert 200 == response.status_code
-        # TODO CCS-38 multithread commands -- we'll need to wait for this to become true, & we'll hit the slack client
-        assert portal_client.mutate.call_count == 1
+        assert HTTPStatus.NO_CONTENT == response.status_code
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
+        assert outcome, 'PortalClient mutate was never called'
         assert 'helpChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
