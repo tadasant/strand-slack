@@ -37,6 +37,13 @@ class TeamFactory(factory.Factory):
     id = factory.Faker('ean8')
 
 
+class UserFactory(factory.Factory):
+    class Meta:
+        model = Team
+
+    id = factory.Faker('ean8')
+
+
 class InteractiveComponentRequestFactory(factory.Factory):
     class Meta:
         model = InteractiveComponentRequest
@@ -44,9 +51,8 @@ class InteractiveComponentRequestFactory(factory.Factory):
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
     team = factory.SubFactory(TeamFactory)
-    original_message = factory.SubFactory(MessageFactory)
+    user = factory.SubFactory(UserFactory)
     response_url = factory.Faker('url')
-    actions = factory.List([ActionFactory.build()])
 
 
 class SlashCommandRequestFactory(factory.Factory):

@@ -15,7 +15,7 @@ from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestPostTopicDialog:
+class TestInitiatePostTopicDialog:
     # For assertions
     fake_slash_command_request = SlashCommandRequestFactory.create()
 

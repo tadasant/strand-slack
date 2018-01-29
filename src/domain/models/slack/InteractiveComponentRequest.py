@@ -10,8 +10,8 @@ from src.domain.models.slack.User import UserSchema
 
 
 class InteractiveComponentRequest:
-    def __init__(self, type, callback_id, team, response_url=None, actions=None, submission=None,
-                 user=None, original_message=None):
+    def __init__(self, type, callback_id, team, user, response_url=None, actions=None, submission=None,
+                 original_message=None):
         self.type = type
         self.actions = actions
         self.callback_id = callback_id
@@ -39,7 +39,6 @@ class InteractiveComponentRequest:
     def is_post_topic_dialog_submission(self):
         return self.type == 'dialog_submission' and self.callback_id == POST_TOPIC_DIALOG.callback_id
 
-
     @property
     def selected_help_channel_id(self):
         help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
@@ -55,7 +54,7 @@ class InteractiveComponentRequestSchema(Schema):
     original_message = fields.Nested(MessageSchema)
     response_url = fields.String()
     submission = fields.Nested(SubmissionSchema)
-    user = fields.Nested(UserSchema)
+    user = fields.Nested(UserSchema, required=True)
 
     @post_load
     def make_interact_menu_request(self, data):
