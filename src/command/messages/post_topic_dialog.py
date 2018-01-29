@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-QuestionDialogType = namedtuple('QuestionDialogType', 'callback_id value')
+PostTopicDialogType = namedtuple('PostTopicDialogType', 'callback_id value')
 
 
 def _generate_attachment(help_channel_id):
@@ -12,13 +12,13 @@ def _generate_attachment(help_channel_id):
     }
 
 
-_question_dialog_callback_id = 'question_dialog'
-QUESTION_DIALOG = QuestionDialogType(
-    callback_id=_question_dialog_callback_id,
+_post_topic_dialog_callback_id = 'post_topic_dialog'
+POST_TOPIC_DIALOG = PostTopicDialogType(
+    callback_id=_post_topic_dialog_callback_id,
     value={
-        'label': 'Ask a Question',
-        'submit_label': 'Submit',
-        'callback_id': _question_dialog_callback_id,
+        'label': 'Post Topic',
+        'submit_label': 'Start Discussion',
+        'callback_id': _post_topic_dialog_callback_id,
         'elements': [
             {
                 'label': 'Title',

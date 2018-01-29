@@ -11,8 +11,8 @@ class SlashCommandRequest:
         self.trigger_id = trigger_id
 
     @property
-    def is_question_initiation(self):
-        return self.command == '/ask'
+    def is_post_topic(self):
+        return self.command == '/codeclippy' and (self.text == 'post' or self.text is None)
 
 
 class SlashCommandRequestSchema(Schema):
