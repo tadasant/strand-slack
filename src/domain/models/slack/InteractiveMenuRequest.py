@@ -45,5 +45,5 @@ class InteractiveMenuRequestSchema(Schema):
     response_url = fields.String(required=True)
 
     @post_load
-    def make_slack_team(self, data):
+    def make_interact_menu_request(self, data):
         return InteractiveMenuRequest(**data)
