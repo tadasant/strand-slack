@@ -28,7 +28,7 @@ class SlackClientWrapper:
     def _is_response_negative(self, response):
         is_negative = not response['ok'] if 'ok' in response else response.status_code != 200
         if is_negative:
-            self.logger.error(f'Negative response from slack: {response["error"] if "error" in response else response}')
+            self.logger.error(f'Negative response from slack: {response}')
         return is_negative
 
     def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=[]):

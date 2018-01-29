@@ -12,7 +12,7 @@ class SlashCommandRequest:
 
     @property
     def is_post_topic(self):
-        return self.command == '/codeclippy' and (self.text == 'post' or self.text is None)
+        return self.command == '/codeclippy' and (self.text == 'post' or self.text == '')
 
 
 class SlashCommandRequestSchema(Schema):

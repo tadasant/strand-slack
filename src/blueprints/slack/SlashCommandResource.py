@@ -13,7 +13,7 @@ from src.domain.models.slack.SlashCommandRequest import SlashCommandRequestSchem
 class SlashCommandResource(SlackResource):
     def post(self):
         self.logger.info(f'Processing SlashCommand request: {request}')
-        payload = json.loads(request.form['payload'])
+        payload = request.form
         self._authenticate(payload)
         slash_command_request = SlashCommandRequestSchema().load(payload).data
         r = slash_command_request

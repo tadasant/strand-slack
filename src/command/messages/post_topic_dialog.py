@@ -16,8 +16,8 @@ _post_topic_dialog_callback_id = 'post_topic_dialog'
 POST_TOPIC_DIALOG = PostTopicDialogType(
     callback_id=_post_topic_dialog_callback_id,
     value={
-        'label': 'Post Topic',
-        'submit_label': 'Start Discussion',
+        'title': 'Post Topic',
+        'submit_label': 'Discuss',
         'callback_id': _post_topic_dialog_callback_id,
         'elements': [
             {
