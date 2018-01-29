@@ -16,8 +16,8 @@ class InteractiveComponentResource(SlackResource):
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
-        interactive_menu_response = InteractiveMenuRequestSchema().load(payload).data
-        r = interactive_menu_response
+        interactive_menu_request = InteractiveMenuRequestSchema().load(payload).data
+        r = interactive_menu_request
         if r.is_help_channel_selection:
             command = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                portal_client_wrapper=current_app.portal_client_wrapper,
