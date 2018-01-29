@@ -3,32 +3,21 @@ from http import HTTPStatus
 from threading import Thread
 
 from flask import current_app, request
-from flask_restful import Resource
 
+from src.blueprints.slack.SlackResource import SlackResource
 from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
-from src.common.logging import get_logger
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.domain.models.slack.InteractiveMenuResponse import InteractiveMenuResponseSchema
+from src.domain.models.slack.InteractiveMenuRequest import InteractiveMenuRequestSchema
 
 
-class InteractiveComponentResource(Resource):
-    def __init__(self):
-        super()
-        self.logger = get_logger('InteractiveComponentResource')
-
-    def _authenticate(self, payload):
-        if payload['token'] != current_app.slack_verification_token:
-            message = 'Invalid slack verification token'
-            self.logger.error(message)
-            raise UnexpectedSlackException(message=message)
-
+class InteractiveComponentResource(SlackResource):
     def post(self):
         """Receiving an interactive menu payload"""
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
-        interactive_menu_response = InteractiveMenuResponseSchema().load(payload).data
-        r = interactive_menu_response
+        interactive_menu_request = InteractiveMenuRequestSchema().load(payload).data
+        r = interactive_menu_request
         if r.is_help_channel_selection:
             command = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                portal_client_wrapper=current_app.portal_client_wrapper,

@@ -5,12 +5,12 @@ from src import create_app
 from src import slack_agent_repository as slack_agent_repository_global
 from src.config import config
 from tests.factories.portalfactories import SlackAgentFactory
-from tests.factories.slackfactories import InteractiveMenuResponseFactory
+from tests.factories.slackfactories import InteractiveMenuRequestFactory
 from tests.testresources.TestPortalClient import TestPortalClient
 from tests.testresources.TestSlackClient import TestSlackClient
 
 register(SlackAgentFactory)
-register(InteractiveMenuResponseFactory)
+register(InteractiveMenuRequestFactory)
 
 
 # Maintenance

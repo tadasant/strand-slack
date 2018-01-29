@@ -6,7 +6,7 @@ from src.domain.models.slack.Message import MessageSchema
 from src.domain.models.slack.Team import TeamSchema
 
 
-class InteractiveMenuResponse:
+class InteractiveMenuRequest:
     def __init__(self, type, actions, callback_id, team, original_message, response_url):
         self.type = type
         self.actions = actions
@@ -36,7 +36,7 @@ class InteractiveMenuResponse:
         return help_channel_selections[0].value
 
 
-class InteractiveMenuResponseSchema(Schema):
+class InteractiveMenuRequestSchema(Schema):
     type = fields.String(required=True)
     actions = fields.Nested(ActionSchema, required=True, many=True)
     callback_id = fields.String(required=True)
@@ -45,5 +45,5 @@ class InteractiveMenuResponseSchema(Schema):
     response_url = fields.String(required=True)
 
     @post_load
-    def make_slack_team(self, data):
-        return InteractiveMenuResponse(**data)
+    def make_interact_menu_request(self, data):
+        return InteractiveMenuRequest(**data)
