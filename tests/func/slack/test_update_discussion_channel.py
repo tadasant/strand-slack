@@ -12,17 +12,17 @@ from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestUpdateHelpChannel:
+class TestUpdateDiscussionChannel:
     # For assertions
-    fake_interactive_menu_response = InteractiveMenuRequestFactory.create()
+    fake_interactive_menu_request = InteractiveMenuRequestFactory.create()
 
     # For setup
     target_endpoint = 'slack.interactivecomponentresource'
     default_payload = {
-        "type": fake_interactive_menu_response.type,
+        "type": fake_interactive_menu_request.type,
         "actions": [
             {
-                "name": fake_interactive_menu_response.actions[0].name,
+                "name": fake_interactive_menu_request.actions[0].name,
                 "type": "select",
                 "selected_options": [
                     {
@@ -31,9 +31,9 @@ class TestUpdateHelpChannel:
                 ]
             }
         ],
-        "callback_id": fake_interactive_menu_response.callback_id,
+        "callback_id": fake_interactive_menu_request.callback_id,
         "team": {
-            "id": fake_interactive_menu_response.team.id,
+            "id": fake_interactive_menu_request.team.id,
             "domain": "solutionloft"
         },
         "channel": {
@@ -47,10 +47,10 @@ class TestUpdateHelpChannel:
         "action_ts": "1517014983.191305",
         "message_ts": "1517014969.000145",
         "attachment_id": "1",
-        "token": config["SLACK_VERIFICATION_TOKEN"],
+        "token": 'unverifiedtoken',
         "is_app_unfurl": False,
         "original_message": {
-            "text": fake_interactive_menu_response.original_message.text,
+            "text": fake_interactive_menu_request.original_message.text,
             "username": "CodeClippy",
             "bot_id": "B8Y9T3Z3J",
             "attachments": [
@@ -74,7 +74,7 @@ class TestUpdateHelpChannel:
             "subtype": "bot_message",
             "ts": "1517014969.000145"
         },
-        "response_url": fake_interactive_menu_response.response_url,
+        "response_url": fake_interactive_menu_request.response_url,
         "trigger_id": "304946943568.10642948979.fde99265c25c102dc631e6cd49ac4535"
     }
     default_headers = {
@@ -95,6 +95,7 @@ class TestUpdateHelpChannel:
         payload['type'] = 'interactive_message'
         payload['actions'][0]['name'] = INITIAL_ONBOARDING_DM.action_id
         payload['callback_id'] = INITIAL_ONBOARDING_DM.callback_id
+        payload['token'] = config['SLACK_VERIFICATION_TOKEN']
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))

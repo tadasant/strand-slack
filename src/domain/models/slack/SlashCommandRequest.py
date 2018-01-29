@@ -2,7 +2,7 @@ from marshmallow import Schema, fields, post_load
 
 
 class SlashCommandRequest:
-    def __init__(self, team_id, user_id, command, text, response_url, trigger_id):
+    def __init__(self, team_id, user_id, command, response_url, trigger_id, text=None):
         self.team_id = team_id
         self.user_id = user_id
         self.command = command
