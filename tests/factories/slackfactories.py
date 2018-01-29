@@ -1,7 +1,7 @@
 import factory
 
 from src.domain.models.slack.Action import Action
-from src.domain.models.slack.InteractiveMenuRequest import InteractiveMenuRequest
+from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequest
 from src.domain.models.slack.Message import Message
 from src.domain.models.slack.Option import Option
 from src.domain.models.slack.SlashCommandRequest import SlashCommandRequest
@@ -37,9 +37,9 @@ class TeamFactory(factory.Factory):
     id = factory.Faker('ean8')
 
 
-class InteractiveMenuRequestFactory(factory.Factory):
+class InteractiveComponentRequestFactory(factory.Factory):
     class Meta:
-        model = InteractiveMenuRequest
+        model = InteractiveComponentRequest
 
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
