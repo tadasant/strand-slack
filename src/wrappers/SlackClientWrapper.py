@@ -42,3 +42,7 @@ class SlackClientWrapper:
         response_retrier = self.standard_retrier.copy(wait=wait_fixed(0.5), stop=stop_after_attempt(4))
         response_retrier.call(fn=requests.post, url=response_url, headers={'Content-Type': 'application/json'},
                               json=payload)
+
+    def send_dialog(self, trigger_id, slack_team_id, dialog):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        self.standard_retrier.call(slack_client.api_call, method='dialog.open', trigger_id=trigger_id, dialog=dialog)
