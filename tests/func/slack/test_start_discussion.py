@@ -43,7 +43,7 @@ class TestStartDiscussion:
             "name": "tadas"
         },
         "action_ts": "1517014983.191305",
-        "token": 'unverifiedtoken',
+        "token": config['SLACK_VERIFICATION_TOKEN'],
     }
     default_headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -51,16 +51,17 @@ class TestStartDiscussion:
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
+        payload = self.default_payload.copy()
+        payload['token'] = 'unverified-token'
         response = self.client.post(path=target_url, headers=self.default_headers,
-                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
-        assert 'error' in response.json
+                                    data=urlencode({'payload': json.dumps(payload)}))
+        assert response.json['error'] == 'Invalid slack verification token'
 
-    def test_post_valid_authenticated_slack(self, slack_client_class, portal_client, mocker):
+    def test_post_valid_authenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
         payload = self.default_payload.copy()
         payload['type'] = 'dialog_submission'
         payload['callback_id'] = POST_TOPIC_DIALOG.callback_id
-        payload['token'] = config['SLACK_VERIFICATION_TOKEN']
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
