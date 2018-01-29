@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, post_load
 
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.messages.post_topic_dialog import POST_TOPIC_DIALOG
 from src.domain.models.slack.Action import ActionSchema
 from src.domain.models.slack.Message import MessageSchema
 from src.domain.models.slack.Submission import SubmissionSchema
@@ -35,6 +36,11 @@ class InteractiveComponentRequest:
         return True
 
     @property
+    def is_post_topic_dialog_submission(self):
+        return self.type == 'dialog_submission' and self.callback_id == POST_TOPIC_DIALOG.callback_id
+
+
+    @property
     def selected_help_channel_id(self):
         help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
         help_channel_selections = help_channel_actions[0].selected_options
@@ -47,10 +53,13 @@ class InteractiveComponentRequestSchema(Schema):
     callback_id = fields.String(required=True)
     team = fields.Nested(TeamSchema, required=True)
     original_message = fields.Nested(MessageSchema)
-    response_url = fields.String(required=True)
+    response_url = fields.String()
     submission = fields.Nested(SubmissionSchema)
     user = fields.Nested(UserSchema)
 
     @post_load
     def make_interact_menu_request(self, data):
         return InteractiveComponentRequest(**data)
+
+    class Meta:
+        strict = True

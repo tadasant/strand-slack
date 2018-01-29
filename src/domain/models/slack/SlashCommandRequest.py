@@ -26,3 +26,6 @@ class SlashCommandRequestSchema(Schema):
     @post_load
     def make_slash_command_request(self, data):
         return SlashCommandRequest(**data)
+
+    class Meta:
+        strict = True

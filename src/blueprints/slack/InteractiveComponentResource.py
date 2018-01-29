@@ -12,12 +12,12 @@ from src.domain.models.slack.InteractiveComponentRequest import InteractiveCompo
 
 class InteractiveComponentResource(SlackResource):
     def post(self):
-        """Receiving an interactive menu payload"""
+        """Receiving an interactive component payload"""
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
-        interactive_menu_request = InteractiveComponentRequestSchema().load(payload).data
-        r = interactive_menu_request
+        interactive_component_request = InteractiveComponentRequestSchema().load(payload).data
+        r = interactive_component_request
         if r.is_help_channel_selection:
             command = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                portal_client_wrapper=current_app.portal_client_wrapper,
@@ -25,9 +25,13 @@ class InteractiveComponentResource(SlackResource):
                                                help_channel_id=r.selected_help_channel_id,
                                                response_url=r.response_url)
             Thread(target=command.execute).start()
+            return '', HTTPStatus.NO_CONTENT
+        elif r.is_post_topic_dialog_submission:
+            print('Recorded submission')
+            # TODO next ticket
+            return {}, HTTPStatus.OK
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)
             raise UnexpectedSlackException(message=message)
 
-        return '', HTTPStatus.NO_CONTENT
