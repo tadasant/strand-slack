@@ -7,7 +7,7 @@ from flask import current_app, request
 from src.blueprints.slack.SlackResource import SlackResource
 from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.domain.models.slack.InteractiveMenuResponse import InteractiveMenuResponseSchema
+from src.domain.models.slack.InteractiveMenuRequest import InteractiveMenuRequestSchema
 
 
 class InteractiveComponentResource(SlackResource):
@@ -16,7 +16,7 @@ class InteractiveComponentResource(SlackResource):
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
-        interactive_menu_response = InteractiveMenuResponseSchema().load(payload).data
+        interactive_menu_response = InteractiveMenuRequestSchema().load(payload).data
         r = interactive_menu_response
         if r.is_help_channel_selection:
             command = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,

@@ -7,14 +7,14 @@ from flask import url_for
 
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
-from tests.factories.slackfactories import InteractiveMenuResponseFactory
+from tests.factories.slackfactories import InteractiveMenuRequestFactory
 from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestUpdateHelpChannel:
     # For assertions
-    fake_interactive_menu_response = InteractiveMenuResponseFactory.create()
+    fake_interactive_menu_response = InteractiveMenuRequestFactory.create()
 
     # For setup
     target_endpoint = 'slack.interactivecomponentresource'
