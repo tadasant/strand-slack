@@ -3,17 +3,22 @@ from marshmallow import Schema, fields, post_load
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.domain.models.slack.Action import ActionSchema
 from src.domain.models.slack.Message import MessageSchema
+from src.domain.models.slack.Submission import SubmissionSchema
 from src.domain.models.slack.Team import TeamSchema
+from src.domain.models.slack.User import UserSchema
 
 
 class InteractiveComponentRequest:
-    def __init__(self, type, actions, callback_id, team, original_message, response_url):
+    def __init__(self, type, callback_id, team, response_url=None, actions=None, submission=None,
+                 user=None, original_message=None):
         self.type = type
         self.actions = actions
         self.callback_id = callback_id
         self.team = team
         self.original_message = original_message
         self.response_url = response_url
+        self.submission = submission
+        self.user = user
 
     @property
     def is_help_channel_selection(self):
@@ -38,11 +43,13 @@ class InteractiveComponentRequest:
 
 class InteractiveComponentRequestSchema(Schema):
     type = fields.String(required=True)
-    actions = fields.Nested(ActionSchema, required=True, many=True)
+    actions = fields.Nested(ActionSchema, many=True)
     callback_id = fields.String(required=True)
     team = fields.Nested(TeamSchema, required=True)
-    original_message = fields.Nested(MessageSchema, required=True)
+    original_message = fields.Nested(MessageSchema)
     response_url = fields.String(required=True)
+    submission = fields.Nested(SubmissionSchema)
+    user = fields.Nested(UserSchema)
 
     @post_load
     def make_interact_menu_request(self, data):
