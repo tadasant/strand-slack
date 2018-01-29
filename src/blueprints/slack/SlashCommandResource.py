@@ -10,9 +10,8 @@ from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlac
 from src.domain.models.slack.InteractiveMenuResponse import InteractiveMenuResponseSchema
 
 
-class InteractiveComponentResource(SlackResource):
+class SlashCommandResource(SlackResource):
     def post(self):
-        """Receiving an interactive menu payload"""
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
