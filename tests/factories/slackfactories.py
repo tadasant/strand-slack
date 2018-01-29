@@ -5,6 +5,7 @@ from src.domain.models.slack.InteractiveComponentRequest import InteractiveCompo
 from src.domain.models.slack.Message import Message
 from src.domain.models.slack.Option import Option
 from src.domain.models.slack.SlashCommandRequest import SlashCommandRequest
+from src.domain.models.slack.Submission import Submission
 from src.domain.models.slack.Team import Team
 
 
@@ -42,6 +43,15 @@ class UserFactory(factory.Factory):
         model = Team
 
     id = factory.Faker('ean8')
+
+
+class SubmissionFactory(factory.Factory):
+    class Meta:
+        model = Submission
+
+    title = factory.Faker('paragraph')
+    description = factory.Faker('paragraph')
+    tags = factory.Faker('paragraph')
 
 
 class InteractiveComponentRequestFactory(factory.Factory):
