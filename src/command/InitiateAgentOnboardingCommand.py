@@ -4,8 +4,7 @@ from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 
 class InitiateAgentOnboardingCommand(Command):
     def __init__(self, slack_client_wrapper, slack_team_id, installer_id):
-        super().__init__(slack_client_wrapper=slack_client_wrapper)
-        self.slack_team_id = slack_team_id
+        super().__init__(slack_client_wrapper=slack_client_wrapper, slack_team_id=slack_team_id)
         self.installer_id = installer_id
 
     def execute(self):

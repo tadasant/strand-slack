@@ -5,6 +5,7 @@ from threading import Thread
 from flask import current_app, request
 
 from src.blueprints.slack.SlackResource import SlackResource
+from src.command.StartDiscussionCommand import StartDiscussionCommand
 from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequestSchema
@@ -27,8 +28,10 @@ class InteractiveComponentResource(SlackResource):
             Thread(target=command.execute).start()
             return '', HTTPStatus.NO_CONTENT
         elif r.is_post_topic_dialog_submission:
-            print('Recorded submission')
-            # TODO next ticket
+            command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
+                                             portal_client_wrapper=current_app.portal_client_wrapper,
+                                             slack_team_id=r.team.id)
+            Thread(target=command.execute).start()
             return {}, HTTPStatus.OK
         else:
             message = f'Could not interpret slack request: {r}'
