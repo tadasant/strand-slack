@@ -49,3 +49,7 @@ class SlackClientWrapper:
     def send_dialog(self, trigger_id, slack_team_id, dialog):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         self.standard_retrier.call(slack_client.api_call, method='dialog.open', trigger_id=trigger_id, dialog=dialog)
+
+    def get_user_info(self, slack_team_id, slack_user_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        return self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)['user']
