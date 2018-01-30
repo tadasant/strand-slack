@@ -12,9 +12,8 @@ class StartDiscussionCommand(Command):
     def execute(self):
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
-            self._create_topic()
-            # TODO creating a new discussion [next ticket]
-            # TODO send DM to user informing them of the creation of their session
+            topic = self._create_topic()
+            # TODO creating a new discussion & send DM to user [next ticket]
         except WrapperException:
             self.logger.error(f'Topic submission failed. Submission: {self.submission}')
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
@@ -25,12 +24,22 @@ class StartDiscussionCommand(Command):
     def _create_topic(self):
         # TODO [CCS-60] move tag parsing to useful validation (maybe derived attr on Submission)
         tag_names = [x.strip() for x in self.submission.tags.split(',')]
-        topic = self.portal_client_wrapper.create_topic(title=self.submission.title,
-                                                        description=self.submission.description,
-                                                        original_poster_slack_user_id=self.slack_user_id,
-                                                        tag_names=tag_names)
-        # TODO [CCS-15] caching user info to avoid relying on error
-        # if portal errors due to lack of user info..
-        #   fetch user info
-        #   re-send the info to portal w/ addition of user info
-        pass
+        try:
+            topic = self.portal_client_wrapper.create_topic(title=self.submission.title,
+                                                            description=self.submission.description,
+                                                            original_poster_slack_user_id=self.slack_user_id,
+                                                            tag_names=tag_names)
+        except WrapperException as e:
+            # TODO [CCS-15] caching user info to avoid relying on error
+            if 'SlackUser matching query does not exist.' not in e.errors:
+                raise e
+            self.logger.info('Tried to create topic for unknown user. Retrying with user creation.')
+            slack_user = self.slack_client_wrapper.get_user(slack_user_id=self.slack_user_id)
+            # TODO convert response from Slack to our model
+            topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster(
+                title=self.submission.title,
+                description=self.submission.description,
+                slack_user=slack_user,
+                tag_names=tag_names
+            )
+        return topic
