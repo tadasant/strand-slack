@@ -2,19 +2,23 @@ import json
 from http import HTTPStatus
 from urllib.parse import urlencode
 
+import factory
 import pytest
 from flask import url_for
 
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
-from tests.factories.slackfactories import InteractiveMenuRequestFactory
+from tests.factories.slackfactories import InteractiveComponentRequestFactory, ActionFactory, MessageFactory
 from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestUpdateDiscussionChannel:
     # For assertions
-    fake_interactive_menu_request = InteractiveMenuRequestFactory.create()
+    fake_interactive_menu_request = InteractiveComponentRequestFactory.create(
+        actions=[ActionFactory.build()],
+        original_message=factory.SubFactory(MessageFactory)
+    )
 
     # For setup
     target_endpoint = 'slack.interactivecomponentresource'
@@ -47,7 +51,7 @@ class TestUpdateDiscussionChannel:
         "action_ts": "1517014983.191305",
         "message_ts": "1517014969.000145",
         "attachment_id": "1",
-        "token": 'unverifiedtoken',
+        "token": config['SLACK_VERIFICATION_TOKEN'],
         "is_app_unfurl": False,
         "original_message": {
             "text": fake_interactive_menu_request.original_message.text,
@@ -83,9 +87,12 @@ class TestUpdateDiscussionChannel:
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
+        payload = self.default_payload.copy()
+        payload['token'] = 'unverified token'
+
         response = self.client.post(path=target_url, headers=self.default_headers,
-                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
-        assert 'error' in response.json
+                                    data=urlencode({'payload': json.dumps(payload)}))
+        assert response.json['error'] == 'Invalid slack verification token'
 
     def test_post_valid_authenticated_slack(self, slack_client_class, portal_client, mocker):
         mocker.spy(slack_client_class, 'api_call')
@@ -95,7 +102,6 @@ class TestUpdateDiscussionChannel:
         payload['type'] = 'interactive_message'
         payload['actions'][0]['name'] = INITIAL_ONBOARDING_DM.action_id
         payload['callback_id'] = INITIAL_ONBOARDING_DM.callback_id
-        payload['token'] = config['SLACK_VERIFICATION_TOKEN']
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))

@@ -1,10 +1,11 @@
 import factory
 
 from src.domain.models.slack.Action import Action
-from src.domain.models.slack.InteractiveMenuRequest import InteractiveMenuRequest
+from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequest
 from src.domain.models.slack.Message import Message
 from src.domain.models.slack.Option import Option
 from src.domain.models.slack.SlashCommandRequest import SlashCommandRequest
+from src.domain.models.slack.Submission import Submission
 from src.domain.models.slack.Team import Team
 
 
@@ -37,16 +38,31 @@ class TeamFactory(factory.Factory):
     id = factory.Faker('ean8')
 
 
-class InteractiveMenuRequestFactory(factory.Factory):
+class UserFactory(factory.Factory):
     class Meta:
-        model = InteractiveMenuRequest
+        model = Team
+
+    id = factory.Faker('ean8')
+
+
+class SubmissionFactory(factory.Factory):
+    class Meta:
+        model = Submission
+
+    title = factory.Faker('paragraph')
+    description = factory.Faker('paragraph')
+    tags = factory.Faker('paragraph')
+
+
+class InteractiveComponentRequestFactory(factory.Factory):
+    class Meta:
+        model = InteractiveComponentRequest
 
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
     team = factory.SubFactory(TeamFactory)
-    original_message = factory.SubFactory(MessageFactory)
+    user = factory.SubFactory(UserFactory)
     response_url = factory.Faker('url')
-    actions = factory.List([ActionFactory.build()])
 
 
 class SlashCommandRequestFactory(factory.Factory):
