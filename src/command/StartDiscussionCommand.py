@@ -1,6 +1,7 @@
 from src.command.Command import Command
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
+from src.domain.models.slack.Channel import ChannelSchema
 
 
 class StartDiscussionCommand(Command):
@@ -14,15 +15,18 @@ class StartDiscussionCommand(Command):
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
             topic = self._create_topic()
-            # slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id, channel_name=f'discussions-{topic.')
-            # slack_channel = ''
-            print(topic)
-            # TODO creating a new discussion & send DM to user [next ticket]
+            slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id,
+                                                                          channel_name=f'discussion-{topic.id}')
+            slack_channel = ChannelSchema().load(slack_channel_info).data
+            discussion = self.portal_client_wrapper.create_discussion(topic_id=topic.id, slack_channel=slack_channel,
+                                                                      slack_team_id=self.slack_team_id)
+            # add user to channel
+            # TODO invite user & send DM to user [next ticket]
         except WrapperException:
-            self.logger.error(f'Topic submission failed. Submission: {self.submission}')
+            self.logger.error(f'Starting discussion failed. Submission: {self.submission}')
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
-                                                      text='Sorry, your topic submission failed for some unknown reason'
+                                                      text='Sorry, starting your discussion failed for some reason'
                                                            ' :see_no_evil: Please contact support@solutionloft.com')
 
     def _create_topic(self):

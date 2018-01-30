@@ -1,11 +1,13 @@
+from datetime import datetime
+
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
-from src.domain.models.portal.SlackAgent import SlackAgentSchema
-
 # TODO [CCS-26] Add authentication
 from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.models.portal.Discussion import DiscussionSchema
+from src.domain.models.portal.SlackAgent import SlackAgentSchema
 from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
 from src.domain.models.portal.Topic import TopicSchema
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
@@ -139,4 +141,27 @@ class PortalClientWrapper:
             raise WrapperException(wrapper_name='PortalClient', message=message)
         topic = response_body['data']['createTopicFromSlack']['topic']
         result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
+        return result
+
+    def create_discussion(self, topic_id, slack_channel, slack_team_id):
+        operation_definition = f'''
+        {{
+            createDiscussionFromSlack(input: {{discussion: {{timeStart: "{datetime.utcnow()}",
+                                                       topicId: {topic_id},
+                                                       id: "{slack_channel.id}",
+                                                       name: "{slack_channel.name}",
+                                                       slackTeamId: "{slack_team_id}"}}) {{
+              discussion {{
+                id
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        if 'errors' in response_body:
+            message = f'Errors when calling PortalClient. Body: {response_body}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='PortalClient', message=message)
+        discussion = response_body['data']['createDiscussionFromSlack']['discussion']
+        result = DiscussionSchema().load(dict_keys_camel_case_to_underscores(discussion)).data
         return result
