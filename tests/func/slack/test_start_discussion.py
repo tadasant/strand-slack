@@ -105,12 +105,12 @@ class TestStartDiscussion:
         # Set up successful discussion creation
         portal_client.set_next_response({
             'data': {
-                'createDiscussionFromSlack': [{
+                'createDiscussionFromSlack': {
                     'discussion': {
                         'id': str(PrimitiveFaker('ean8')),
                         'name': str(PrimitiveFaker('word'))
                     },
-                }]
+                }
             }
         })
 
