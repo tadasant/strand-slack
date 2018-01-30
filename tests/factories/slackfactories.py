@@ -35,14 +35,14 @@ class TeamFactory(factory.Factory):
     class Meta:
         model = Team
 
-    id = factory.Faker('ean8')
+    id = factory.Faker('bban')
 
 
 class UserFactory(factory.Factory):
     class Meta:
         model = Team
 
-    id = factory.Faker('ean8')
+    id = factory.Faker('bban')
 
 
 class SubmissionFactory(factory.Factory):
@@ -69,8 +69,8 @@ class SlashCommandRequestFactory(factory.Factory):
     class Meta:
         model = SlashCommandRequest
 
-    team_id = factory.Faker('ean8')
-    user_id = factory.Faker('ean8')
+    team_id = factory.Faker('bban')
+    user_id = factory.Faker('bban')
     command = factory.Faker('word')
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')

@@ -75,7 +75,7 @@ class TestStartDiscussion:
         mocker.spy(portal_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
-        fake_topic_id = str(PrimitiveFaker('ean8'))
+        fake_topic_id = str(PrimitiveFaker('random_int'))
 
         # Need team's slack agent to be present in memory
         slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
@@ -108,7 +108,7 @@ class TestStartDiscussion:
             'data': {
                 'createDiscussionFromSlack': {
                     'discussion': {
-                        'id': str(PrimitiveFaker('ean8')),
+                        'id': str(PrimitiveFaker('random_int')),
                         'name': str(PrimitiveFaker('word'))
                     },
                 }
@@ -167,7 +167,7 @@ class TestStartDiscussion:
             'data': {
                 'createUserAndTopicFromSlack': {
                     'topic': {
-                        'id': str(PrimitiveFaker('ean8')),
+                        'id': str(PrimitiveFaker('random_int')),
                         'title': self.fake_interactive_component_request.submission.title,
                         'description': self.fake_interactive_component_request.submission.description,
                         'tags': [
@@ -184,7 +184,7 @@ class TestStartDiscussion:
             'data': {
                 'createDiscussionFromSlack': {
                     'discussion': {
-                        'id': str(PrimitiveFaker('ean8')),
+                        'id': str(PrimitiveFaker('random_int')),
                         'name': str(PrimitiveFaker('word'))
                     },
                 }

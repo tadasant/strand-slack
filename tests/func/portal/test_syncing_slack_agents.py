@@ -64,7 +64,7 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
 
         target_url = url_for(endpoint=self.target_endpoint)
         payload = self.default_payload.copy()
-        payload['group_id'] = str(PrimitiveFaker('ean8'))
+        payload['group_id'] = str(PrimitiveFaker('bban'))
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=json.dumps(self.default_payload))

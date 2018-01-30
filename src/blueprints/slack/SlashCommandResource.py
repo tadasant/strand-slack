@@ -21,7 +21,7 @@ class SlashCommandResource(SlackResource):
                                                      trigger_id=r.trigger_id,
                                                      slack_team_id=r.team_id,
                                                      slack_user_id=r.user_id)
-            Thread(target=command.execute).start()
+            Thread(target=command.execute, daemon=True).start()
         else:
             # TODO send user an ephemeral help message instead of silently failing here
             message = f'Could not interpret slack request: {r}'

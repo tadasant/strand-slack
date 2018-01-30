@@ -25,7 +25,7 @@ class InteractiveComponentResource(SlackResource):
                                                slack_team_id=r.team.id,
                                                help_channel_id=r.selected_help_channel_id,
                                                response_url=r.response_url)
-            Thread(target=command.execute).start()
+            Thread(target=command.execute, daemon=True).start()
             return '', HTTPStatus.NO_CONTENT
         elif r.is_post_topic_dialog_submission:
             command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
@@ -33,7 +33,7 @@ class InteractiveComponentResource(SlackResource):
                                              slack_team_id=r.team.id,
                                              submission=r.submission,
                                              slack_user_id=r.user.id)
-            Thread(target=command.execute).start()
+            Thread(target=command.execute, daemon=True).start()
             return {}, HTTPStatus.OK
         else:
             message = f'Could not interpret slack request: {r}'
