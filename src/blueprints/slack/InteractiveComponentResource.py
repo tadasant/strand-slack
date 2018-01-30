@@ -34,4 +34,3 @@ class InteractiveComponentResource(SlackResource):
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)
             raise UnexpectedSlackException(message=message)
-

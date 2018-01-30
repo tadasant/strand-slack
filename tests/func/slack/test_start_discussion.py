@@ -6,11 +6,9 @@ import factory
 import pytest
 from flask import url_for
 
-from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.messages.post_topic_dialog import POST_TOPIC_DIALOG
 from src.config import config
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, SubmissionFactory
-from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client

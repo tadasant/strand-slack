@@ -22,7 +22,7 @@ class TestInitiatePostTopicDialog:
     # For setup
     target_endpoint = 'slack.slashcommandresource'
     default_payload = {
-        'token': 'unverified-token',
+        'token': config["SLACK_VERIFICATION_TOKEN"],
         'team_id': fake_slash_command_request.team_id,
         'team_domain': 'doesnt matter',
         'channel_id': 'doesnt matter',
@@ -40,8 +40,11 @@ class TestInitiatePostTopicDialog:
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(self.default_payload))
-        assert 'error' in response.json
+        payload = self.default_payload.copy()
+        payload['token'] = 'unverified token'
+
+        response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
+        assert response.json['error'] == 'Invalid slack verification token'
 
     def test_post_valid_authenticated_slack(self, slack_client_class, mocker, slack_agent_repository):
         mocker.spy(slack_client_class, 'api_call')
@@ -49,7 +52,6 @@ class TestInitiatePostTopicDialog:
         payload = self.default_payload.copy()
         payload['command'] = '/codeclippy'
         payload['text'] = ''
-        payload['token'] = config["SLACK_VERIFICATION_TOKEN"]
 
         # Need team's slack agent to be present in memory
         slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
