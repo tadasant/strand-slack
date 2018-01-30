@@ -80,6 +80,7 @@ class TestStartDiscussion:
             'data': {
                 'createTopicFromSlack': [{
                     'topic': {
+                        'id': str(PrimitiveFaker('ean8')),
                         'title': self.fake_interactive_component_request.submission.title,
                         'description': self.fake_interactive_component_request.submission.description,
                         'tags': [
@@ -118,6 +119,7 @@ class TestStartDiscussion:
             'data': {
                 'createUserAndTopicFromSlack': [{
                     'topic': {
+                        'id': str(PrimitiveFaker('ean8')),
                         'title': self.fake_interactive_component_request.submission.title,
                         'description': self.fake_interactive_component_request.submission.description,
                         'tags': [

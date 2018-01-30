@@ -14,6 +14,8 @@ class StartDiscussionCommand(Command):
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
             topic = self._create_topic()
+            # slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id, channel_name=f'discussions-{topic.')
+            # slack_channel = ''
             print(topic)
             # TODO creating a new discussion & send DM to user [next ticket]
         except WrapperException:

@@ -20,7 +20,7 @@ class SlackClientWrapper:
             retry=(retry_if_exception_type(ConnectionError) | retry_if_result(self._is_response_negative))
         )
 
-    def _get_slack_client(self, slack_team_id, is_bot=False):
+    def _get_slack_client(self, slack_team_id, is_bot=True):
         repo = slack_agent_repository
         token = repo.get_slack_bot_access_token(slack_team_id=slack_team_id) if is_bot else repo.get_slack_access_token(
             slack_team_id=slack_team_id)
@@ -36,7 +36,7 @@ class SlackClientWrapper:
         if not attachments:
             attachments = []
 
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='im.open', user=slack_user_id)
         slack_channel_id = response['channel']['id']
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
@@ -55,7 +55,16 @@ class SlackClientWrapper:
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)
         if 'user' not in response:
-            message = f'Failed to get users.info for {slack_user_id} on team {slack_team_id}'
+            message = f'Failed to get users.info for {slack_user_id} on team {slack_team_id}. Response: {response}'
             self.logger.error(message)
             raise WrapperException(wrapper_name='SlackClient', message=message)
         return response['user']
+
+    def create_channel(self, slack_team_id, channel_name):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.create', name=channel_name)
+        if 'channel' not in response:
+            message = f'Failed to channels.create for {channel_name} on team {slack_team_id}. Response: {response}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='SlackClient', message=message)
+        return response['channel']

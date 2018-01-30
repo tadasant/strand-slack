@@ -83,6 +83,7 @@ class PortalClientWrapper:
                                         }})
             {{
               topic {{
+                id
                 title
                 description
                 tags {{
@@ -121,6 +122,7 @@ class PortalClientWrapper:
                                                     }},
                                                     tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
                 topic {{
+                  id
                   title
                   description
                   tags {{
