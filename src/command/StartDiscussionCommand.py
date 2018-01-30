@@ -22,8 +22,8 @@ class StartDiscussionCommand(Command):
                                                                       slack_team_id=self.slack_team_id)
             # add user to channel
             # TODO invite user & send DM to user [next ticket]
-        except WrapperException:
-            self.logger.error(f'Starting discussion failed. Submission: {self.submission}')
+        except WrapperException as e:
+            self.logger.error(f'Starting discussion failed. Submission: {self.submission}. Error: {e}')
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text='Sorry, starting your discussion failed for some reason'

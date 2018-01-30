@@ -12,3 +12,6 @@ class ChannelSchema(Schema):
     @post_load
     def make_channel(self, data):
         return Channel(**data)
+
+    class Meta:
+        strict = True

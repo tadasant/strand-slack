@@ -14,3 +14,6 @@ class SubmissionSchema(Schema):
     @post_load
     def make_submission(self, data):
         return Submission(**data)
+
+    class Meta:
+        strict = True

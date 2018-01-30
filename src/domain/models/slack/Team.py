@@ -11,3 +11,6 @@ class TeamSchema(Schema):
     @post_load
     def make_team(self, data):
         return Team(**data)
+
+    class Meta:
+        strict = True

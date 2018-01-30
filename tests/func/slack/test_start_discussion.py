@@ -20,7 +20,7 @@ from tests.utils import wait_until
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestStartDiscussion:
     # For assertions
-    fake_tags = [str(PrimitiveFaker('name')), str(PrimitiveFaker('name'))]
+    fake_tags = [str(PrimitiveFaker('word')), str(PrimitiveFaker('word'))]
     fake_interactive_component_request = InteractiveComponentRequestFactory.create(
         submission=SubmissionFactory.create(tags=', '.join(fake_tags)),
         callback_id=POST_TOPIC_DIALOG.callback_id,
@@ -71,22 +71,44 @@ class TestStartDiscussion:
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
 
-    def test_post_with_existing_user(self, portal_client, mocker):
+    def test_post_with_existing_user(self, portal_client, slack_agent_repository, mocker):
         mocker.spy(portal_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
+        fake_topic_id = str(PrimitiveFaker('ean8'))
 
-        # Set up successful portal creation
+        # Need team's slack agent to be present in memory
+        slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
+            status=SlackAgentStatus.ACTIVE,
+            slack_team=SlackTeam(id=self.fake_interactive_component_request.team.id),
+            slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
+                                                                        installer=SlackUser(id='doesnt matter'),
+                                                                        bot_access_token='doesnt matter'))
+        )
+
+        # Set up successful topic creation
         portal_client.set_next_response({
             'data': {
-                'createTopicFromSlack': [{
+                'createTopicFromSlack': {
                     'topic': {
-                        'id': str(PrimitiveFaker('ean8')),
+                        'id': fake_topic_id,
                         'title': self.fake_interactive_component_request.submission.title,
                         'description': self.fake_interactive_component_request.submission.description,
                         'tags': [
                             {'name': self.fake_tags[0].lower()},
                             {'name': self.fake_tags[1].lower()}
                         ],
+                    },
+                }
+            }
+        })
+
+        # Set up successful discussion creation
+        portal_client.set_next_response({
+            'data': {
+                'createDiscussionFromSlack': [{
+                    'discussion': {
+                        'id': str(PrimitiveFaker('ean8')),
+                        'name': str(PrimitiveFaker('word'))
                     },
                 }]
             }
@@ -95,9 +117,17 @@ class TestStartDiscussion:
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
-        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
+
+        # topic creation assertions
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count >= 1)
         assert outcome, 'PortalClient mutate was never called'
-        # TODO brittle test; later assert that it did the right thing (esp. w/ tags) w/ the resulting Topic
+        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
+
+        # discussion creation assertions
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 2)
+        assert outcome, 'PortalClient mutate not called twice'
+        assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
+        assert fake_topic_id in portal_client.mutate.call_args_list[1][1]['operation_definition']
 
     def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):
         mocker.spy(portal_client, 'mutate')

@@ -14,3 +14,6 @@ class ActionSchema(Schema):
     @post_load
     def make_action(self, data):
         return Action(**data)
+
+    class Meta:
+        strict = True
