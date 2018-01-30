@@ -14,6 +14,7 @@ class StartDiscussionCommand(Command):
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
             topic = self._create_topic()
+            print(topic)
             # TODO creating a new discussion & send DM to user [next ticket]
         except WrapperException:
             self.logger.error(f'Topic submission failed. Submission: {self.submission}')

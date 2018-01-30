@@ -15,7 +15,9 @@ from tests.factories.slackfactories import InteractiveComponentRequestFactory, S
 class TestStartDiscussion:
     # For assertions
     fake_interactive_component_request = InteractiveComponentRequestFactory.create(
-        submission=factory.SubFactory(SubmissionFactory)
+        submission=factory.SubFactory(SubmissionFactory),
+        callback_id=POST_TOPIC_DIALOG.callback_id,
+        type='dialog_submission'
     )
 
     # For setup
@@ -57,10 +59,15 @@ class TestStartDiscussion:
 
     def test_post_valid_authenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
-        payload['type'] = 'dialog_submission'
-        payload['callback_id'] = POST_TOPIC_DIALOG.callback_id
 
         response = self.client.post(path=target_url, headers=self.default_headers,
-                                    data=urlencode({'payload': json.dumps(payload)}))
+                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
+
+    def test_post_with_existing_user(self):
+        target_url = url_for(endpoint=self.target_endpoint)
+        print(target_url)
+        pass
+
+    def test_post_with_nonexisting_user(self):
+        pass

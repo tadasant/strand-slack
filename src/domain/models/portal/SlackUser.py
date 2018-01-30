@@ -4,7 +4,7 @@ from src.domain.models.portal.SlackProfile import SlackProfileSchema
 
 
 class SlackUser:
-    def __init__(self, id, name, real_name=None, is_bot=None, is_admin=None, team_id=None, profile=None):
+    def __init__(self, id, name=None, real_name=None, is_bot=None, is_admin=None, team_id=None, profile=None):
         self.id = id
         self.name = name
         self.real_name = real_name
@@ -16,7 +16,7 @@ class SlackUser:
 
 class SlackUserSchema(Schema):
     id = fields.String(required=True)
-    name = fields.String(required=True)
+    name = fields.String()
     real_name = fields.String()
     is_bot = fields.Boolean()
     is_admin = fields.Boolean()
