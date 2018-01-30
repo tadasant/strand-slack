@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.command.messages.formatted_text import discussion_initiation_message
+from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
@@ -33,7 +33,9 @@ class StartDiscussionCommand(Command):
                                                        description=self.submission.description,
                                                        tags=self.submission.tags
                                                    ))
-            # TODO send DM to user [next ticket]
+            self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
+                                                      slack_user_id=self.slack_user_id,
+                                                      text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
         except WrapperException as e:
             self.logger.error(f'Starting discussion failed. Submission: {self.submission}. Error: {e}')
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,

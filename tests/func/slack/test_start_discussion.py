@@ -140,10 +140,12 @@ class TestStartDiscussion:
         assert slack_client_class.api_call.call_args_list[1][1][
                    'user'] == self.fake_interactive_component_request.user.id
 
-        # channel initial message assertion
-        outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count >= 2)
-        assert outcome, 'SlackClient not called thrice (create and invite and initial message)'
+        # channel informative message assertions
+        outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count >= 5)
+        assert outcome, 'SlackClient not called five times'
         assert slack_client_class.api_call.call_args_list[2][1]['method'] == 'chat.postMessage'
+        assert slack_client_class.api_call.call_args_list[3][1]['method'] == 'im.open'
+        assert slack_client_class.api_call.call_args_list[4][1]['method'] == 'chat.postMessage'
 
     def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):
         mocker.spy(portal_client, 'mutate')
