@@ -3,6 +3,7 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_
 
 from src import slack_agent_repository
 from src.common.logging import get_logger
+from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class SlackClientWrapper:
@@ -31,7 +32,10 @@ class SlackClientWrapper:
             self.logger.error(f'Negative response from slack: {response}')
         return is_negative
 
-    def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=[]):
+    def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=None):
+        if not attachments:
+            attachments = []
+
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
         response = self.standard_retrier.call(slack_client.api_call, method='im.open', user=slack_user_id)
         slack_channel_id = response['channel']['id']
@@ -46,3 +50,12 @@ class SlackClientWrapper:
     def send_dialog(self, trigger_id, slack_team_id, dialog):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         self.standard_retrier.call(slack_client.api_call, method='dialog.open', trigger_id=trigger_id, dialog=dialog)
+
+    def get_user_info(self, slack_team_id, slack_user_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)
+        if 'user' not in response:
+            message = f'Failed to get users.info for {slack_user_id} on team {slack_team_id}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='SlackClient', message=message)
+        return response['user']

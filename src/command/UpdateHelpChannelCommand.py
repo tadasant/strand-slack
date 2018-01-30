@@ -6,8 +6,8 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 
 class UpdateHelpChannelCommand(Command):
     def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, help_channel_id, response_url):
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
-        self.slack_team_id = slack_team_id
+        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper,
+                         slack_team_id=slack_team_id)
         self.help_channel_id = help_channel_id
         self.response_url = response_url
 

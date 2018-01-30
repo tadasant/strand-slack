@@ -1,4 +1,4 @@
-# TODO eventually test this / effectively treat it as an independent package (or use an existing graphql client?)
+# TODO [CCS-61] test this / effectively treat it as an independent package (or use an existing graphql client?)
 import requests
 
 """
@@ -35,5 +35,5 @@ class PortalClientException(Exception):
         self.response = response
 
     def __str__(self):
-        return f'{self.message}\n\tStatus: {self.response.status_code}\n\t'\
+        return f'{self.message}\n\tStatus: {self.response.status_code}\n\t' \
                f'Reason: {self.response.reason}\n\tText: {self.response.text}'

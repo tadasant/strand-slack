@@ -57,7 +57,7 @@ class InteractiveComponentRequestSchema(Schema):
     user = fields.Nested(UserSchema, required=True)
 
     @post_load
-    def make_interact_menu_request(self, data):
+    def make_interactive_component_request(self, data):
         return InteractiveComponentRequest(**data)
 
     class Meta:

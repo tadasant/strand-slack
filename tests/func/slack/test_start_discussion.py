@@ -2,20 +2,29 @@ import json
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-import factory
 import pytest
 from flask import url_for
 
 from src.command.messages.post_topic_dialog import POST_TOPIC_DIALOG
 from src.config import config
+from src.domain.models.portal.SlackAgent import SlackAgent
+from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallation
+from src.domain.models.portal.SlackTeam import SlackTeam
+from src.domain.models.portal.SlackUser import SlackUser
+from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, SubmissionFactory
+from tests.utils import wait_until
 
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestStartDiscussion:
     # For assertions
+    fake_tags = [str(PrimitiveFaker('name')), str(PrimitiveFaker('name'))]
     fake_interactive_component_request = InteractiveComponentRequestFactory.create(
-        submission=factory.SubFactory(SubmissionFactory)
+        submission=SubmissionFactory.create(tags=', '.join(fake_tags)),
+        callback_id=POST_TOPIC_DIALOG.callback_id,
+        type='dialog_submission'
     )
 
     # For setup
@@ -57,10 +66,74 @@ class TestStartDiscussion:
 
     def test_post_valid_authenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
-        payload['type'] = 'dialog_submission'
-        payload['callback_id'] = POST_TOPIC_DIALOG.callback_id
 
         response = self.client.post(path=target_url, headers=self.default_headers,
-                                    data=urlencode({'payload': json.dumps(payload)}))
+                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
+
+    def test_post_with_existing_user(self, portal_client, mocker):
+        mocker.spy(portal_client, 'mutate')
+        target_url = url_for(endpoint=self.target_endpoint)
+
+        # Set up successful portal creation
+        portal_client.set_next_response({
+            'data': {
+                'createTopicFromSlack': [{
+                    'topic': {
+                        'title': self.fake_interactive_component_request.submission.title,
+                        'description': self.fake_interactive_component_request.submission.description,
+                        'tags': [
+                            {'name': self.fake_tags[0].lower()},
+                            {'name': self.fake_tags[1].lower()}
+                        ],
+                    },
+                }]
+            }
+        })
+
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
+        assert HTTPStatus.OK == response.status_code
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
+        assert outcome, 'PortalClient mutate was never called'
+        # TODO brittle test; later assert that it did the right thing (esp. w/ tags) w/ the resulting Topic
+
+    def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):
+        mocker.spy(portal_client, 'mutate')
+        mocker.spy(slack_client_class, 'api_call')
+        target_url = url_for(endpoint=self.target_endpoint)
+
+        # Need team's slack agent to be present in memory
+        slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
+            status=SlackAgentStatus.ACTIVE,
+            slack_team=SlackTeam(id=self.fake_interactive_component_request.team.id),
+            slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
+                                                                        installer=SlackUser(id='doesnt matter'),
+                                                                        bot_access_token='doesnt matter'))
+        )
+
+        # Set up a failed call & successful portal/user creation
+        portal_client.set_next_response(None)
+        portal_client.set_next_response({
+            'data': {
+                'createUserAndTopicFromSlack': [{
+                    'topic': {
+                        'title': self.fake_interactive_component_request.submission.title,
+                        'description': self.fake_interactive_component_request.submission.description,
+                        'tags': [
+                            {'name': self.fake_tags[0].lower()},
+                            {'name': self.fake_tags[1].lower()}
+                        ],
+                    },
+                }]
+            }
+        })
+
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=urlencode({'payload': json.dumps(self.default_payload)}))
+        assert HTTPStatus.OK == response.status_code
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 2)
+        assert outcome, 'PortalClient mutate was not called twice'
+        assert slack_client_class.api_call.call_args[1]['method'] == 'users.info'
+        assert slack_client_class.api_call.call_args[1]['user'] == self.fake_interactive_component_request.user.id
+        # TODO brittle test; later assert that it did the right thing (esp. w/ tags) w/ the resulting Topic

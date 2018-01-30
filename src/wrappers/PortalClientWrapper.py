@@ -7,6 +7,7 @@ from src.domain.models.portal.SlackAgent import SlackAgentSchema
 # TODO [CCS-26] Add authentication
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.portal.Topic import TopicSchema
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
@@ -69,4 +70,71 @@ class PortalClientWrapper:
         slack_agent = response_body['data']['updateSlackAgentHelpChannelAndActivate']['slackAgent']
         result = SlackAgentSchema().load(dict_keys_camel_case_to_underscores(slack_agent)).data
         assert result.status == SlackAgentStatus.ACTIVE, 'Call to activate Slack Agent oddly did not transition'
+        return result
+
+    def create_topic(self, title, description, original_poster_slack_user_id, tag_names):
+        # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
+        operation_definition = f'''
+          {{
+            createTopicFromSlack(input: {{title: "{title}",
+                                          description: "{description}",
+                                          originalPosterSlackUserId: "{original_poster_slack_user_id}",
+                                          tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
+                                        }})
+            {{
+              topic {{
+                title
+                description
+                tags {{
+                  name
+                }}
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        if 'errors' in response_body:
+            message = f'Errors when calling PortalClient. Body: {response_body}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])
+        topic = response_body['data']['createTopicFromSlack']['topic']
+        result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
+        return result
+
+    def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
+        operation_definition = f'''
+            {{
+              createUserAndTopicFromSlack(input: {{title: "{title}",
+                                                    description: "{description}",
+                                                    originalPosterSlackUser: {{
+                                                      id: "{slack_user.id}",
+                                                      name: "{slack_user.name}",
+                                                      firstName: "{slack_user.profile.first_name}",
+                                                      lastName: "{slack_user.profile.last_name}",
+                                                      realName: "{slack_user.real_name}",
+                                                      displayName: "{slack_user.profile.display_name}",
+                                                      email: "{slack_user.profile.email}",
+                                                      avatar72: "{slack_user.profile.image_72}",
+                                                      isBot: {str(slack_user.is_bot).lower()},
+                                                      isAdmin: {str(slack_user.is_admin).lower()},
+                                                      slackTeamId: "{slack_user.team_id}"
+                                                    }},
+                                                    tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
+                topic {{
+                  title
+                  description
+                  tags {{
+                    name
+                  }}
+                }}
+              }}
+            }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        if 'errors' in response_body:
+            message = f'Errors when calling PortalClient. Body: {response_body}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='PortalClient', message=message)
+        topic = response_body['data']['createTopicFromSlack']['topic']
+        result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
         return result
