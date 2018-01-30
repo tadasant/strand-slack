@@ -109,3 +109,4 @@ class TestUpdateDiscussionChannel:
         outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
         assert outcome, 'PortalClient mutate was never called'
         assert 'helpChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
+        # TODO if this test hangs a little, requests.post is called (and ignored) in a thread. Should clean up.
