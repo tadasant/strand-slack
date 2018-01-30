@@ -31,7 +31,10 @@ class SlackClientWrapper:
             self.logger.error(f'Negative response from slack: {response}')
         return is_negative
 
-    def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=[]):
+    def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=None):
+        if not attachments:
+            attachments = []
+
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
         response = self.standard_retrier.call(slack_client.api_call, method='im.open', user=slack_user_id)
         slack_channel_id = response['channel']['id']

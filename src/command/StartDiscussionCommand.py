@@ -14,11 +14,13 @@ class StartDiscussionCommand(Command):
         try:
             self._create_topic()
             # TODO creating a new discussion [next ticket]
+            # TODO send DM to user informing them of the creation of their session
         except WrapperException:
             self.logger.error(f'Topic submission failed. Submission: {self.submission}')
-            # TODO send DM to user informing them to contact support
-            pass
-        # TODO send DM to user informing them of the creation of their session
+            self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
+                                                      slack_user_id=self.slack_user_id,
+                                                      text='Sorry, your topic submission failed for some unknown reason'
+                                                           ' :see_no_evil: Please contact support@solutionloft.com')
 
     def _create_topic(self):
         # TODO [CCS-60] move tag parsing to useful validation (maybe derived attr on Submission)
