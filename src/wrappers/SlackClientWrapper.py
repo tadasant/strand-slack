@@ -3,6 +3,7 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_
 
 from src import slack_agent_repository
 from src.common.logging import get_logger
+from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class SlackClientWrapper:
@@ -52,4 +53,9 @@ class SlackClientWrapper:
 
     def get_user_info(self, slack_team_id, slack_user_id):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
-        return self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)['user']
+        response = self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)
+        if 'user' not in response:
+            message = f'Failed to get users.info for {slack_user_id} on team {slack_team_id}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='SlackClient', message=message)
+        return response['user']
