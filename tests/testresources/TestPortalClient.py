@@ -1,33 +1,42 @@
+from src.domain.models.exceptions.WrapperException import WrapperException
+
+
 class TestPortalClient:
     def __init__(self, **kwargs):
-        self.next_response = None
+        self.next_responses = []
         pass
 
     # UTILITIES
 
     def set_next_response(self, response):
-        self.next_response = response
+        # TODO tbh shouldn't use this feature. Instead, store some relevant state and make normal calls to set up
+        # TODO the ensuing appropriate responses
+        self.next_responses.append(response)
 
-    def clear_response(self):
-        self.next_response = None
+    def clear_responses(self):
+        self.next_responses = []
 
     # MOCKS
 
     def query(self, operation_definition):
-        if self.next_response:
-            result = self.next_response
-            self.next_response = None
-            return result
+        if len(self.next_responses) > 0:
+            result = self.next_responses[0]
+            self.next_responses = self.next_responses[1:]
+            if result:
+                # Allow us to set_next_response as None to skip a call
+                return result
         elif 'slackAgents' in operation_definition:
             return {'data': {'slackAgents': []}}
         return None
 
     def mutate(self, operation_definition):
-        if self.next_response:
-            result = self.next_response
-            self.next_response = None
-            return result
-        elif 'updateSlackAgentHelpChannelAndActivate' in operation_definition:
+        if len(self.next_responses) > 0:
+            result = self.next_responses[0]
+            self.next_responses = self.next_responses[1:]
+            if result:
+                # Allow us to set_next_response as None to skip a call
+                return result
+        if 'updateSlackAgentHelpChannelAndActivate' in operation_definition:
             return {'data': {'updateSlackAgentHelpChannelAndActivate': {
                 'slackAgent': {
                     'status': 'ACTIVE',
@@ -43,4 +52,8 @@ class TestPortalClient:
                     }
                 }
             }}}
-        return None
+        elif 'createTopicFromSlack' in operation_definition:
+            # Assuming that portal does not have the user in the request
+            raise WrapperException(wrapper_name='PortalClient', message='',
+                                   errors=['SlackUser matching query does not exist.'])
+        return {'errors': ['someerror']}

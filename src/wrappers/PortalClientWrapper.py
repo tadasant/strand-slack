@@ -109,19 +109,20 @@ class PortalClientWrapper:
                                                     originalPosterSlackUser: {{
                                                       id: "{slack_user.id}",
                                                       name: "{slack_user.name}",
-                                                      firstName: "{slack_user.first_name}",
-                                                      lastName: "{slack_user.last_name}",
+                                                      firstName: "{slack_user.profile.first_name}",
+                                                      lastName: "{slack_user.profile.last_name}",
                                                       realName: "{slack_user.real_name}",
-                                                      displayName: "{slack_user.display_name}",
-                                                      email: "{slack_user.email}",
-                                                      avatar72: "{slack_user.avatar_72}",
+                                                      displayName: "{slack_user.profile.display_name}",
+                                                      email: "{slack_user.profile.email}",
+                                                      avatar72: "{slack_user.profile.image_72}",
                                                       isBot: {str(slack_user.is_bot).lower()},
                                                       isAdmin: {str(slack_user.is_admin).lower()},
-                                                      slackTeamId: "{slack_user.slack_team.id}"
+                                                      slackTeamId: "{slack_user.team_id}"
                                                     }},
                                                     tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
                 topic {{
                   title
+                  description
                   tags {{
                     name
                   }}

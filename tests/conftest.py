@@ -52,7 +52,7 @@ def portal_client_factory():
 @pytest.fixture
 def portal_client(portal_client_factory):
     yield portal_client_factory
-    portal_client_factory.clear_response()
+    portal_client_factory.clear_responses()
 
 
 @pytest.fixture(scope='session')

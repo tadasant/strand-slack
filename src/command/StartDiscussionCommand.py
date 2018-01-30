@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.domain.models.exceptions import WrapperException
+from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 
 
@@ -36,7 +36,8 @@ class StartDiscussionCommand(Command):
             if 'SlackUser matching query does not exist.' not in e.errors:
                 raise e
             self.logger.info('Tried to create topic for unknown user. Retrying with user creation.')
-            slack_user_info = self.slack_client_wrapper.get_user(slack_user_id=self.slack_user_id)
+            slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_user_id,
+                                                                      slack_team_id=self.slack_team_id)
             slack_user = SlackUserSchema().load(slack_user_info).data
             topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster(
                 title=self.submission.title,
