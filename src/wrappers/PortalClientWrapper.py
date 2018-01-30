@@ -74,13 +74,12 @@ class PortalClientWrapper:
 
     def create_topic(self, title, description, original_poster_slack_user_id, tag_names):
         # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
-        tags = [{'name': x} for x in tag_names]
         operation_definition = f'''
-          mutation {{
+          {{
             createTopicFromSlack(input: {{title: "{title}",
                                           description: "{description}",
                                           originalPosterSlackUserId: "{original_poster_slack_user_id}",
-                                          tags: [{str(tag) for tag in tags}]
+                                          tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
                                         }})
             {{
               topic {{
@@ -103,33 +102,32 @@ class PortalClientWrapper:
         return result
 
     def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
-        tags = [{'name': x} for x in tag_names]
         operation_definition = f'''
-                  mutation {{
-                    createUserAndTopicFromSlack(input: {{title: "{title}",
-                                                          description: "{description}",
-                                                          originalPosterSlackUser: {{
-                                                            id: "{slack_user.id}",
-                                                            name: "{slack_user.name}",
-                                                            firstName: "{slack_user.first_name}",
-                                                            lastName: "{slack_user.last_name}",
-                                                            realName: "{slack_user.real_name}",
-                                                            displayName: "{slack_user.display_name}",
-                                                            email: "{slack_user.email}",
-                                                            avatar72: "{slack_user.avatar_72}",
-                                                            isBot: {str(slack_user.is_bot).lower()},
-                                                            isAdmin: {str(slack_user.is_admin).lower()},
-                                                            slackTeamId: "{slack_user.slack_team.id}"
-                                                          }},
-                                                          tags: [{str(tag) for tag in tags}]
-                      topic {{
-                        title
-                        tags {{
-                          name
-                        }}
-                      }}
-                    }}
+            {{
+              createUserAndTopicFromSlack(input: {{title: "{title}",
+                                                    description: "{description}",
+                                                    originalPosterSlackUser: {{
+                                                      id: "{slack_user.id}",
+                                                      name: "{slack_user.name}",
+                                                      firstName: "{slack_user.first_name}",
+                                                      lastName: "{slack_user.last_name}",
+                                                      realName: "{slack_user.real_name}",
+                                                      displayName: "{slack_user.display_name}",
+                                                      email: "{slack_user.email}",
+                                                      avatar72: "{slack_user.avatar_72}",
+                                                      isBot: {str(slack_user.is_bot).lower()},
+                                                      isAdmin: {str(slack_user.is_admin).lower()},
+                                                      slackTeamId: "{slack_user.slack_team.id}"
+                                                    }},
+                                                    tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
+                topic {{
+                  title
+                  tags {{
+                    name
                   }}
+                }}
+              }}
+            }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         if 'errors' in response_body:
