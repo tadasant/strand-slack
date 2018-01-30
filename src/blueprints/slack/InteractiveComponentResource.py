@@ -30,7 +30,9 @@ class InteractiveComponentResource(SlackResource):
         elif r.is_post_topic_dialog_submission:
             command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                              portal_client_wrapper=current_app.portal_client_wrapper,
-                                             slack_team_id=r.team.id)
+                                             slack_team_id=r.team.id,
+                                             submission=r.submission,
+                                             slack_user_id=r.user.id)
             Thread(target=command.execute).start()
             return {}, HTTPStatus.OK
         else:
