@@ -25,7 +25,10 @@ class StartDiscussionCommand(Command):
     def _create_topic(self):
         # TODO [CCS-60] move tag parsing to useful validation (maybe derived attr on Submission)
         tag_names = [x.strip() for x in self.submission.tags.split(',')]
-        # pass them onto portal
+        topic = self.portal_client_wrapper.create_topic(title=self.submission.title,
+                                                        description=self.submission.description,
+                                                        original_poster_slack_user_id=self.slack_user_id,
+                                                        tag_names=tag_names)
         # TODO [CCS-15] caching user info to avoid relying on error
         # if portal errors due to lack of user info..
         #   fetch user info
