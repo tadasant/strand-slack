@@ -164,8 +164,8 @@ class TestStartDiscussion:
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
-        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 2)
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count >= 2)
         assert outcome, 'PortalClient mutate was not called twice'
         assert slack_client_class.api_call.call_args[1]['method'] == 'users.info'
         assert slack_client_class.api_call.call_args[1]['user'] == self.fake_interactive_component_request.user.id
-        # TODO brittle test; later assert that it did the right thing (esp. w/ tags) w/ the resulting Topic
+        # TODO brittle test; later assert similar to above, just use some abstracted functions
