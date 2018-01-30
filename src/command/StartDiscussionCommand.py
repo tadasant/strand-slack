@@ -15,13 +15,16 @@ class StartDiscussionCommand(Command):
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
             topic = self._create_topic()
+            channel_name = f'discussion-{topic.id}'
             slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id,
-                                                                          channel_name=f'discussion-{topic.id}')
+                                                                          channel_name=channel_name)
             slack_channel = ChannelSchema().load(slack_channel_info).data
             self.portal_client_wrapper.create_discussion(topic_id=topic.id, slack_channel=slack_channel,
                                                          slack_team_id=self.slack_team_id)
-            # discussion = above, and add user to channel
-            # TODO invite user & send DM to user [next ticket]
+            self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
+                                                             slack_channel_id=slack_channel.id,
+                                                             slack_user_id=self.slack_user_id)
+            # TODO send DM to user [next ticket]
         except WrapperException as e:
             self.logger.error(f'Starting discussion failed. Submission: {self.submission}. Error: {e}')
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,

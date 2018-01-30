@@ -71,8 +71,9 @@ class TestStartDiscussion:
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
 
-    def test_post_with_existing_user(self, portal_client, slack_agent_repository, mocker):
+    def test_post_with_existing_user(self, portal_client, slack_agent_repository, slack_client_class, mocker):
         mocker.spy(portal_client, 'mutate')
+        mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         fake_topic_id = str(PrimitiveFaker('ean8'))
 
@@ -129,6 +130,16 @@ class TestStartDiscussion:
         assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
         assert fake_topic_id in portal_client.mutate.call_args_list[1][1]['operation_definition']
 
+        # channel creation assertion
+        assert slack_client_class.api_call.call_args_list[0][1]['method'] == 'channels.create'
+
+        # channel invite assertion
+        outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count == 2)
+        assert outcome, 'SlackClient not called twice (create and invite)'
+        assert slack_client_class.api_call.call_args_list[1][1]['method'] == 'channels.invite'
+        assert slack_client_class.api_call.call_args_list[1][1][
+                   'user'] == self.fake_interactive_component_request.user.id
+
     def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):
         mocker.spy(portal_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
@@ -147,7 +158,7 @@ class TestStartDiscussion:
         portal_client.set_next_response(None)
         portal_client.set_next_response({
             'data': {
-                'createUserAndTopicFromSlack': [{
+                'createUserAndTopicFromSlack': {
                     'topic': {
                         'id': str(PrimitiveFaker('ean8')),
                         'title': self.fake_interactive_component_request.submission.title,
@@ -157,7 +168,19 @@ class TestStartDiscussion:
                             {'name': self.fake_tags[1].lower()}
                         ],
                     },
-                }]
+                }
+            }
+        })
+
+        # Set up successful discussion creation
+        portal_client.set_next_response({
+            'data': {
+                'createDiscussionFromSlack': {
+                    'discussion': {
+                        'id': str(PrimitiveFaker('ean8')),
+                        'name': str(PrimitiveFaker('word'))
+                    },
+                }
             }
         })
 
@@ -166,6 +189,7 @@ class TestStartDiscussion:
         assert HTTPStatus.OK == response.status_code
         outcome = wait_until(condition=lambda: portal_client.mutate.call_count >= 2)
         assert outcome, 'PortalClient mutate was not called twice'
-        assert slack_client_class.api_call.call_args[1]['method'] == 'users.info'
-        assert slack_client_class.api_call.call_args[1]['user'] == self.fake_interactive_component_request.user.id
+        assert slack_client_class.api_call.call_args_list[0][1]['method'] == 'users.info'
+        assert slack_client_class.api_call.call_args_list[0][1][
+                   'user'] == self.fake_interactive_component_request.user.id
         # TODO brittle test; later assert similar to above, just use some abstracted functions

@@ -139,7 +139,7 @@ class PortalClientWrapper:
             message = f'Errors when calling PortalClient. Body: {response_body}'
             self.logger.error(message)
             raise WrapperException(wrapper_name='PortalClient', message=message)
-        topic = response_body['data']['createTopicFromSlack']['topic']
+        topic = response_body['data']['createUserAndTopicFromSlack']['topic']
         result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
         return result
 
@@ -153,6 +153,7 @@ class PortalClientWrapper:
                                                        slackTeamId: "{slack_team_id}"}}) {{
               discussion {{
                 id
+                name
               }}
             }}
           }}
