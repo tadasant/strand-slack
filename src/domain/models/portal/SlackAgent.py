@@ -7,9 +7,9 @@ from src.domain.models.portal.SlackTeam import SlackTeamSchema
 
 
 class SlackAgent:
-    def __init__(self, status, slack_team, slack_application_installation, help_channel_id=None):
+    def __init__(self, status, slack_team, slack_application_installation, discuss_channel_id=None):
         self.status = status
-        self.help_channel_id = help_channel_id
+        self.discuss_channel_id = discuss_channel_id
 
         self.slack_team = slack_team
         self.slack_application_installation = slack_application_installation
@@ -17,7 +17,7 @@ class SlackAgent:
 
 class SlackAgentSchema(Schema):
     status = EnumField(SlackAgentStatus, required=True)
-    help_channel_id = fields.String(allow_none=True)
+    discuss_channel_id = fields.String(allow_none=True)
     slack_team = fields.Nested(SlackTeamSchema, required=True)
     slack_application_installation = fields.Nested(SlackApplicationInstallationSchema)
 

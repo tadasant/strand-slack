@@ -1,21 +1,15 @@
 from http import HTTPStatus
 from urllib.parse import urlencode
 
-import pytest
 from flask import url_for
 
 from src.config import config
-from src.domain.models.portal.SlackAgent import SlackAgent
-from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallation
-from src.domain.models.portal.SlackTeam import SlackTeam
-from src.domain.models.portal.SlackUser import SlackUser
 from tests.factories.slackfactories import SlashCommandRequestFactory
+from tests.func.slack.TestSlackFunction import TestSlackFunction
 from tests.utils import wait_until
 
 
-@pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestInitiatePostTopicDialog:
+class TestInitiatePostTopicDialog(TestSlackFunction):
     # For assertions
     fake_slash_command_request = SlashCommandRequestFactory.create()
 
@@ -34,9 +28,6 @@ class TestInitiatePostTopicDialog:
         'response_url': fake_slash_command_request.response_url,
         'trigger_id': fake_slash_command_request.trigger_id
     }
-    default_headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
@@ -52,20 +43,20 @@ class TestInitiatePostTopicDialog:
         payload = self.default_payload.copy()
         payload['command'] = '/codeclippy'
         payload['text'] = ''
-
-        # Need team's slack agent to be present in memory
-        slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
-            status=SlackAgentStatus.ACTIVE,
-            slack_team=SlackTeam(id=self.fake_slash_command_request.team_id),
-            slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
-                                                                        installer=SlackUser(id='doesnt matter'),
-                                                                        bot_access_token='doesnt matter'))
-        )
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_slash_command_request.team_id)
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
 
         assert HTTPStatus.NO_CONTENT == response.status_code
         outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count == 1)
         assert outcome, 'SlackClient api_call was never called'
-        assert slack_client_class.api_call.call_args[1]['method'] == 'dialog.open'
-        assert slack_client_class.api_call.call_args[1]['trigger_id'] == self.fake_slash_command_request.trigger_id
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {
+                    'method': 'dialog.open',
+                    'trigger_id': self.fake_slash_command_request.trigger_id
+                }
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )

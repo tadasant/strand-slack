@@ -1,16 +1,16 @@
 # TODO [CCS-61] test this / effectively treat it as an independent package (or use an existing graphql client?)
 import requests
 
-"""
-This client library returns the results of a GraphQL query on {host}{endpoint}.
-
-If the GraphQL operation fails due to an HTTP error, will throw a PortalClientException.
-
-If there are GraphQL errors for the operation, will return the standard {'errors': [...]} GraphQL response format.
-"""
-
 
 class PortalClient:
+    """
+    This client library returns the results of a GraphQL query on {host}{endpoint}.
+
+    If the GraphQL operation fails due to an HTTP error, will throw a PortalClientException.
+
+    If there are GraphQL errors for the operation, will return the standard {'errors': [...]} GraphQL response format.
+    """
+
     def __init__(self, host, endpoint):
         self.url = f'{host}{endpoint}'
 
@@ -31,6 +31,7 @@ class PortalClient:
 
 class PortalClientException(Exception):
     def __init__(self, message, response):
+        super().__init__()
         self.message = message
         self.response = response
 

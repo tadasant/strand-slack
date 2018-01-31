@@ -3,17 +3,16 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 
 import factory
-import pytest
 from flask import url_for
 
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, ActionFactory, MessageFactory
+from tests.func.slack.TestSlackFunction import TestSlackFunction
 from tests.utils import wait_until
 
 
-@pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestUpdateDiscussionChannel:
+class TestUpdateDiscussionChannel(TestSlackFunction):
     # For assertions
     fake_interactive_menu_request = InteractiveComponentRequestFactory.create(
         actions=[ActionFactory.build()],
@@ -66,8 +65,8 @@ class TestUpdateDiscussionChannel:
                     "actions": [
                         {
                             "id": "1",
-                            "name": "help_channel_list",
-                            "text": "What channel should I use for showing help requests?",
+                            "name": "discuss_channel_list",
+                            "text": "What channel should I use for showing discussion topic requests?",
                             "type": "select",
                             "data_source": "channels"
                         }
@@ -80,9 +79,6 @@ class TestUpdateDiscussionChannel:
         },
         "response_url": fake_interactive_menu_request.response_url,
         "trigger_id": "304946943568.10642948979.fde99265c25c102dc631e6cd49ac4535"
-    }
-    default_headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
     }
 
     def test_post_valid_unauthenticated_slack(self):
@@ -105,7 +101,11 @@ class TestUpdateDiscussionChannel:
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
-        assert HTTPStatus.NO_CONTENT == response.status_code
+
         outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
         assert outcome, 'PortalClient mutate was never called'
-        assert 'helpChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
+
+        assert HTTPStatus.NO_CONTENT == response.status_code
+        assert 'discussChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
+        # TODO if this test hangs a little, requests.post is called (and ignored) in a thread. Should clean up w/ mock.
+        # TODO this is what is causing an occasional WARNING in pytest

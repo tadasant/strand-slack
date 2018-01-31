@@ -11,14 +11,14 @@ class SlackTeamFactory(factory.Factory):
     class Meta:
         model = SlackTeam
 
-    id = factory.Faker('ean8')
+    id = factory.Faker('bban')
 
 
 class SlackUserFactory(factory.Factory):
     class Meta:
         model = SlackUser
 
-    id = factory.Faker('ean8')
+    id = factory.Faker('bban')
 
 
 class SlackApplicationInstallationFactory(factory.Factory):
@@ -35,6 +35,6 @@ class SlackAgentFactory(factory.Factory):
         model = SlackAgent
 
     status = SlackAgentStatus.INITIATED.name
-    help_channel_id = factory.Faker('ean8')
+    discuss_channel_id = factory.Faker('bban')
     slack_team = factory.SubFactory(SlackTeamFactory)
     slack_application_installation = factory.SubFactory(SlackApplicationInstallationFactory)

@@ -1,6 +1,6 @@
 class RepositoryException(Exception):
     def __init__(self, object_name, message):
-        super()
+        super().__init__()
 
         self.object_name = object_name
         self.message = message

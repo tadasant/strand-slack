@@ -22,14 +22,14 @@ class InteractiveComponentRequest:
         self.user = user
 
     @property
-    def is_help_channel_selection(self):
+    def is_discuss_channel_selection(self):
         if self.type == 'interactive_message' and self.callback_id == INITIAL_ONBOARDING_DM.callback_id:
-            help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
-            if len(help_channel_actions) != 1:
+            discuss_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
+            if len(discuss_channel_actions) != 1:
                 return False
 
-            help_channel_selections = help_channel_actions[0].selected_options
-            if len(help_channel_selections) != 1:
+            discuss_channel_selections = discuss_channel_actions[0].selected_options
+            if len(discuss_channel_selections) != 1:
                 return False
         else:
             return False
@@ -40,10 +40,10 @@ class InteractiveComponentRequest:
         return self.type == 'dialog_submission' and self.callback_id == POST_TOPIC_DIALOG.callback_id
 
     @property
-    def selected_help_channel_id(self):
-        help_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
-        help_channel_selections = help_channel_actions[0].selected_options
-        return help_channel_selections[0].value
+    def selected_discuss_channel_id(self):
+        discuss_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
+        discuss_channel_selections = discuss_channel_actions[0].selected_options
+        return discuss_channel_selections[0].value
 
 
 class InteractiveComponentRequestSchema(Schema):
