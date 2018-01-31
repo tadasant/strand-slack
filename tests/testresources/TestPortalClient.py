@@ -23,7 +23,7 @@ class TestPortalClient:
 
     def query(self, operation_definition):
         with self.lock:
-            if len(self.next_responses) > 0:
+            if self.next_responses:
                 result = self.next_responses[0]
                 self.next_responses = self.next_responses[1:]
                 if result:
@@ -35,7 +35,7 @@ class TestPortalClient:
 
     def mutate(self, operation_definition):
         with self.lock:
-            if len(self.next_responses) > 0:
+            if self.next_responses:
                 result = self.next_responses[0]
                 self.next_responses = self.next_responses[1:]
                 if result:

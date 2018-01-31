@@ -9,7 +9,7 @@ def camel_case_to_underscores(value):
 
 def dict_keys_camel_case_to_underscores(value):
     """Recursively converts all keys of a dictionary to be underscore-delimited"""
-    if not type(value) is dict:
+    if not isinstance(value, dict):
         return value
     result = dict()
     for k, v in value.items():
