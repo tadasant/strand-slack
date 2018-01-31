@@ -114,9 +114,7 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
         assert 'discussChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
-                {
-                    'method': 'chat.postMessage'  # introduce channel
-                },
+                {'method': 'chat.postMessage'},  # introduce channel
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )

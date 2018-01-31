@@ -87,30 +87,14 @@ class TestStartDiscussion(TestSlackFunction):
         assert fake_topic_id in portal_client.mutate.call_args_list[1][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
-                {
-                    'method': 'channels.create'
-                },
-                {
-                    'method': 'channels.invite'
-                },
-                {
-                    'method': 'chat.postMessage'  # initiate discussion
-                },
-                {
-                    'method': 'im.open'
-                },
-                {
-                    'method': 'chat.postMessage'  # DM user discussion info
-                },
-                {
-                    'method': 'channels.history'  # Grabbing last post in #discuss
-                },
-                {
-                    'method': 'chat.update'  # Updating last post with topic info
-                },
-                {
-                    'method': 'chat.postMessage'  # Re-posting last post
-                },
+                {'method': 'channels.create'},
+                {'method': 'channels.invite'},
+                {'method': 'chat.postMessage'},  # initiate discussion
+                {'method': 'im.open'},
+                {'method': 'chat.postMessage'},  # DM user discussion info
+                {'method': 'channels.history'},  # Grabbing last post in #discuss
+                {'method': 'chat.update'},  # Updating last post with topic info
+                {'method': 'chat.postMessage'},  # Re-posting last post
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
@@ -145,30 +129,14 @@ class TestStartDiscussion(TestSlackFunction):
                     'method': 'users.info',
                     'user': self.fake_interactive_component_request.user.id
                 },
-                {
-                    'method': 'channels.create'
-                },
-                {
-                    'method': 'channels.invite'
-                },
-                {
-                    'method': 'chat.postMessage'  # initiate discussion
-                },
-                {
-                    'method': 'im.open'
-                },
-                {
-                    'method': 'chat.postMessage'  # DM user discussion info
-                },
-                {
-                    'method': 'channels.history'  # Grabbing last post in #discuss
-                },
-                {
-                    'method': 'chat.update'  # Updating last post with topic info
-                },
-                {
-                    'method': 'chat.postMessage'  # Re-posting last post
-                },
+                {'method': 'channels.create'},
+                {'method': 'channels.invite'},
+                {'method': 'chat.postMessage'},  # initiate discussion
+                {'method': 'im.open'},
+                {'method': 'chat.postMessage'},  # DM user discussion info
+                {'method': 'channels.history'},  # Grabbing last post in #discuss
+                {'method': 'chat.update'},  # Updating last post with topic info
+                {'method': 'chat.postMessage'},  # Re-posting last post
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
