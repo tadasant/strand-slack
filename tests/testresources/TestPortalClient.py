@@ -11,8 +11,7 @@ class TestPortalClient:
     # UTILITIES
 
     def set_next_response(self, response):
-        # TODO tbh shouldn't use this feature. Instead, store some relevant state and make normal calls to set up
-        # TODO the ensuing appropriate responses
+        # TODO [CCS-70] shouldn't use this feature
         with self.lock:
             self.next_responses.append(response)
 

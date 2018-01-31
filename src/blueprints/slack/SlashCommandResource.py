@@ -23,7 +23,6 @@ class SlashCommandResource(SlackResource):
                                                      slack_user_id=r.user_id)
             Thread(target=command.execute, daemon=True).start()
         else:
-            # TODO send user an ephemeral help message instead of silently failing here
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)
             raise UnexpectedSlackException(message=message)

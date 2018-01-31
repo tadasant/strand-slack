@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClientException
