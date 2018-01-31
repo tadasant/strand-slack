@@ -51,5 +51,12 @@ class TestInitiatePostTopicDialog(TestSlackFunction):
         assert HTTPStatus.NO_CONTENT == response.status_code
         outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count == 1)
         assert outcome, 'SlackClient api_call was never called'
-        assert slack_client_class.api_call.call_args[1]['method'] == 'dialog.open'
-        assert slack_client_class.api_call.call_args[1]['trigger_id'] == self.fake_slash_command_request.trigger_id
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {
+                    'method': 'dialog.open',
+                    'trigger_id': self.fake_slash_command_request.trigger_id
+                }
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )

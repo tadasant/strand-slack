@@ -19,3 +19,12 @@ class TestSlackFunction(TestFunction):
                                                                         installer=SlackUser(id='doesnt matter'),
                                                                         bot_access_token='doesnt matter'))
         )
+
+    def assert_values_in_call_args_list(self, params_to_expecteds, call_args_list):
+        params_to_actuals = [x[1] for x in call_args_list]
+        remaining_params_to_expecteds = params_to_expecteds.copy()
+        for i, expected in enumerate(params_to_expecteds):
+            for actual in params_to_actuals:
+                if all(item in actual.items() for item in expected.items()):
+                    del remaining_params_to_expecteds[i]
+        assert len(remaining_params_to_expecteds) == 0, f'Expected {remaining_params_to_expecteds} to be called'
