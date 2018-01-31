@@ -12,3 +12,11 @@ def discussion_initiation_message(original_post_slack_user_id, title, descriptio
 
         Do not post sensitive information! A transcript of this discussion will be available on www.codeclippy.com.
     ''')
+
+
+def discussion_initiation_dm(slack_channel_id):
+    return dedent(f'''
+        Your discussion has been started at <#{slack_channel_id}>. Check it out!
+
+        Please `/codeclippy close` it (invoke the command inside the channel) when the discussion is over.
+    ''')
