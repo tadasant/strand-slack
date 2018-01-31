@@ -6,6 +6,8 @@ from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
 
 
+# TODO move deserialization to this class instead of in Commands
+
 class SlackClientWrapper:
     """Manages all outgoing interaction with Slack APIs"""
 
@@ -65,20 +67,24 @@ class SlackClientWrapper:
     def send_message(self, slack_team_id, slack_channel_id, text):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.postMessage',
-                                              channel=slack_channel_id,
-                                              text=text)
+                                              channel=slack_channel_id, text=text)
         self._validate_response_ok(response, 'invite_user_to_channel', slack_team_id, slack_channel_id, text)
 
     def get_last_channel_message(self, slack_team_id, slack_channel_id):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
-                                              channel=slack_channel_id,
-                                              count=1)
+                                              channel=slack_channel_id, count=1)
         self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
         messages = response['messages']
         if len(messages) != 1:
             self._raise_wrapper_exception(response, 'no messages in discuss', slack_team_id, slack_channel_id)
         return messages[0]
+
+    def update_message(self, slack_team_id, slack_channel_id, new_text, message_ts):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='chat.update', channel=slack_channel_id,
+                                              text=new_text, ts=message_ts)
+        self._validate_response_ok(response, 'update_message', slack_team_id, slack_channel_id)
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
         repo = slack_agent_repository
