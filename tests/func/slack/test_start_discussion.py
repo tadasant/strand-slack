@@ -77,7 +77,6 @@ class TestStartDiscussion(TestSlackFunction):
 
         def wait_condition():
             return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 5
-
         outcome = wait_until(condition=wait_condition)
         assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 5+'
 
@@ -94,13 +93,13 @@ class TestStartDiscussion(TestSlackFunction):
                     'method': 'channels.invite'
                 },
                 {
-                    'method': 'chat.postMessage'
+                    'method': 'chat.postMessage'  # initiate discussion
                 },
                 {
                     'method': 'im.open'
                 },
                 {
-                    'method': 'chat.postMessage'
+                    'method': 'chat.postMessage'  # DM user discussion info
                 },
             ],
             call_args_list=slack_client_class.api_call.call_args_list
@@ -119,13 +118,40 @@ class TestStartDiscussion(TestSlackFunction):
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
+
+        def wait_condition():
+            return portal_client.mutate.call_count == 3 and slack_client_class.api_call.call_count >= 5
+        outcome = wait_until(condition=wait_condition)
+        assert outcome, 'Expected portal_client to have 3 calls, and slack_client to have 6+'
+
         assert HTTPStatus.OK == response.status_code
-        outcome = wait_until(condition=lambda: portal_client.mutate.call_count >= 2)
-        assert outcome, 'PortalClient mutate was not called twice'
-        assert slack_client_class.api_call.call_args_list[0][1]['method'] == 'users.info'
-        assert slack_client_class.api_call.call_args_list[0][1][
-                   'user'] == self.fake_interactive_component_request.user.id
-        # TODO TODO make this mirror the above
+        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'createUserAndTopicFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
+        assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[2][1]['operation_definition']
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {
+                    'method': 'users.info',
+                    'user': self.fake_interactive_component_request.user.id
+                },
+                {
+                    'method': 'channels.create'
+                },
+                {
+                    'method': 'channels.invite'
+                },
+                {
+                    'method': 'chat.postMessage'  # initiate discussion
+                },
+                {
+                    'method': 'im.open'
+                },
+                {
+                    'method': 'chat.postMessage'  # DM user discussion info
+                },
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )
 
     def _queue_portal_topic_creation(self, portal_client, topic_id):
         portal_client.set_next_response({
@@ -169,6 +195,7 @@ class TestStartDiscussion(TestSlackFunction):
                             {'name': self.fake_tags[1].lower()}
                         ],
                     },
+                    # TODO missing user
                 }
             }
         })
