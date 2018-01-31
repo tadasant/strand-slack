@@ -1,8 +1,11 @@
 from src.command.Command import Command
-from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm
+from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm, \
+    discuss_introduction_repost, topic_queue_message
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
+from src.domain.models.slack.Message import MessageSchema
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class StartDiscussionCommand(Command):
@@ -25,11 +28,13 @@ class StartDiscussionCommand(Command):
             self.slack_client_wrapper.send_message(slack_team_id=self.slack_team_id,
                                                    slack_channel_id=slack_channel.id,
                                                    text=discussion_initiation_message(
-                                                       original_post_slack_user_id=self.slack_user_id,
+                                                       original_poster_slack_user_id=self.slack_user_id,
                                                        title=self.submission.title,
                                                        description=self.submission.description,
                                                        tags=self.submission.tags
                                                    ))
+            self._add_topic_to_discuss_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
+                                               discussion_channel_id=slack_channel.id)
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
@@ -69,3 +74,21 @@ class StartDiscussionCommand(Command):
         slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id,
                                                                       channel_name=channel_name)
         return ChannelSchema().load(slack_channel_info).data
+
+    def _add_topic_to_discuss_channel(self, topic, original_poster_slack_user_id, discussion_channel_id):
+        """Note that discussion_channel_id is the discussion's channel, discuss_channel_id is #discuss"""
+        discuss_channel_id = slack_agent_repository.get_discuss_channel_id(slack_team_id=self.slack_team_id)
+        intro_message_info = self.slack_client_wrapper.get_last_channel_message(slack_team_id=self.slack_team_id,
+                                                                                slack_channel_id=discuss_channel_id)
+        intro_message = MessageSchema().load(intro_message_info).data
+        new_topic_message = topic_queue_message(discussion_channel_id=discussion_channel_id,
+                                                original_poster_slack_user_id=original_poster_slack_user_id,
+                                                title=topic.title, description=topic.description,
+                                                tags=topic.tags)
+        self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id, slack_channel_id=discuss_channel_id,
+                                                 new_text=new_topic_message, message_ts=intro_message.ts)
+        self.slack_client_wrapper.send_message(
+            slack_team_id=self.slack_team_id,
+            slack_channel_id=discuss_channel_id,
+            text=discuss_introduction_repost()
+        )

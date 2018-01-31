@@ -13,4 +13,6 @@ class TestSlackClient:
             return {'ok': True, 'channel': {'id': 'someid', 'name': 'somename'}}
         elif method == 'channels.invite':
             return {'ok': True, 'channel': {'id': 'someid', 'name': 'somename'}}
+        elif method == 'channels.history':
+            return {'ok': True, 'messages': [{'text': 'some', 'ts': '4328.1292'}]}
         return {'ok': True}

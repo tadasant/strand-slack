@@ -15,6 +15,11 @@ class SlackAgentRepository:
             raise RepositoryException(object_name='SlackAgent', message=f'get: No slack agent for team {slack_team_id}')
         return self._slack_agents_by_team_id[slack_team_id].slack_application_installation.bot_access_token
 
+    def get_discuss_channel_id(self, slack_team_id):
+        if slack_team_id not in self._slack_agents_by_team_id:
+            raise RepositoryException(object_name='SlackAgent', message=f'get: No slack agent for team {slack_team_id}')
+        return self._slack_agents_by_team_id[slack_team_id].discuss_channel_id
+
     def set_slack_agents(self, slack_agents):
         self._slack_agents_by_team_id = {x.slack_team.id: x for x in slack_agents}
 

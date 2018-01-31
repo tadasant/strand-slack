@@ -14,6 +14,7 @@ class MessageFactory(factory.Factory):
         model = Message
 
     text = factory.Faker('paragraph')
+    ts = factory.Faker('random_int')
 
 
 class OptionFactory(factory.Factory):
