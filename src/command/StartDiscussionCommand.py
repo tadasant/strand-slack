@@ -1,8 +1,10 @@
+from src import slack_agent_repository
 from src.command.Command import Command
 from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
+from src.domain.models.slack.Message import MessageSchema
 
 
 class StartDiscussionCommand(Command):
@@ -72,6 +74,10 @@ class StartDiscussionCommand(Command):
         return ChannelSchema().load(slack_channel_info).data
 
     def _add_topic_to_discuss_channel(self, topic, original_poster_id):
+        discuss_channel_id = slack_agent_repository.get_discuss_channel_id(slack_team_id=self.slack_team_id)
+        intro_message_info = self.slack_client_wrapper.get_last_channel_message(slack_team_id=self.slack_team_id,
+                                                                                slack_channel_id=discuss_channel_id)
+        intro_message = MessageSchema().load(intro_message_info).data
         # edit last message in channel to be the new question
         # re-add the intro message w/ message that the above discussion is new
         pass

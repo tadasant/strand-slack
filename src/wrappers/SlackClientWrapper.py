@@ -75,6 +75,10 @@ class SlackClientWrapper:
                                               channel=slack_channel_id,
                                               count=1)
         self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
+        messages = response['messages']
+        if len(messages) != 1:
+            self._raise_wrapper_exception(response, 'no messages in discuss', slack_team_id, slack_channel_id)
+        return messages[0]
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
         repo = slack_agent_repository
@@ -86,6 +90,9 @@ class SlackClientWrapper:
         """All variables in *args are dumped to logger output"""
         is_negative = not response['ok'] if 'ok' in response else response.status_code != 200
         if is_negative:
-            message = f'Errors when calling SlackClient. \n\t{response}\n\t{args}'
-            self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message)
+            self._raise_wrapper_exception(response=response, *args)
+
+    def _raise_wrapper_exception(self, response, *args):
+        message = f'Errors when calling SlackClient. \n\t{response}\n\t{args}'
+        self.logger.error(message)
+        raise WrapperException(wrapper_name='SlackClient', message=message)
