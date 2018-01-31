@@ -6,7 +6,6 @@ from src.clients.PortalClient import PortalClientException
 from src.common.logging import get_logger
 # TODO [CCS-26] Add authentication
 from src.domain.models.exceptions.WrapperException import WrapperException
-from src.domain.models.portal.Discussion import DiscussionSchema
 from src.domain.models.portal.SlackAgent import SlackAgentSchema
 from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
 from src.domain.models.portal.Topic import TopicSchema
@@ -163,6 +162,3 @@ class PortalClientWrapper:
             message = f'Errors when calling PortalClient. Body: {response_body}'
             self.logger.error(message)
             raise WrapperException(wrapper_name='PortalClient', message=message)
-        discussion = response_body['data']['createDiscussionFromSlack']['discussion']
-        result = DiscussionSchema().load(dict_keys_camel_case_to_underscores(discussion)).data
-        return result

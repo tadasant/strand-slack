@@ -11,7 +11,7 @@ from src.config import config
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, ActionFactory, MessageFactory
 from tests.utils import wait_until
 
-
+# TODO clean this up
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestUpdateDiscussionChannel:
     # For assertions
