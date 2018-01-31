@@ -12,7 +12,8 @@ class UpdateDiscussChannelCommand(Command):
         self.response_url = response_url
 
     def execute(self):
-        self.logger.info(f'Executing UpdateDiscussChannel for {self.slack_team_id} with channel {self.discuss_channel_id}')
+        log_message = f'Executing UpdateDiscussChannel for {self.slack_team_id} with channel {self.discuss_channel_id}'
+        self.logger.info(log_message)
         response_payload = {
             'text': INITIAL_ONBOARDING_DM.text,
             'attachments': [UPDATE_DISCUSS_CHANNEL_DM.attachment_generator(discuss_channel_id=self.discuss_channel_id)]

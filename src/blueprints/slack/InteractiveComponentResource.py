@@ -21,10 +21,10 @@ class InteractiveComponentResource(SlackResource):
         r = interactive_component_request
         if r.is_discuss_channel_selection:
             command = UpdateDiscussChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                               portal_client_wrapper=current_app.portal_client_wrapper,
-                                               slack_team_id=r.team.id,
-                                               discuss_channel_id=r.selected_discuss_channel_id,
-                                               response_url=r.response_url)
+                                                  portal_client_wrapper=current_app.portal_client_wrapper,
+                                                  slack_team_id=r.team.id,
+                                                  discuss_channel_id=r.selected_discuss_channel_id,
+                                                  response_url=r.response_url)
             Thread(target=command.execute, daemon=True).start()
             return '', HTTPStatus.NO_CONTENT
         elif r.is_post_topic_dialog_submission:
