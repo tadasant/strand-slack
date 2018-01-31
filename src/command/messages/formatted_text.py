@@ -52,4 +52,3 @@ def discuss_introduction_repost():
 
         `/codeclippy post` to start another one!
     ''')
-
