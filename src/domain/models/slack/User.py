@@ -11,3 +11,6 @@ class UserSchema(Schema):
     @post_load
     def make_user(self, data):
         return User(**data)
+
+    class Meta:
+        strict = True

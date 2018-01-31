@@ -9,4 +9,6 @@ class TestSlackClient:
             return {'ok': True, 'ts': 0}
         elif method == 'users.info':
             return {'ok': True, 'user': {'id': 'someid', 'profile': {'image_72': 'url.com'}}}
+        elif method == 'channels.create':
+            return {'ok': True, 'channel': {'id': 'someid', 'name': 'somename'}}
         return {'ok': True}

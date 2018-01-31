@@ -11,3 +11,6 @@ class MessageSchema(Schema):
     @post_load
     def make_message(self, data):
         return Message(**data)
+
+    class Meta:
+        strict = True

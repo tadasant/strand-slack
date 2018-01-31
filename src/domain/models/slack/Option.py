@@ -11,3 +11,6 @@ class OptionSchema(Schema):
     @post_load
     def make_option(self, data):
         return Option(**data)
+
+    class Meta:
+        strict = True
