@@ -68,3 +68,23 @@ class SlackClientWrapper:
             self.logger.error(message)
             raise WrapperException(wrapper_name='SlackClient', message=message)
         return response['channel']
+
+    def invite_user_to_channel(self, slack_team_id, slack_channel_id, slack_user_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.invite', channel=slack_channel_id,
+                                              user=slack_user_id)
+        if 'channel' not in response:
+            message = f'Failed to channels.invite {slack_user_id} on team {slack_team_id}. Response: {response}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='SlackClient', message=message)
+
+    def send_message(self, slack_team_id, slack_channel_id, text):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='chat.postMessage',
+                                              channel=slack_channel_id,
+                                              text=text)
+        if not response['ok']:
+            message = f'Failed to chat.postMessage {text} on channel {slack_channel_id}' \
+                      f' for team {slack_team_id}. Response: {response}'
+            self.logger.error(message)
+            raise WrapperException(wrapper_name='SlackClient', message=message)
