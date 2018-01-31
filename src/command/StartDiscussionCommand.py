@@ -30,6 +30,7 @@ class StartDiscussionCommand(Command):
                                                        description=self.submission.description,
                                                        tags=self.submission.tags
                                                    ))
+            self._add_topic_to_discuss_channel(topic=topic, original_poster_id=self.slack_user_id)
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
@@ -69,3 +70,8 @@ class StartDiscussionCommand(Command):
         slack_channel_info = self.slack_client_wrapper.create_channel(slack_team_id=self.slack_team_id,
                                                                       channel_name=channel_name)
         return ChannelSchema().load(slack_channel_info).data
+
+    def _add_topic_to_discuss_channel(self, topic, original_poster_id):
+        # edit last message in channel to be the new question
+        # re-add the intro message w/ message that the above discussion is new
+        pass
