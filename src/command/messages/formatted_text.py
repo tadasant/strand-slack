@@ -20,3 +20,11 @@ def discussion_initiation_dm(slack_channel_id):
 
         Please `/codeclippy close` it (invoke the command inside the channel) when the discussion is over.
     ''')
+
+
+def discuss_introduction():
+    return dedent(f'''
+        This channel is a live view of the topics of all discussions going on right now.
+
+        `/codeclippy post` to start another one!
+    ''')
