@@ -1,4 +1,5 @@
 from src.command.Command import Command
+from src.command.messages.formatted_text import discuss_introduction
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.messages.update_discuss_channel_dm import UPDATE_DISCUSS_CHANNEL_DM
 from src.domain.models.exceptions.WrapperException import WrapperException
@@ -22,6 +23,11 @@ class UpdateDiscussChannelCommand(Command):
             self.portal_client_wrapper.update_discuss_channel_and_activate_agent(
                 slack_team_id=self.slack_team_id,
                 discuss_channel_id=self.discuss_channel_id)
+            self.slack_client_wrapper.send_message(
+                slack_team_id=self.slack_team_id,
+                slack_channel_id=self.discuss_channel_id,
+                text=discuss_introduction()
+            )
         except WrapperException:
             response_payload['attachments'] = [{'text': 'Something went wrong! Contact support@solutionloft.com'}]
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
