@@ -106,6 +106,7 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
 
         def wait_condition():
             return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 1
+
         outcome = wait_until(condition=wait_condition)
         assert outcome, 'Expected portal_client to have a calls and slack_client to have at least 1'
 

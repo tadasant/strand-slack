@@ -83,7 +83,7 @@ class SlackClientWrapper:
     def update_message(self, slack_team_id, slack_channel_id, new_text, message_ts):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.update', channel=slack_channel_id,
-                                              text=new_text, ts=message_ts)
+                                              text=new_text, ts=message_ts, as_user=True)  # bot is user in this case
         self._validate_response_ok(response, 'update_message', slack_team_id, slack_channel_id)
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
