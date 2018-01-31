@@ -14,6 +14,20 @@ def discussion_initiation_message(original_poster_slack_user_id, title, descript
     ''')
 
 
+def topic_queue_message(discussion_channel_id, original_poster_slack_user_id, title, description, tags):
+    return dedent(f'''
+        *Channel*: <#{discussion_channel_id}>'
+        *OP*: <@{original_poster_slack_user_id}>
+        *Title*: {title}
+        *Description*: {description}
+        *Tags*: {tags}
+
+        <@{original_poster_slack_user_id}>: please `/codeclippy close` this discussion when you are done
+
+        Do not post sensitive information! A transcript of this discussion will be available on www.codeclippy.com.
+    ''')
+
+
 def discussion_initiation_dm(slack_channel_id):
     return dedent(f'''
         Your discussion has been started at <#{slack_channel_id}>. Check it out!
