@@ -21,10 +21,15 @@ class TestSlackFunction(TestFunction):
         )
 
     def assert_values_in_call_args_list(self, params_to_expecteds, call_args_list):
+        """
+        Asserts that a subset of each item in params_to_expecteds exists in the call args list
+
+        :param params_to_expecteds: e.g. [{'paramname': 'expectedval', 'param2name': 'expected2val}]
+        """
         params_to_actuals = [x[1] for x in call_args_list]
-        remaining_params_to_expecteds = params_to_expecteds.copy()
-        for i, expected in enumerate(params_to_expecteds):
+        original_params_to_expecteds = params_to_expecteds.copy()
+        for i, expected in enumerate(original_params_to_expecteds):
             for actual in params_to_actuals:
                 if all(item in actual.items() for item in expected.items()):
-                    del remaining_params_to_expecteds[i]
-        assert len(remaining_params_to_expecteds) == 0, f'Expected {remaining_params_to_expecteds} to be called'
+                    params_to_expecteds[i] = None
+        assert len([x for x in params_to_expecteds if x is not None]) == 0, f'{params_to_expecteds} not called'
