@@ -195,7 +195,6 @@ class TestStartDiscussion(TestSlackFunction):
                             {'name': self.fake_tags[1].lower()}
                         ],
                     },
-                    # TODO missing user
                 }
             }
         })
