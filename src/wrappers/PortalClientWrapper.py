@@ -44,12 +44,8 @@ class PortalClientWrapper:
             }
         '''
         response_body = self.standard_retrier.call(self.portal_client.query, operation_definition=operation_definition)
-        if 'errors' in response_body:
-            message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message)
-        slack_agent_dicts = response_body['data']['slackAgents']
-        return [SlackAgentSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in slack_agent_dicts]
+        return self._deserialize_response_body(response_body=response_body, ObjectSchema=SlackAgentSchema,
+                                               path_to_object=['data', 'slackAgents'], many=True)
 
     def update_help_channel_and_activate_agent(self, slack_team_id, help_channel_id):
         operation_definition = f'''
@@ -64,12 +60,10 @@ class PortalClientWrapper:
             }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
-        if 'errors' in response_body:
-            message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message)
-        slack_agent = response_body['data']['updateSlackAgentHelpChannelAndActivate']['slackAgent']
-        result = SlackAgentSchema().load(dict_keys_camel_case_to_underscores(slack_agent)).data
+        result = self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=SlackAgentSchema,
+            path_to_object=['data', 'updateSlackAgentHelpChannelAndActivate', 'slackAgent']
+        )
         assert result.status == SlackAgentStatus.ACTIVE, 'Call to activate Slack Agent oddly did not transition'
         return result
 
@@ -95,13 +89,10 @@ class PortalClientWrapper:
           }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
-        if 'errors' in response_body:
-            message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])
-        topic = response_body['data']['createTopicFromSlack']['topic']
-        result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
-        return result
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=TopicSchema,
+            path_to_object=['data', 'createTopicFromSlack', 'topic']
+        )
 
     def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
         operation_definition = f'''
@@ -134,22 +125,18 @@ class PortalClientWrapper:
             }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
-        if 'errors' in response_body:
-            message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message)
-        topic = response_body['data']['createUserAndTopicFromSlack']['topic']
-        result = TopicSchema().load(dict_keys_camel_case_to_underscores(topic)).data
-        return result
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=TopicSchema,
+            path_to_object=['data', 'createUserAndTopicFromSlack', 'topic']
+        )
 
     def create_discussion(self, topic_id, slack_channel, slack_team_id):
         operation_definition = f'''
         {{
-            createDiscussionFromSlack(input: {{discussion: {{timeStart: "{datetime.utcnow()}",
-                                                       topicId: {topic_id},
-                                                       id: "{slack_channel.id}",
-                                                       name: "{slack_channel.name}",
-                                                       slackTeamId: "{slack_team_id}"}}) {{
+            createDiscussionFromSlack(input: {{topicId: {topic_id},
+                                               id: "{slack_channel.id}",
+                                               name: "{slack_channel.name}",
+                                               slackTeamId: "{slack_team_id}"}}) {{
               discussion {{
                 id
                 name
@@ -158,6 +145,18 @@ class PortalClientWrapper:
           }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
+    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
+        self._validate_no_response_body_errors(response_body=response_body)
+        result_json = response_body
+        for key in path_to_object:
+            result_json = result_json[key]
+        if many:
+            return [ObjectSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in result_json]
+        return ObjectSchema().load(dict_keys_camel_case_to_underscores(result_json)).data
+
+    def _validate_no_response_body_errors(self, response_body):
         if 'errors' in response_body:
             message = f'Errors when calling PortalClient. Body: {response_body}'
             self.logger.error(message)
