@@ -21,7 +21,7 @@ class TestSyncingSlackAgents:
     target_endpoint = 'portal.slackagentresource'
     default_payload = {
         'status': fake_slack_agent.status,
-        'help_channel_id': fake_slack_agent.help_channel_id,
+        'discuss_channel_id': fake_slack_agent.discuss_channel_id,
         'slack_team': {
             'id': fake_slack_team_id
         },

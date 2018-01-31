@@ -65,8 +65,8 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
                     "actions": [
                         {
                             "id": "1",
-                            "name": "help_channel_list",
-                            "text": "What channel should I use for showing help requests?",
+                            "name": "discuss_channel_list",
+                            "text": "What channel should I use for showing discussion topic requests?",
                             "type": "select",
                             "data_source": "channels"
                         }
@@ -106,6 +106,6 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
         assert outcome, 'PortalClient mutate was never called'
 
         assert HTTPStatus.NO_CONTENT == response.status_code
-        assert 'helpChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
+        assert 'discussChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
         # TODO if this test hangs a little, requests.post is called (and ignored) in a thread. Should clean up w/ mock.
         # TODO this is what is causing an occasional WARNING in pytest

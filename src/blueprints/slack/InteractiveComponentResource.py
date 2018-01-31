@@ -6,7 +6,7 @@ from flask import current_app, request
 
 from src.blueprints.slack.SlackResource import SlackResource
 from src.command.StartDiscussionCommand import StartDiscussionCommand
-from src.command.UpdateHelpChannelCommand import UpdateHelpChannelCommand
+from src.command.UpdateDiscussChannelCommand import UpdateDiscussChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequestSchema
 
@@ -19,11 +19,11 @@ class InteractiveComponentResource(SlackResource):
         self._authenticate(payload)
         interactive_component_request = InteractiveComponentRequestSchema().load(payload).data
         r = interactive_component_request
-        if r.is_help_channel_selection:
-            command = UpdateHelpChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
+        if r.is_discuss_channel_selection:
+            command = UpdateDiscussChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                portal_client_wrapper=current_app.portal_client_wrapper,
                                                slack_team_id=r.team.id,
-                                               help_channel_id=r.selected_help_channel_id,
+                                               discuss_channel_id=r.selected_discuss_channel_id,
                                                response_url=r.response_url)
             Thread(target=command.execute, daemon=True).start()
             return '', HTTPStatus.NO_CONTENT

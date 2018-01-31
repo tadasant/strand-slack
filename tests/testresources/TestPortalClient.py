@@ -41,8 +41,8 @@ class TestPortalClient:
                 if result:
                     # Allow us to set_next_response as None to skip a call
                     return result
-            if 'updateSlackAgentHelpChannelAndActivate' in operation_definition:
-                return {'data': {'updateSlackAgentHelpChannelAndActivate': {
+            if 'updateSlackAgentDiscussChannelAndActivate' in operation_definition:
+                return {'data': {'updateSlackAgentDiscussChannelAndActivate': {
                     'slackAgent': {
                         'status': 'ACTIVE',
                         'slackTeam': {

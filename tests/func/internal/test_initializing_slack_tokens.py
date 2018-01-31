@@ -27,7 +27,7 @@ class TestInitializingSlackApplicationInstallations:
             'data': {
                 'slackAgents': [{
                     'status': self.fake_slack_agent.status,
-                    'helpChannelId': self.fake_slack_agent.help_channel_id,
+                    'discussChannelId': self.fake_slack_agent.discuss_channel_id,
                     'slackTeam': {
                         'id': self.fake_slack_team_id
                     },

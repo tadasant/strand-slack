@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from src.domain.models.portal.User import TagSchema
+from src.domain.models.portal.Tag import TagSchema
 
 
 class Topic:
