@@ -1,14 +1,12 @@
-import pytest
-
 from src.domain.models.portal.SlackAgent import SlackAgent
 from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
 from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallation
 from src.domain.models.portal.SlackTeam import SlackTeam
 from src.domain.models.portal.SlackUser import SlackUser
+from tests.func.TestFunction import TestFunction
 
 
-@pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestSlackFunction:
+class TestSlackFunction(TestFunction):
     default_headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
     }
