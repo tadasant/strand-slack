@@ -1,9 +1,9 @@
 import requests
-from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type, retry_if_result
+from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type
 
-from src import slack_agent_repository
 from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 # TODO move deserialization to this class instead of in Commands

@@ -2,8 +2,8 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src import slack_agent_repository as slack_agent_repository_global
 from src.config import config
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository as slack_agent_repository_global
 from tests.factories.portalfactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
 from tests.testresources.TestPortalClient import TestPortalClient

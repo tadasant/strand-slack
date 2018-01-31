@@ -76,9 +76,10 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 5
+            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 8
+
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 5+'
+        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 8+'
 
         assert HTTPStatus.OK == response.status_code
         assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
@@ -101,6 +102,15 @@ class TestStartDiscussion(TestSlackFunction):
                 {
                     'method': 'chat.postMessage'  # DM user discussion info
                 },
+                {
+                    'method': 'channels.history'  # Grabbing last post in #discuss
+                },
+                {
+                    'method': 'chat.update'  # Updating last post with topic info
+                },
+                {
+                    'method': 'chat.postMessage'  # Re-posting last post
+                },
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
@@ -120,9 +130,10 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 3 and slack_client_class.api_call.call_count >= 5
+            return portal_client.mutate.call_count == 3 and slack_client_class.api_call.call_count >= 9
+
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 3 calls, and slack_client to have 6+'
+        assert outcome, 'Expected portal_client to have 3 calls, and slack_client to have 9+'
 
         assert HTTPStatus.OK == response.status_code
         assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
@@ -148,6 +159,15 @@ class TestStartDiscussion(TestSlackFunction):
                 },
                 {
                     'method': 'chat.postMessage'  # DM user discussion info
+                },
+                {
+                    'method': 'channels.history'  # Grabbing last post in #discuss
+                },
+                {
+                    'method': 'chat.update'  # Updating last post with topic info
+                },
+                {
+                    'method': 'chat.postMessage'  # Re-posting last post
                 },
             ],
             call_args_list=slack_client_class.api_call.call_args_list

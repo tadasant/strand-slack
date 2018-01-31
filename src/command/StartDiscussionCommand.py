@@ -1,4 +1,3 @@
-from src import slack_agent_repository
 from src.command.Command import Command
 from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm, \
     discuss_introduction_repost
@@ -6,6 +5,7 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
 from src.domain.models.slack.Message import MessageSchema
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class StartDiscussionCommand(Command):
