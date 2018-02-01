@@ -28,6 +28,7 @@ class UpdateDiscussChannelCommand(Command):
                 slack_channel_id=self.discuss_channel_id,
                 text=discuss_introduction()
             )
+            # TODO join the configured channel as the bot
         except WrapperException:
             response_payload['attachments'] = [{'text': 'Something went wrong! Contact support@solutionloft.com'}]
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)

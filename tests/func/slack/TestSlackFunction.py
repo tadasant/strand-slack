@@ -17,7 +17,8 @@ class TestSlackFunction(TestFunction):
             slack_team=SlackTeam(id=slack_team_id),
             slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
                                                                         installer=SlackUser(id='doesnt matter'),
-                                                                        bot_access_token='doesnt matter'))
+                                                                        bot_access_token='doesnt matter',
+                                                                        bot_user_id='doesnt matter'))
         )
 
     def assert_values_in_call_args_list(self, params_to_expecteds, call_args_list):

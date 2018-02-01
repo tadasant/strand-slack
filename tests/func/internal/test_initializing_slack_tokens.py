@@ -8,6 +8,7 @@ class TestInitializingSlackApplicationInstallations:
     fake_slack_team_id = fake_slack_agent.slack_team.id
     fake_slack_access_token = fake_slack_agent.slack_application_installation.access_token
     fake_slack_bot_access_token = fake_slack_agent.slack_application_installation.bot_access_token
+    fake_slack_bot_user_id = fake_slack_agent.slack_application_installation.bot_user_id
 
     def test_installations_initialized_on_startup(self, mocker, portal_client):
         mocker.spy(portal_client, 'query')
@@ -21,6 +22,8 @@ class TestInitializingSlackApplicationInstallations:
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_access_token
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
+        assert slack_agent_repository.get_slack_bot_user_id(
+            slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_user_id
 
     def _queue_response_from_portal(self, portal_client):
         portal_client.set_next_response({
@@ -36,7 +39,8 @@ class TestInitializingSlackApplicationInstallations:
                         'installer': {
                             'id': self.fake_slack_agent.slack_application_installation.installer.id,
                         },
-                        'botAccessToken': self.fake_slack_bot_access_token
+                        'botAccessToken': self.fake_slack_bot_access_token,
+                        'botUserId': self.fake_slack_bot_user_id,
                     },
                 }]
             }

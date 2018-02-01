@@ -4,16 +4,18 @@ from src.domain.models.portal.SlackUser import SlackUserSchema
 
 
 class SlackApplicationInstallation:
-    def __init__(self, access_token, bot_access_token, installer):
+    def __init__(self, access_token, bot_access_token, installer, bot_user_id):
         self.access_token = access_token
         self.installer = installer
         self.bot_access_token = bot_access_token
+        self.bot_user_id = bot_user_id
 
 
 class SlackApplicationInstallationSchema(Schema):
     access_token = fields.String(required=True)
     installer = fields.Nested(SlackUserSchema, required=True)
     bot_access_token = fields.String(required=True)
+    bot_user_id = fields.String(required=True)
 
     @post_load
     def make_slack_application_installation(self, data):

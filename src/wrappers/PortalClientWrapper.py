@@ -37,6 +37,7 @@ class PortalClientWrapper:
                             id
                         }
                         botAccessToken
+                        botUserId
                     }
                 }
             }

@@ -28,6 +28,7 @@ class SlackApplicationInstallationFactory(factory.Factory):
     bot_access_token = factory.Faker('md5')
     access_token = factory.Faker('md5')
     installer = factory.SubFactory(SlackUserFactory)
+    bot_user_id = factory.Faker('bban')
 
 
 class SlackAgentFactory(factory.Factory):

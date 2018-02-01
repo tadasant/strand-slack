@@ -30,7 +30,8 @@ class TestSyncingSlackAgents:
             'installer': {
                 'id': fake_installer_id,
             },
-            'bot_access_token': fake_slack_bot_access_token
+            'bot_access_token': fake_slack_bot_access_token,
+            'bot_user_id': fake_slack_agent.slack_application_installation.bot_user_id
         },
     }
     default_headers = {
