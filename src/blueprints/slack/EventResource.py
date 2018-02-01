@@ -1,5 +1,3 @@
-import json
-
 from flask import request
 
 from src.blueprints.slack.SlackResource import SlackResource
