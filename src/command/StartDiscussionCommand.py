@@ -22,10 +22,18 @@ class StartDiscussionCommand(Command):
             slack_channel = self._create_channel(topic=topic)
             self.portal_client_wrapper.create_discussion(topic_id=topic.id, slack_channel=slack_channel,
                                                          slack_team_id=self.slack_team_id)
-            # TODO Invite bot user to channel so we get messages
+            slack_bot_user_id = slack_agent_repository.get_slack_bot_user_id(slack_team_id=self.slack_team_id)
+
+            # invite bot
+            self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
+                                                             slack_channel_id=slack_channel.id,
+                                                             slack_user_id=slack_bot_user_id)
+
+            # invite original poster
             self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
                                                              slack_channel_id=slack_channel.id,
                                                              slack_user_id=self.slack_user_id)
+
             self.slack_client_wrapper.send_message(slack_team_id=self.slack_team_id,
                                                    slack_channel_id=slack_channel.id,
                                                    text=discussion_initiation_message(
