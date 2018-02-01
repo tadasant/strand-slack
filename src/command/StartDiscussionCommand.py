@@ -4,7 +4,7 @@ from src.command.messages.formatted_text import discussion_initiation_message, d
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
-from src.domain.models.slack.Message import MessageSchema
+from src.domain.models.slack.requests.elements.Message import MessageSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 

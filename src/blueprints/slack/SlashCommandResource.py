@@ -6,7 +6,7 @@ from flask import current_app, request
 from src.blueprints.slack.SlackResource import SlackResource
 from src.command.SendUserPostTopicDialogCommand import SendUserPostTopicDialogCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.domain.models.slack.SlashCommandRequest import SlashCommandRequestSchema
+from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequestSchema
 
 
 class SlashCommandResource(SlackResource):

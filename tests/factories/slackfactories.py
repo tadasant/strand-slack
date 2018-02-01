@@ -1,11 +1,11 @@
 import factory
 
-from src.domain.models.slack.Action import Action
-from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequest
-from src.domain.models.slack.Message import Message
-from src.domain.models.slack.Option import Option
-from src.domain.models.slack.SlashCommandRequest import SlashCommandRequest
-from src.domain.models.slack.Submission import Submission
+from src.domain.models.slack.requests.elements.Action import Action
+from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
+from src.domain.models.slack.requests.elements.Message import Message
+from src.domain.models.slack.requests.elements.Option import Option
+from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
+from src.domain.models.slack.requests.elements.Submission import Submission
 from src.domain.models.slack.Team import Team
 
 

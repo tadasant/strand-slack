@@ -2,9 +2,9 @@ from marshmallow import Schema, fields, post_load
 
 from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.messages.post_topic_dialog import POST_TOPIC_DIALOG
-from src.domain.models.slack.Action import ActionSchema
-from src.domain.models.slack.Message import MessageSchema
-from src.domain.models.slack.Submission import SubmissionSchema
+from src.domain.models.slack.requests.elements.Action import ActionSchema
+from src.domain.models.slack.requests.elements.Message import MessageSchema
+from src.domain.models.slack.requests.elements.Submission import SubmissionSchema
 from src.domain.models.slack.Team import TeamSchema
 from src.domain.models.slack.User import UserSchema
 
