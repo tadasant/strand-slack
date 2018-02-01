@@ -16,6 +16,15 @@ class StartDiscussionCommand(Command):
         self.slack_user_id = slack_user_id
 
     def execute(self):
+        """
+            Start discussion by:
+                1) Persist Discussion
+                2) Create Channel for Discussion
+                3) Invite bot & OP to Channel
+                4) Post the OP's topic
+                5) Update #discuss with the topic
+                6) DM the OP with details
+        """
         self.logger.info(f'Executing StartDiscussionCommand for {self.slack_team_id}')
         try:
             topic = self._create_topic()

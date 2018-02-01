@@ -2,6 +2,8 @@ from src.common.logging import get_logger
 
 
 class Command:
+    """Parent for all command procedures"""
+
     def __init__(self, slack_team_id, slack_client_wrapper=None, portal_client_wrapper=None):
         self.slack_team_id = slack_team_id
         self.slack_client_wrapper = slack_client_wrapper

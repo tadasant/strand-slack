@@ -1,4 +1,6 @@
 class RepositoryException(Exception):
+    """Raised by in-memory repository when unexpected operations happen"""
+
     def __init__(self, object_name, message):
         super().__init__()
 

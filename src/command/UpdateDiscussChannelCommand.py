@@ -14,6 +14,7 @@ class UpdateDiscussChannelCommand(Command):
         self.response_url = response_url
 
     def execute(self):
+        """Set the #discuss channel setting and respond to the installer with success/failure"""
         log_message = f'Executing UpdateDiscussChannel for {self.slack_team_id} with channel {self.discuss_channel_id}'
         self.logger.info(log_message)
         response_payload = {

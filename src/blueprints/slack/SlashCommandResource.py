@@ -11,6 +11,7 @@ from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandReq
 
 class SlashCommandResource(SlackResource):
     def post(self):
+        """Receive a slash command for which we are registered"""
         self.logger.info(f'Processing SlashCommand request: {request}')
         payload = request.form
         self._authenticate(payload)

@@ -13,7 +13,7 @@ from src.domain.models.slack.requests.InteractiveComponentRequest import Interac
 
 class InteractiveComponentResource(SlackResource):
     def post(self):
-        """Receiving an interactive component payload"""
+        """Receive an interactive component (e.g. menu, dialog box) payload"""
         self.logger.info(f'Processing InteractiveComponent request: {request}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)

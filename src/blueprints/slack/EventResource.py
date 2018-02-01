@@ -9,7 +9,7 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 class EventResource(SlackResource):
     def post(self):
-        """Receiving an event from Slack"""
+        """Receive events for which we are registered from Slack (Events API)"""
         self.logger.info(f'Processing Event request: {request}')
         payload = request.get_json()
         self._authenticate(payload)

@@ -11,6 +11,8 @@ from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
 class PortalClientWrapper:
+    """Manage all outgoing interaction with the Portal"""
+
     def __init__(self, portal_client):
         self.portal_client = portal_client
         self.logger = get_logger('PortalClientWrapper')
@@ -147,6 +149,7 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
+        """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)
         result_json = response_body
         for key in path_to_object:
@@ -156,6 +159,7 @@ class PortalClientWrapper:
         return ObjectSchema().load(dict_keys_camel_case_to_underscores(result_json)).data
 
     def _validate_no_response_body_errors(self, response_body):
+        """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
             message = f'Errors when calling PortalClient. Body: {response_body}'
             self.logger.error(message)

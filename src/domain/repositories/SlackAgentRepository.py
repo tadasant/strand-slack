@@ -2,6 +2,8 @@ from src.domain.models.exceptions.RepositoryException import RepositoryException
 
 
 class SlackAgentRepository:
+    """Effectively an in-memory DB for storing SlackAgents"""
+
     def __init__(self):
         self._slack_agents_by_team_id = {}
 
