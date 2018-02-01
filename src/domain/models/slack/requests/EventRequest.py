@@ -4,14 +4,21 @@ from src.domain.models.slack.requests.elements.Event import EventSchema
 
 
 class EventRequest:
-    def __init__(self, team_id, event):
+    def __init__(self, type, challenge=None, team_id=None, event=None):
+        self.type = type
+        self.challenge = challenge
         self.team_id = team_id
         self.event = event
 
+    def is_verification_request(self):
+        return self.type == 'url_verification'
+
 
 class EventRequestSchema(Schema):
-    team_id = fields.String(required=True)
-    event = fields.Nested(EventSchema, required=True)
+    type = fields.String(required=True)
+    challenge = fields.String()
+    team_id = fields.String()
+    event = fields.Nested(EventSchema)
 
     @post_load
     def make_event_request(self, data):
