@@ -11,11 +11,11 @@ class EventResource(SlackResource):
     def post(self):
         """Receiving an event from Slack"""
         self.logger.info(f'Processing Event request: {request}')
-        payload = request.json
+        payload = request.get_json()
         self._authenticate(payload)
         event_request = EventRequestSchema().load(payload).data
         if event_request.is_verification_request:
-            return event_request.challenge, HTTPStatus.OK
+            return {'challenge': event_request.challenge}, HTTPStatus.OK
         elif event_request.event and event_request.event.is_message_channels_event:
             discuss_channel_id = slack_agent_repository.get_discuss_channel_id(slack_team_id=event_request.team_id)
             if event_request.event.item.channel == discuss_channel_id:
