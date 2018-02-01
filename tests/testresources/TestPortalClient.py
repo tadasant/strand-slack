@@ -53,7 +53,8 @@ class TestPortalClient:
                             'botAccessToken': 'unimportant',
                             'installer': {
                                 'id': 'unimportant'
-                            }
+                            },
+                            'botUserId': 'unimportant',
                         }
                     }
                 }}}

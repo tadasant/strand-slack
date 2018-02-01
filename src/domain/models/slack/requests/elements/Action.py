@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from marshmallow import Schema, fields, post_load
 
-from src.domain.models.slack.Option import OptionSchema
+from src.domain.models.slack.requests.elements.Option import OptionSchema
 
 Action = namedtuple(typename='Action', field_names='name selected_options')
 

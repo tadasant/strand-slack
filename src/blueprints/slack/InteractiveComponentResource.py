@@ -8,7 +8,7 @@ from src.blueprints.slack.SlackResource import SlackResource
 from src.command.StartDiscussionCommand import StartDiscussionCommand
 from src.command.UpdateDiscussChannelCommand import UpdateDiscussChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.domain.models.slack.InteractiveComponentRequest import InteractiveComponentRequestSchema
+from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequestSchema
 
 
 class InteractiveComponentResource(SlackResource):

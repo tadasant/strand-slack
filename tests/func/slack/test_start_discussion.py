@@ -88,7 +88,8 @@ class TestStartDiscussion(TestSlackFunction):
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'channels.create'},
-                {'method': 'channels.invite'},
+                {'method': 'channels.invite'},  # invite bot
+                {'method': 'channels.invite'},  # invite user
                 {'method': 'chat.postMessage'},  # initiate discussion
                 {'method': 'im.open'},
                 {'method': 'chat.postMessage'},  # DM user discussion info
@@ -130,7 +131,8 @@ class TestStartDiscussion(TestSlackFunction):
                     'user': self.fake_interactive_component_request.user.id
                 },
                 {'method': 'channels.create'},
-                {'method': 'channels.invite'},
+                {'method': 'channels.invite'},  # invite bot
+                {'method': 'channels.invite'},  # invite user
                 {'method': 'chat.postMessage'},  # initiate discussion
                 {'method': 'im.open'},
                 {'method': 'chat.postMessage'},  # DM user discussion info

@@ -6,10 +6,10 @@ from flask import url_for
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.portalfactories import SlackAgentFactory
+from tests.func.TestFunction import TestFunction
 
 
-@pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
-class TestSyncingSlackAgents:
+class TestSyncingSlackAgents(TestFunction):
     # For assertions
     fake_slack_agent = SlackAgentFactory.build()
     fake_slack_team_id = fake_slack_agent.slack_team.id
@@ -30,7 +30,8 @@ class TestSyncingSlackAgents:
             'installer': {
                 'id': fake_installer_id,
             },
-            'bot_access_token': fake_slack_bot_access_token
+            'bot_access_token': fake_slack_bot_access_token,
+            'bot_user_id': fake_slack_agent.slack_application_installation.bot_user_id
         },
     }
     default_headers = {
