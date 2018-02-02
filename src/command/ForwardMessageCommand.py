@@ -16,11 +16,18 @@ class ForwardMessageCommand(Command):
         self.logger.info(log_message)
         if self._is_discussion_message():
             try:
-                self.portal_client_wrapper.create_message(text=self.message_item.text,
-                                                          slack_channel_id=self.message_item.channel,
-                                                          slack_event_ts=self.message_item.ts,
-                                                          author_slack_user_id=self.message_item.user)
-                # handle if reply
+                if self.message_item.is_reply:
+                    self.portal_client_wrapper.create_reply(text=self.message_item.text,
+                                                            slack_channel_id=self.message_item.channel,
+                                                            slack_event_ts=self.message_item.ts,
+                                                            slack_thread_ts=self.message_item.thread_ts,
+                                                            author_slack_user_id=self.message_item.user)
+                else:
+                    # regular message
+                    self.portal_client_wrapper.create_message(text=self.message_item.text,
+                                                              slack_channel_id=self.message_item.channel,
+                                                              slack_event_ts=self.message_item.ts,
+                                                              author_slack_user_id=self.message_item.user)
             except WrapperException as e:
                 self.logger.error(f'Failed to store message: {self.message_item}')
                 raise e
