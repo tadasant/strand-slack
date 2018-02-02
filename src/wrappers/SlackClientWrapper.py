@@ -9,7 +9,7 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 # TODO move deserialization to this class instead of in Commands
 
 class SlackClientWrapper:
-    """Manages all outgoing interaction with Slack APIs"""
+    """Manage all outgoing interaction with Slack APIs"""
 
     def __init__(self, SlackClientClass):
         self.SlackClientClass = SlackClientClass
@@ -68,10 +68,10 @@ class SlackClientWrapper:
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.postMessage',
                                               channel=slack_channel_id, text=text)
-        self._validate_response_ok(response, 'invite_user_to_channel', slack_team_id, slack_channel_id, text)
+        self._validate_response_ok(response, 'send_message', slack_team_id, slack_channel_id, text)
 
     def get_last_channel_message(self, slack_team_id, slack_channel_id):
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
         response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
                                               channel=slack_channel_id, count=1)
         self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
@@ -87,6 +87,7 @@ class SlackClientWrapper:
         self._validate_response_ok(response, 'update_message', slack_team_id, slack_channel_id)
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
+        """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
         repo = slack_agent_repository
         token = repo.get_slack_bot_access_token(slack_team_id=slack_team_id) if is_bot else repo.get_slack_access_token(
             slack_team_id=slack_team_id)
@@ -96,7 +97,7 @@ class SlackClientWrapper:
         """All variables in *args are dumped to logger output"""
         is_negative = not response['ok'] if 'ok' in response else response.status_code != 200
         if is_negative:
-            self._raise_wrapper_exception(response=response, *args)
+            self._raise_wrapper_exception(response, *args)
 
     def _raise_wrapper_exception(self, response, *args):
         message = f'Errors when calling SlackClient. \n\t{response}\n\t{args}'

@@ -11,6 +11,8 @@ from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
 class PortalClientWrapper:
+    """Manage all outgoing interaction with the Portal"""
+
     def __init__(self, portal_client):
         self.portal_client = portal_client
         self.logger = get_logger('PortalClientWrapper')
@@ -111,7 +113,9 @@ class PortalClientWrapper:
                                                       isAdmin: {str(slack_user.is_admin).lower()},
                                                       slackTeamId: "{slack_user.team_id}"
                                                     }},
-                                                    tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
+                                                    tags: [
+                                                        {','.join([f'{{name: "{name}"}}' for name in tag_names])}
+                                                    ]}}) {{
                 topic {{
                   id
                   title
@@ -132,13 +136,12 @@ class PortalClientWrapper:
     def create_discussion(self, topic_id, slack_channel, slack_team_id):
         operation_definition = f'''
         {{
-            createDiscussionFromSlack(input: {{topicId: {topic_id},
+            createDiscussionFromSlack(input: {{discussion: {{topicId: {topic_id}}},
                                                id: "{slack_channel.id}",
                                                name: "{slack_channel.name}",
                                                slackTeamId: "{slack_team_id}"}}) {{
               discussion {{
                 id
-                name
               }}
             }}
           }}
@@ -147,6 +150,7 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
+        """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)
         result_json = response_body
         for key in path_to_object:
@@ -156,7 +160,8 @@ class PortalClientWrapper:
         return ObjectSchema().load(dict_keys_camel_case_to_underscores(result_json)).data
 
     def _validate_no_response_body_errors(self, response_body):
+        """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
             message = f'Errors when calling PortalClient. Body: {response_body}'
             self.logger.error(message)
-            raise WrapperException(wrapper_name='PortalClient', message=message)
+            raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])

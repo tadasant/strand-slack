@@ -6,10 +6,12 @@ from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlac
 
 
 class SlackResource(Resource):
+    """Parent for all Slack callback resources"""
     def __init__(self):
         self.logger = get_logger(self.__class__.__name__)
 
     def _authenticate(self, payload):
+        """Check if the Slack payload has the verification token"""
         if payload['token'] != current_app.slack_verification_token:
             message = 'Invalid slack verification token'
             self.logger.error(message)

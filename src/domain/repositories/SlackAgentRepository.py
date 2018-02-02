@@ -2,6 +2,8 @@ from src.domain.models.exceptions.RepositoryException import RepositoryException
 
 
 class SlackAgentRepository:
+    """Effectively an in-memory DB for storing SlackAgents"""
+
     def __init__(self):
         self._slack_agents_by_team_id = {}
 
@@ -24,6 +26,11 @@ class SlackAgentRepository:
         if slack_team_id not in self._slack_agents_by_team_id:
             raise RepositoryException(object_name='SlackAgent', message=f'get: No slack agent for team {slack_team_id}')
         return self._slack_agents_by_team_id[slack_team_id].slack_application_installation.bot_user_id
+
+    def get_installer_slack_user_id(self, slack_team_id):
+        if slack_team_id not in self._slack_agents_by_team_id:
+            raise RepositoryException(object_name='SlackAgent', message=f'get: No slack agent for team {slack_team_id}')
+        return self._slack_agents_by_team_id[slack_team_id].slack_application_installation.installer.id
 
     def set_slack_agents(self, slack_agents):
         self._slack_agents_by_team_id = {x.slack_team.id: x for x in slack_agents}

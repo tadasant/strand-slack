@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from http import HTTPStatus
 from urllib.parse import urlencode
 
@@ -83,7 +84,7 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['token'] = 'unverified token'
 
         response = self.client.post(path=target_url, headers=self.default_headers,
@@ -94,7 +95,7 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
         mocker.spy(slack_client_class, 'api_call')
         mocker.spy(portal_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['type'] = 'interactive_message'
         payload['actions'][0]['name'] = INITIAL_ONBOARDING_DM.action_id
         payload['callback_id'] = INITIAL_ONBOARDING_DM.callback_id

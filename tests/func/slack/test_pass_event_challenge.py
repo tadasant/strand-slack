@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from http import HTTPStatus
 
 from flask import url_for
@@ -26,11 +27,11 @@ class TestPassSlackEventChallenge(TestSlackFunction):
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['token'] = 'unverified token'
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
-        assert response.json['error'] == 'Invalid slack verification token'
+        assert response.json == {}
 
     def test_post_valid_authenticated_slack(self, slack_client_class, portal_client, mocker):
         mocker.spy(slack_client_class, 'api_call')

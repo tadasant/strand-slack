@@ -1,3 +1,4 @@
+from copy import deepcopy
 from http import HTTPStatus
 from urllib.parse import urlencode
 
@@ -31,7 +32,7 @@ class TestInitiatePostTopicDialog(TestSlackFunction):
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['token'] = 'unverified token'
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
@@ -40,7 +41,7 @@ class TestInitiatePostTopicDialog(TestSlackFunction):
     def test_post_valid_authenticated_slack(self, slack_client_class, mocker, slack_agent_repository):
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['command'] = '/codeclippy'
         payload['text'] = ''
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,

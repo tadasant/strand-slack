@@ -12,6 +12,12 @@ class SlackAgentResource(Resource):
         args = request.get_json()
         slack_agent = SlackAgentSchema().load(args).data
         slack_agent_repository.set_slack_agent(slack_agent)
+
+        # TODO [CCS-28] probably want a different message the second time around
+        InitiateAgentOnboardingCommand(slack_client_wrapper=current_app.slack_client_wrapper,
+                                       slack_team_id=slack_agent.slack_team.id,
+                                       installer_id=slack_agent.slack_application_installation.installer.id).execute()
+
         return SlackAgentSchema().dump(slack_agent)
 
     def post(self):

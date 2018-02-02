@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 import pytest
 from flask import url_for
@@ -64,7 +65,7 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['group_id'] = str(PrimitiveFaker('bban'))
 
         response = self.client.post(path=target_url, headers=self.default_headers,
@@ -79,7 +80,7 @@ class TestPostingSlackAgents(TestSyncingSlackAgents):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         del payload['status']
         target_url = url_for(endpoint=self.target_endpoint)
 
@@ -96,7 +97,7 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
 
         new_fake_access_token = str(PrimitiveFaker('md5'))
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['slack_application_installation']['access_token'] = new_fake_access_token
         response = self.client.put(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
@@ -118,7 +119,7 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)
 
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         del payload['status']
         target_url = url_for(endpoint=self.target_endpoint)
 
