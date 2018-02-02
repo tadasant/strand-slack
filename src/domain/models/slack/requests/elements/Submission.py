@@ -11,9 +11,6 @@ class SubmissionSchema(Schema):
     description = fields.String(required=True)
     tags = fields.String(required=True)
 
-    def __repr__(self):
-        return f'<{self.__class__}({self.__dict__})>'
-
     @post_load
     def make_submission(self, data):
         return Submission(**data)
