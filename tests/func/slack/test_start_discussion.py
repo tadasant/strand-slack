@@ -10,7 +10,7 @@ from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, SubmissionFactory
 from tests.func.slack.TestSlackFunction import TestSlackFunction
 from tests.utils import wait_until
-
+from copy import deepcopy
 
 class TestStartDiscussion(TestSlackFunction):
     # For assertions
@@ -49,7 +49,7 @@ class TestStartDiscussion(TestSlackFunction):
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
-        payload = self.default_payload.copy()
+        payload = deepcopy(self.default_payload)
         payload['token'] = 'unverified-token'
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
@@ -98,6 +98,38 @@ class TestStartDiscussion(TestSlackFunction):
                 {'method': 'chat.postMessage'},  # Re-posting last post
             ],
             call_args_list=slack_client_class.api_call.call_args_list
+        )
+
+    def test_post_with_installer_user(self, portal_client, slack_agent_repository, slack_client_class, mocker):
+        mocker.spy(portal_client, 'mutate')
+        mocker.spy(slack_client_class, 'api_call')
+        target_url = url_for(endpoint=self.target_endpoint)
+        fake_installer_user_id = str(PrimitiveFaker('bban'))
+        payload = deepcopy(self.default_payload)
+        payload['user']['id'] = fake_installer_user_id
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_interactive_component_request.team.id,
+                                           installer_user_id=fake_installer_user_id)
+        self._queue_portal_topic_creation(portal_client=portal_client, topic_id=str(PrimitiveFaker('random_int')))
+        self._queue_portal_discussion_creation(portal_client=portal_client)
+
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=urlencode({'payload': json.dumps(payload)}))
+
+        def wait_condition():
+            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 7
+
+        outcome = wait_until(condition=wait_condition)
+        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 7+'
+
+        assert HTTPStatus.OK == response.status_code
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {'method': 'channels.invite'},  # invite bot
+                {'method': 'channels.invite'},  # invite user (shouldn't happen)
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list,
+            expect_succeed=False
         )
 
     def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):

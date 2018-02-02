@@ -39,9 +39,11 @@ class StartDiscussionCommand(Command):
                                                              slack_user_id=slack_bot_user_id)
 
             # invite original poster
-            self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
-                                                             slack_channel_id=slack_channel.id,
-                                                             slack_user_id=self.slack_user_id)
+            installer_slack_user_id = slack_agent_repository.get_installer_slack_user_id(self.slack_team_id)
+            if installer_slack_user_id != self.slack_user_id:  # Slack auto-adds the oauth'd user
+                self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
+                                                                 slack_channel_id=slack_channel.id,
+                                                                 slack_user_id=self.slack_user_id)
 
             self.slack_client_wrapper.send_message(slack_team_id=self.slack_team_id,
                                                    slack_channel_id=slack_channel.id,
@@ -73,18 +75,20 @@ class StartDiscussionCommand(Command):
                                                             tag_names=tag_names)
         except WrapperException as e:
             # TODO [CCS-15] caching user info to avoid relying on error
-            if 'SlackUser matching query does not exist.' not in e.errors:
+            if e.errors and e.errors[0]['message'] == 'SlackUser matching query does not exist.':
+                self.logger.info('Tried to create topic for unknown user. Retrying with user creation.')
+                slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_user_id,
+                                                                          slack_team_id=self.slack_team_id)
+                slack_user = SlackUserSchema().load(slack_user_info).data
+                topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster(
+                    title=self.submission.title,
+                    description=self.submission.description,
+                    slack_user=slack_user,
+                    tag_names=tag_names
+                )
+            else:
                 raise e
-            self.logger.info('Tried to create topic for unknown user. Retrying with user creation.')
-            slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_user_id,
-                                                                      slack_team_id=self.slack_team_id)
-            slack_user = SlackUserSchema().load(slack_user_info).data
-            topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster(
-                title=self.submission.title,
-                description=self.submission.description,
-                slack_user=slack_user,
-                tag_names=tag_names
-            )
+
         return topic
 
     def _create_channel(self, topic):
