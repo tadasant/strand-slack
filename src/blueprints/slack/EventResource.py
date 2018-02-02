@@ -4,9 +4,9 @@ from threading import Thread
 from flask import request, current_app
 
 from src.blueprints.slack.SlackResource import SlackResource
-from src.command.ForwardMessageCommand import ForwardMessageCommand
 from src.domain.models.slack.requests.EventRequest import EventRequestSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
+from src.service.DiscussionMessageService import DiscussionMessageService
 
 
 class EventResource(SlackResource):
@@ -33,11 +33,10 @@ class EventResource(SlackResource):
                     else:
                         # TODO [CCS-81] Check whether or not this is #discussions-X vs. other should happen here via db
                         self.logger.info('Message in non-discuss channel')
-                        command = ForwardMessageCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                                        portal_client_wrapper=current_app.portal_client_wrapper,
-                                                        slack_team_id=event_request.team_id,
-                                                        slack_event=event_request.event)
-                        Thread(target=command.execute, daemon=True).start()
+                        service = DiscussionMessageService(slack_client_wrapper=current_app.slack_client_wrapper,
+                                                           portal_client_wrapper=current_app.portal_client_wrapper,
+                                                           event_request=event_request)
+                        Thread(target=service.execute, daemon=True).start()
         finally:
             # Slack will keep re-sending if we don't respond 200 OK, even in exception case on our end
             return result

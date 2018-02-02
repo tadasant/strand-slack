@@ -5,10 +5,10 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class ForwardMessageCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, slack_event):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, team_id, event):
         super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper,
-                         slack_team_id=slack_team_id)
-        self.slack_event = slack_event
+                         slack_team_id=team_id)
+        self.slack_event = event
 
     def execute(self):
         """Forward message onward to the portal for storage"""
