@@ -21,11 +21,11 @@ class EventResource(SlackResource):
             if event_request.is_verification_request:
                 result = ({'challenge': event_request.challenge}, HTTPStatus.OK)
             elif event_request.event and event_request.event.is_message_channels_event:
-                if event_request.event.item.is_message and not event_request.event.item.hidden:
+                if event_request.event.is_message and not event_request.event.hidden:
                     discuss_channel_id = slack_agent_repository.get_discuss_channel_id(
                         slack_team_id=event_request.team_id
                     )
-                    if event_request.event.item.channel == discuss_channel_id:
+                    if event_request.event.channel == discuss_channel_id:
                         self.logger.info('Detected message in #discuss channel')
                         # TODO [CCS-75] Command to delete non-clippy #discuss channel messages
                         # command = None
@@ -36,7 +36,7 @@ class EventResource(SlackResource):
                         command = ForwardMessageCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                                         portal_client_wrapper=current_app.portal_client_wrapper,
                                                         slack_team_id=event_request.team_id,
-                                                        message_item=event_request.event.item)
+                                                        slack_event=event_request.event)
                         Thread(target=command.execute, daemon=True).start()
         finally:
             # Slack will keep re-sending if we don't respond 200 OK, even in exception case on our end

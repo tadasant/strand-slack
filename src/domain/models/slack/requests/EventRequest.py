@@ -11,6 +11,7 @@ class EventRequest(Model):
         self.team_id = team_id
         self.event = event
 
+    @property
     def is_verification_request(self):
         return self.type == 'url_verification'
 

@@ -159,7 +159,7 @@ class PortalClientWrapper:
                 id
               }}
             }}
-          }}    
+          }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
@@ -176,7 +176,7 @@ class PortalClientWrapper:
                 id
               }}
             }}
-          }}  
+          }}
         '''
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)

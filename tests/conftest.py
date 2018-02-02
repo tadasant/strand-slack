@@ -7,7 +7,7 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository 
 from tests.factories.portalfactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
 from tests.testresources.TestPortalClient import TestPortalClient
-from tests.testresources.TestSlackClient import TestSlackClient
+from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
 
 register(SlackAgentFactory)
 register(InteractiveComponentRequestFactory)
@@ -55,6 +55,14 @@ def portal_client(portal_client_factory):
     portal_client_factory.clear_responses()
 
 
+@pytest.fixture
+def slack_client():
+    """Simulates Slack's actual state. Include fixture if using Slack's returned values."""
+    yield
+    clear_slack_state()
+
+
 @pytest.fixture(scope='session')
 def slack_client_class():
+    """Type of client to make on a per-call basis throughout tests"""
     return TestSlackClient

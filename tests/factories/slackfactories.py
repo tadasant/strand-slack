@@ -1,15 +1,14 @@
 import factory
 
+from src.domain.models.slack.Team import Team
 from src.domain.models.slack.requests.EventRequest import EventRequest
-from src.domain.models.slack.requests.elements.Action import Action
 from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
+from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
+from src.domain.models.slack.requests.elements.Action import Action
 from src.domain.models.slack.requests.elements.Event import Event
-from src.domain.models.slack.requests.elements.EventItem import EventItem
 from src.domain.models.slack.requests.elements.Message import Message
 from src.domain.models.slack.requests.elements.Option import Option
-from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
 from src.domain.models.slack.requests.elements.Submission import Submission
-from src.domain.models.slack.Team import Team
 
 
 class MessageFactory(factory.Factory):
@@ -17,7 +16,7 @@ class MessageFactory(factory.Factory):
         model = Message
 
     text = factory.Faker('paragraph')
-    ts = factory.Faker('random_int')
+    ts = factory.Faker('msisdn')
 
 
 class OptionFactory(factory.Factory):
@@ -58,24 +57,15 @@ class SubmissionFactory(factory.Factory):
     tags = factory.Faker('paragraph')
 
 
-class EventItemFactory(factory.Factory):
-    class Meta:
-        model = EventItem
-
-    type = factory.Faker('word')
-    channel = factory.Faker('bban')
-    user = factory.Faker('bban')
-    text = factory.Faker('paragraph')
-    ts = factory.Faker('random_int')
-
-
 class EventFactory(factory.Factory):
     class Meta:
         model = Event
 
     type = factory.Faker('word')
     user = factory.Faker('bban')
-    item = factory.SubFactory(EventItemFactory)
+    channel = factory.Faker('bban')
+    text = factory.Faker('paragraph')
+    ts = factory.Faker('msisdn')
 
 
 #  TOP LEVEL
