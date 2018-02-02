@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from http import HTTPStatus
 from urllib.parse import urlencode
 
@@ -10,7 +11,7 @@ from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, SubmissionFactory
 from tests.func.slack.TestSlackFunction import TestSlackFunction
 from tests.utils import wait_until
-from copy import deepcopy
+
 
 class TestStartDiscussion(TestSlackFunction):
     # For assertions
