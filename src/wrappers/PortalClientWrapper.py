@@ -149,6 +149,25 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
+    def create_message(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
+        operation_definition = f'''
+          mutation {{
+            createMessageFromSlack(input: {{text: "{text}",
+                                            slackChannelId: "{slack_channel_id}", slackUserId: "{author_slack_user_id}",
+                                            originSlackEventTs: "{slack_event_ts}"}}) {{
+              message {{
+                id
+              }}
+            }}
+          }}    
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
+    def create_reply(self):
+        # TODO
+        pass
+
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)

@@ -5,26 +5,25 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class ForwardMessageCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, message, event_item):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, message_item):
         super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper,
                          slack_team_id=slack_team_id)
-        self.message = message
-        # TODO [CCS-81] won't need event_item in this command after refactoring
-        self.event_item = event_item
+        self.message_item = message_item
 
     def execute(self):
         """Forward message onward to the portal for storage"""
-        log_message = f'Executing ForwardMessageCommand for {self.slack_team_id} with message {self.message}'
+        log_message = f'Executing ForwardMessageCommand for {self.slack_team_id} with message {self.message_item}'
         self.logger.info(log_message)
         if self._is_discussion_message():
             try:
-                pass
-                # forward message
+                self.portal_client_wrapper.create_message(text=self.message_item.text,
+                                                          slack_channel_id=self.message_item.channel,
+                                                          slack_event_ts=self.message_item.ts,
+                                                          author_slack_user_id=self.message_item.user)
+                # handle if reply
             except WrapperException as e:
-                self.logger.error(f'Failed to store message. {self.event_item} {self.message}')
+                self.logger.error(f'Failed to store message: {self.message_item}')
                 raise e
-
-        self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
 
     def _is_discussion_message(self):
         # TODO [CCS-81] This check should happen via db prior to this command's execution
