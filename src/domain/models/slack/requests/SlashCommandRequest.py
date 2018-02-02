@@ -1,7 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 
-class SlashCommandRequest:
+
+class SlashCommandRequest(Model):
     def __init__(self, team_id, user_id, command, response_url, trigger_id, text=None):
         self.team_id = team_id
         self.user_id = user_id

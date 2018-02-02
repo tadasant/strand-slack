@@ -1,7 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 
-class Tag:
+
+class Tag(Model):
     def __init__(self, name):
         self.name = name
 

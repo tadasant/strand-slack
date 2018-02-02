@@ -1,9 +1,10 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 from src.domain.models.portal.Tag import TagSchema
 
 
-class Topic:
+class Topic(Model):
     def __init__(self, id, title, description, tags):
         self.id = id
         self.title = title

@@ -1,9 +1,10 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 from src.domain.models.slack.requests.elements.EventItem import EventItemSchema
 
 
-class Event:
+class Event(Model):
     def __init__(self, type, user, item):
         self.type = type
         self.user = user

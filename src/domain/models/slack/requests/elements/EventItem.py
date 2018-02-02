@@ -1,7 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 
-class EventItem:
+
+class EventItem(Model):
     def __init__(self, type=None, channel=None, user=None, text=None, ts=None):
         self.type = type
         self.channel = channel

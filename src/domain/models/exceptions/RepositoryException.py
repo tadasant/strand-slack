@@ -1,11 +1,10 @@
-class RepositoryException(Exception):
+from src.domain.models.exceptions.SlackIntegrationException import SlackIntegrationException
+
+
+class RepositoryException(SlackIntegrationException):
     """Raised by in-memory repository when unexpected operations happen"""
 
     def __init__(self, object_name, message):
-        super().__init__()
+        super().__init__(message=message)
 
         self.object_name = object_name
-        self.message = message
-
-    def __str__(self):
-        return f'{self.object_name}\n\t{self.message}'
