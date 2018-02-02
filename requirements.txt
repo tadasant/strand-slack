@@ -11,6 +11,7 @@ colorama==0.3.9
 coverage==4.4.2
 docopt==0.6.2
 docutils==0.14
+emoji==0.4.5
 execnet==1.5.0
 factory-boy==2.8.1
 Faker==0.8.10
@@ -22,6 +23,7 @@ inflection==0.3.1
 itsdangerous==0.24
 Jinja2==2.10
 jmespath==0.9.3
+markdown2==2.3.5
 MarkupSafe==1.0
 marshmallow==2.15.0
 marshmallow-enum==1.4.1

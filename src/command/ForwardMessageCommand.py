@@ -33,7 +33,7 @@ class ForwardMessageCommand(Command):
                 raise e
 
     def _is_discussion_message(self):
-        # TODO [CCS-81] This check should happen via db prior to this command's execution
+        # TODO [CCS-81] This check should happen via db in processor
         calling_channel_id = self.slack_event.channel
         calling_channel_info = self.slack_client_wrapper.get_channel_info(slack_team_id=self.slack_team_id,
                                                                           slack_channel_id=calling_channel_id)

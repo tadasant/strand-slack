@@ -62,7 +62,7 @@ class TestForwardMessagesToPortal(TestSlackFunction):
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
-        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1)
+        outcome = wait_until(condition=lambda: portal_client.mutate.call_count == 1, timeout=1000)
         assert outcome, 'Expected portal_client.mutate be called'
 
         assert HTTPStatus.OK == response.status_code
