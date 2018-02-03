@@ -6,6 +6,7 @@ from src.domain.models.slack.requests.InteractiveComponentRequest import Interac
 from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
 from src.domain.models.slack.requests.elements.Action import Action
 from src.domain.models.slack.requests.elements.Event import Event
+from src.domain.models.slack.requests.elements.File import File
 from src.domain.models.slack.requests.elements.Message import Message
 from src.domain.models.slack.requests.elements.Option import Option
 from src.domain.models.slack.requests.elements.Submission import Submission
@@ -57,6 +58,15 @@ class SubmissionFactory(factory.Factory):
     tags = factory.Faker('paragraph')
 
 
+class FileFactory(factory.Factory):
+    class Meta:
+        model = File
+
+    id = factory.Faker('bban')
+    public_url_shared = factory.Faker('url')
+    permalink_public = False
+
+
 class EventFactory(factory.Factory):
     class Meta:
         model = Event
@@ -66,6 +76,8 @@ class EventFactory(factory.Factory):
     channel = factory.Faker('bban')
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
+    subtype = factory.Faker('word')
+    file = factory.SubFactory(FileFactory)
 
 
 #  TOP LEVEL

@@ -4,7 +4,7 @@ import emoji
 import markdown2
 
 
-class DiscussionMessageTextFormatter:
+class MessageTextFormatter:
     def __init__(self, discussion_message):
         self.discussion_message = discussion_message
 
@@ -47,6 +47,9 @@ class DiscussionMessageTextFormatter:
         text = text.replace('\n', '<br />')
         # Introduce unicode emoji
         text = emoji.emojize(text, use_aliases=True)
+
+        if self.discussion_message.file_url:
+            text = re.sub('(https):(.*?)\|', self.discussion_message.file_url + '|', text)
         return text
 
     @staticmethod

@@ -92,6 +92,12 @@ class SlackClientWrapper:
         self._validate_response_ok(response, 'get_channel_info', slack_team_id, slack_channel_id)
         return response['channel']
 
+    def publicize_file(self, slack_team_id, file_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='files.sharedPublicURL', file=file_id)
+        self._validate_response_ok(response, 'publicize_file', slack_team_id, file_id)
+        return response['file']
+
     def _get_slack_client(self, slack_team_id, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
         repo = slack_agent_repository
