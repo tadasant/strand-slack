@@ -12,7 +12,7 @@ class File(Model):
 
 class FileSchema(Schema):
     id = fields.String(required=True)
-    public_url_shared = fields.String()
+    public_url_shared = fields.Boolean(allow_none=True)
     permalink_public = fields.String()
 
     @post_load

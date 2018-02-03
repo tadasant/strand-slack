@@ -29,6 +29,8 @@ class TestSlackClient:
             return {'ok': True, 'channel': {'id': 'someid', 'name': 'somename'}}
         elif method == 'channels.history':
             return {'ok': True, 'messages': [{'text': 'some', 'ts': '4328.1292'}]}
+        elif method == 'files.sharedPublicURL':
+            return {'ok': True, 'permalink_public': 'someurl.com'}
         elif method == 'channels.info':
             channel_id = kwargs.get('channel')
             if channel_id in SlackRepository['created_channels_by_id']:
