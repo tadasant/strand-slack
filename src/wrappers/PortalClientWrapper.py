@@ -181,6 +181,11 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
+    def close_discussion(self, topic_id, slack_team_id):
+        operation_definition = f'''
+        
+        '''
+
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)
