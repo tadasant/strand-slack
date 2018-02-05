@@ -86,6 +86,12 @@ class SlackClientWrapper:
                                               text=new_text, ts=message_ts, as_user=True)  # bot is user in this case
         self._validate_response_ok(response, 'update_message', slack_team_id, slack_channel_id)
 
+    def get_channel_info(self, slack_team_id, slack_channel_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.info', channel=slack_channel_id)
+        self._validate_response_ok(response, 'get_channel_info', slack_team_id, slack_channel_id)
+        return response['channel']
+
     def _get_slack_client(self, slack_team_id, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
         repo = slack_agent_repository

@@ -11,7 +11,7 @@ class TestPortalClient:
     # UTILITIES
 
     def set_next_response(self, response):
-        # TODO [CCS-70] shouldn't use this feature
+        # TODO [CCS-70] shouldn't use this feature. Will become mostly obsolete with CCS-81.
         with self.lock:
             self.next_responses.append(response)
 

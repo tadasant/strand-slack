@@ -1,9 +1,10 @@
 from marshmallow import Schema, fields, post_load
 
+from src.domain.models.Model import Model
 from src.domain.models.portal.SlackUser import SlackUserSchema
 
 
-class SlackApplicationInstallation:
+class SlackApplicationInstallation(Model):
     def __init__(self, access_token, bot_access_token, installer, bot_user_id):
         self.access_token = access_token
         self.installer = installer

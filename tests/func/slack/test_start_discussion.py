@@ -67,7 +67,7 @@ class TestStartDiscussion(TestSlackFunction):
         mocker.spy(portal_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
-        fake_topic_id = str(PrimitiveFaker('random_int'))
+        fake_topic_id = int(str(PrimitiveFaker('random_int')))
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)
         self._queue_portal_topic_creation(portal_client=portal_client, topic_id=fake_topic_id)
@@ -85,7 +85,7 @@ class TestStartDiscussion(TestSlackFunction):
         assert HTTPStatus.OK == response.status_code
         assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
         assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
-        assert fake_topic_id in portal_client.mutate.call_args_list[1][1]['operation_definition']
+        assert str(fake_topic_id) in portal_client.mutate.call_args_list[1][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'channels.create'},
@@ -198,7 +198,7 @@ class TestStartDiscussion(TestSlackFunction):
             'data': {
                 'createDiscussionFromSlack': {
                     'discussion': {
-                        'id': str(PrimitiveFaker('random_int')),
+                        'id': int(str(PrimitiveFaker('random_int'))),
                         'name': str(PrimitiveFaker('word'))
                     },
                 }
@@ -210,7 +210,7 @@ class TestStartDiscussion(TestSlackFunction):
             'data': {
                 'createUserAndTopicFromSlack': {
                     'topic': {
-                        'id': str(PrimitiveFaker('random_int')),
+                        'id': int(str(PrimitiveFaker('random_int'))),
                         'title': self.fake_interactive_component_request.submission.title,
                         'description': self.fake_interactive_component_request.submission.description,
                         'tags': [
