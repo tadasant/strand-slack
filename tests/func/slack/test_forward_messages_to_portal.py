@@ -117,7 +117,15 @@ class TestForwardMessagesToPortal(TestSlackFunction):
         assert HTTPStatus.OK == response.status_code
         assert 'createMessageFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
         assert discussion_channel_id in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert # assert that we called the sharedPublicURL thing -- after that, shoudl be good
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {
+                    'method': 'files.sharedPublicURL',
+                    'file': self.fake_event_request.event.file.id
+                }
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )
 
     def test_post_message_irrelevant_channel(self, portal_client, mocker):
         target_url = url_for(endpoint=self.target_endpoint)

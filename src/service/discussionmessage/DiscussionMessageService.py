@@ -30,7 +30,7 @@ class DiscussionMessageService(Service):
         slack_team_id = self.event_request.team_id
         discussion_message = DiscussionMessage(**self.event_request.event.__dict__)
         if discussion_message.subtype == 'file_share':
-            file_publicizer = MessageFilePublicizer(discussion_message=discussion_message,
+            file_publicizer = MessageFilePublicizer(event=self.event_request.event,
                                                     slack_client_wrapper=self.slack_client_wrapper,
                                                     slack_team_id=slack_team_id)
             file_url = file_publicizer.publicize_file()
