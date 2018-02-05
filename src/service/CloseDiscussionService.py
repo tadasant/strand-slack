@@ -1,5 +1,7 @@
 import re
+from threading import Thread
 
+from src.command.CloseDiscussionOnPortalCommand import CloseDiscussionOnPortalCommand
 from src.service.Service import Service
 
 
@@ -21,12 +23,18 @@ class CloseDiscussionService(Service):
         self.slack_channel_id = slack_channel_id
 
     def execute(self):
-        if self._is_discussion_channel():
+        topic_id = self._get_topic_id()
+        if topic_id:
             if self._user_is_authorized():
-                # perform closing command(s)
-                pass
+                portal_command = CloseDiscussionOnPortalCommand(portal_client_wrapper=self.portal_client_wrapper,
+                                                                topic_id=topic_id,
+                                                                slack_team_id=self.slack_team_id)
+                Thread(target=portal_command.execute, daemon=True).start()
+                # slack_command = CloseDiscussionOnSlackCommand()
+                # send message to the channel
+                # archive the channel
 
-    def _is_discussion_channel(self):
+    def _get_topic_id(self):
         # TODO [CCS-81] This check should happen via db in validator
         calling_channel_info = self.slack_client_wrapper.get_channel_info(slack_team_id=self.slack_team_id,
                                                                           slack_channel_id=self.slack_channel_id)
