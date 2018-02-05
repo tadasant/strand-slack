@@ -4,6 +4,7 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
+from src.common.logging import get_logger
 from src.config import config
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository as slack_agent_repository_global
 from tests.factories.portalfactories import SlackAgentFactory
@@ -33,6 +34,14 @@ def client(app):
 def wait_for_threads():
     yield
     wait_until(condition=lambda: len(threading.enumerate()) <= 4, timeout=5)
+
+
+@pytest.fixture(autouse=True)
+def log_test_start():
+    logger = get_logger('Fixtures')
+    logger.info('******** TEST START ********')
+    yield
+    logger.info('******** TEST END ********')
 
 
 # Core

@@ -1,3 +1,4 @@
+from src.common.logging import get_logger
 from tests.common.PrimitiveFaker import PrimitiveFaker
 
 SlackRepository = {
@@ -12,6 +13,7 @@ def clear_slack_state():
 class TestSlackClient:
     def __init__(self, token, *args, **kwargs):
         self.token = token
+        self.logger = get_logger('TestSlackClient')
 
     def api_call(self, method, *args, **kwargs):
         if method == 'im.open':
