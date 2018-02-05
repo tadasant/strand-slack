@@ -1,3 +1,5 @@
+import threading
+
 import pytest
 from pytest_factoryboy import register
 
@@ -8,6 +10,7 @@ from tests.factories.portalfactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
 from tests.testresources.TestPortalClient import TestPortalClient
 from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
+from tests.utils import wait_until
 
 register(SlackAgentFactory)
 register(InteractiveComponentRequestFactory)
@@ -24,6 +27,12 @@ def init_tempdir(tmpdir_factory):
 def client(app):
     client = app.test_client()
     return client
+
+
+@pytest.fixture(autouse=True)
+def wait_for_threads():
+    yield
+    wait_until(condition=lambda: len(threading.enumerate()) <= 4, timeout=5)
 
 
 # Core

@@ -102,6 +102,7 @@ class SlashCommandRequestFactory(factory.Factory):
     command = factory.Faker('word')
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')
+    channel_id = factory.Faker('bban')
 
 
 class EventRequestFactory(factory.Factory):

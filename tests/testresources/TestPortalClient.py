@@ -6,7 +6,7 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 class TestPortalClient:
     def __init__(self, **kwargs):
         self.next_responses = []
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
 
     # UTILITIES
 
