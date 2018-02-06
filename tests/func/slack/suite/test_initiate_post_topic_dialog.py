@@ -4,31 +4,13 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.config import config
-from tests.factories.slackfactories import SlashCommandRequestFactory
-from tests.func.slack.TestSlackFunction import TestSlackFunction
+from tests.func.slack.TestSlashCommand import TestSlashCommand
 from tests.utils import wait_until
 
 
-class TestInitiatePostTopicDialog(TestSlackFunction):
-    # For assertions
-    fake_slash_command_request = SlashCommandRequestFactory.create()
-
-    # For setup
-    target_endpoint = 'slack.slashcommandresource'
-    default_payload = {
-        'token': config["SLACK_VERIFICATION_TOKEN"],
-        'team_id': fake_slash_command_request.team_id,
-        'team_domain': 'doesnt matter',
-        'channel_id': 'doesnt matter',
-        'channel_name': 'doesnt matter',
-        'user_id': fake_slash_command_request.user_id,
-        'user_name': 'doesnt matter',
-        'command': fake_slash_command_request.command,
-        'text': fake_slash_command_request.text,
-        'response_url': fake_slash_command_request.response_url,
-        'trigger_id': fake_slash_command_request.trigger_id
-    }
+class TestInitiatePostTopicDialog(TestSlashCommand):
+    default_payload = deepcopy(TestSlashCommand.default_payload)
+    default_payload['command'] = '/codeclippy'
 
     def test_post_valid_unauthenticated_slack(self):
         target_url = url_for(endpoint=self.target_endpoint)
@@ -42,7 +24,6 @@ class TestInitiatePostTopicDialog(TestSlackFunction):
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         payload = deepcopy(self.default_payload)
-        payload['command'] = '/codeclippy'
         payload['text'] = ''
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_slash_command_request.team_id)
