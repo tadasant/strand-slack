@@ -8,10 +8,6 @@ class CloseDiscussionOnPortalCommand(Command):
         self.slack_channel_id = slack_channel_id
 
     def execute(self):
-        """
-            Send a message to the installer user with options for what s/he needs
-            to fill out prior to activating the agent
-        """
         log_msg = f'Executing CloseDiscussionOnPortalCommand for {self.slack_team_id} for chan {self.slack_channel_id}'
         self.logger.info(log_msg)
         self.portal_client_wrapper.close_discussion(slack_channel_id=self.slack_channel_id)
