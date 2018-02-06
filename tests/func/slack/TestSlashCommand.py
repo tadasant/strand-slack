@@ -18,7 +18,7 @@ class TestSlashCommand(TestSlackFunction):
         'token': config["SLACK_VERIFICATION_TOKEN"],
         'team_id': fake_slash_command_request.team_id,
         'team_domain': 'doesnt matter',
-        'channel_id': 'doesnt matter',
+        'channel_id': fake_slash_command_request.channel_id,
         'channel_name': 'doesnt matter',
         'user_id': fake_slash_command_request.user_id,
         'user_name': 'doesnt matter',
