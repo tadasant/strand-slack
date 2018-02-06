@@ -1,10 +1,12 @@
 from marshmallow import Schema, fields, post_load
 
 from src.domain.models.Model import Model
+from src.domain.models.slack.requests.elements.File import FileSchema
 
 
 class Event(Model):
-    def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None):
+    def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None, file=None,
+                 subtype=None):
         self.type = type
         self.user = user
         self.hidden = hidden
@@ -12,6 +14,8 @@ class Event(Model):
         self.text = text
         self.ts = ts
         self.thread_ts = thread_ts
+        self.file = file
+        self.subtype = subtype
 
     @property
     def is_message_channels_event(self):
@@ -36,6 +40,8 @@ class EventSchema(Schema):
     text = fields.String()
     ts = fields.String()
     thread_ts = fields.String()
+    file = fields.Nested(FileSchema)
+    subtype = fields.String()
 
     @post_load
     def make_event(self, data):
