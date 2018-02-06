@@ -1,5 +1,4 @@
 from src.command.Command import Command
-from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 
 
 class CloseDiscussionOnPortalCommand(Command):

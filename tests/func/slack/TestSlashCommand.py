@@ -1,3 +1,8 @@
+from copy import deepcopy
+from urllib.parse import urlencode
+
+from flask import url_for
+
 from src.config import config
 from tests.factories.slackfactories import SlashCommandRequestFactory
 from tests.func.slack.TestSlackFunction import TestSlackFunction
@@ -22,3 +27,11 @@ class TestSlashCommand(TestSlackFunction):
         'response_url': fake_slash_command_request.response_url,
         'trigger_id': fake_slash_command_request.trigger_id
     }
+
+    def test_post_valid_unauthenticated_slack(self):
+        target_url = url_for(endpoint=self.target_endpoint)
+        payload = deepcopy(self.default_payload)
+        payload['token'] = 'unverified token'
+
+        response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
+        assert response.json['error'] == 'Invalid slack verification token'
