@@ -15,6 +15,7 @@ from src.domain.models.portal.SlackUser import SlackUser
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory
 from tests.func.TestFunction import TestFunction
+from tests.testresources.TestSlackClient import SlackRepository
 from tests.utils import wait_until
 
 
@@ -53,6 +54,17 @@ class TestSlackFunction(TestFunction):
                                                                         bot_user_id='doesnt matter'))
         )
 
+    def start_discussion_on_channel(self, slack_team_id, portal_client, slack_agent_repository, slack_client_class,
+                                    mocker):
+        self.start_discussion(slack_agent_repository=slack_agent_repository,
+                              slack_team_id=slack_team_id,
+                              slack_client_class=slack_client_class,
+                              portal_client=portal_client,
+                              mocker=mocker)
+        assert 1 == len(SlackRepository['created_channels_by_id'].items())
+        # return created channel id
+        return next(iter(SlackRepository['created_channels_by_id'].values()))['id']
+
     def start_discussion(self, slack_agent_repository, slack_team_id, slack_client_class, portal_client, mocker,
                          topic_id=int(str(PrimitiveFaker('random_int')))):
         """
@@ -65,8 +77,6 @@ class TestSlackFunction(TestFunction):
         mocker.spy(slack_client_class, 'api_call')
         discussion_dialog_post_endpoint = 'slack.interactivecomponentresource'
         target_url = url_for(endpoint=discussion_dialog_post_endpoint)
-        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
-                                           slack_team_id=slack_team_id)
 
         self.__queue_portal_topic_creation(portal_client=portal_client, topic_id=topic_id)
         self.__queue_portal_discussion_creation(portal_client=portal_client)
