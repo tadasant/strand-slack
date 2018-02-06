@@ -1,6 +1,5 @@
 from src.command.Command import Command
 from src.command.messages.formatted_text import close_discussion
-from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 
 
 class CloseDiscussionOnSlackCommand(Command):

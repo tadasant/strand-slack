@@ -12,15 +12,7 @@ class TestInitiatePostTopicDialog(TestSlashCommand):
     default_payload = deepcopy(TestSlashCommand.default_payload)
     default_payload['command'] = '/codeclippy'
 
-    def test_post_valid_unauthenticated_slack(self):
-        target_url = url_for(endpoint=self.target_endpoint)
-        payload = deepcopy(self.default_payload)
-        payload['token'] = 'unverified token'
-
-        response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
-        assert response.json['error'] == 'Invalid slack verification token'
-
-    def test_post_valid_authenticated_slack(self, slack_client_class, mocker, slack_agent_repository):
+    def test_valid_post_command(self, slack_client_class, mocker, slack_agent_repository):
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         payload = deepcopy(self.default_payload)

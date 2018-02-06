@@ -57,8 +57,8 @@ def discuss_introduction_repost():
 def close_discussion(closer_slack_user_id):
     return dedent(f'''
         <@{closer_slack_user_id}> has marked this discussion as closed.
-        
+
         At this time, no more messages will be allowed in this channel.
-        
+
         This conversation will be archived and may be reviewed on www.codeclippy.com
     ''')
