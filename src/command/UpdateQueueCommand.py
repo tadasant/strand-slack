@@ -12,16 +12,18 @@ class UpdateQueueCommand(Command):
     def execute(self):
         log_msg = f'Executing UpdateQueueCommand for {self.slack_team_id} for chan {self.discussion_slack_channel_id}'
         self.logger.info(log_msg)
-        # TODO eventually remove this in favor of a modeled queue
+        # TODO eventually remove this in favor of a modeled topic list
         messages_info = self.slack_client_wrapper.get_channel_messages(slack_team_id=self.slack_team_id,
                                                                        slack_channel_id=self.topic_slack_channel_id)
         potential_entry_matches = [x for x in messages_info if self.discussion_slack_channel_id in x['text']]
         assert 1 == len(potential_entry_matches), 'Should have one entry per discussion channel in the queue'
 
         entry_ts = potential_entry_matches[0]['ts']
-        entry_original_text = potential_entry_matches[0]['text']
-        new_text = f'>>>{entry_original_text}'  # blockquote
+        entry_attachments = potential_entry_matches[0]['attachments']
+        new_text = f'>>>This discussion is closed. View the archive at <#{self.discussion_slack_channel_id}>'
+        for attachment in entry_attachments:
+            attachment['color'] = '#e3e4e6'  # sets it gray to indicate it's closed
 
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id,
                                                  slack_channel_id=self.topic_slack_channel_id, new_text=new_text,
-                                                 message_ts=entry_ts)
+                                                 message_ts=entry_ts, attachments=entry_attachments)

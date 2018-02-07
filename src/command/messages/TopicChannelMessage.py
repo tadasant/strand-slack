@@ -23,7 +23,7 @@ class TopicChannelMessage:
         return {
             'fallback': f'*Title*: {self._title}',
             'color': '#32424a',
-            'author_name': 'Posted by <@adi>',
+            'author_name': f'Posted by <@{self._original_poster_user_id}>',
             'author_link': f'https://{self._team_domain}.slack.com/team/{self._original_poster_user_id}',
             'title': self._title,
             'title_link': f'https://{self._team_domain}.slack.com/messages/{self._discussion_channel_id}'

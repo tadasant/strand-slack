@@ -123,7 +123,7 @@ class TestSlackFunction(TestFunction):
             return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= + 8
 
         assert HTTPStatus.OK == response.status_code
-        wait_until(condition=wait_condition, timeout=500)
+        wait_until(condition=wait_condition)
         mocker.stopall()
 
     def simulate_topic_channel_initiation(self, slack_agent_repository, slack_team_id):
@@ -131,7 +131,7 @@ class TestSlackFunction(TestFunction):
         if topic_channel_id not in SlackRepository['messages_posted_by_channel_id']:
             SlackRepository['messages_posted_by_channel_id'][topic_channel_id] = []
         SlackRepository['messages_posted_by_channel_id'][topic_channel_id].append(
-            {'ts': str(PrimitiveFaker('random_int')), 'text': 'sometext'}
+            {'ts': str(PrimitiveFaker('random_int')), 'text': 'sometext', 'attachments': []}
         )
 
     def __queue_portal_topic_creation(self, portal_client, topic_id=1, topic_title='sometitle',
