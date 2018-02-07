@@ -48,6 +48,7 @@ class TestSlackFunction(TestFunction):
         slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
             status=SlackAgentStatus.ACTIVE,
             slack_team=SlackTeam(id=slack_team_id),
+            discuss_channel_id=str(PrimitiveFaker('bban')),
             slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
                                                                         installer=SlackUser(id=installer_user_id),
                                                                         bot_access_token='doesnt matter',
@@ -77,6 +78,8 @@ class TestSlackFunction(TestFunction):
         mocker.spy(slack_client_class, 'api_call')
         discussion_dialog_post_endpoint = 'slack.interactivecomponentresource'
         target_url = url_for(endpoint=discussion_dialog_post_endpoint)
+        self.simulate_discuss_channel_initiation(slack_agent_repository=slack_agent_repository,
+                                                 slack_team_id=slack_team_id)
 
         self.__queue_portal_topic_creation(portal_client=portal_client, topic_id=topic_id)
         self.__queue_portal_discussion_creation(portal_client=portal_client)
@@ -120,8 +123,16 @@ class TestSlackFunction(TestFunction):
             return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= + 8
 
         assert HTTPStatus.OK == response.status_code
-        wait_until(condition=wait_condition)
+        wait_until(condition=wait_condition, timeout=500)
         mocker.stopall()
+
+    def simulate_discuss_channel_initiation(self, slack_agent_repository, slack_team_id):
+        discuss_channel_id = slack_agent_repository.get_discuss_channel_id(slack_team_id=slack_team_id)
+        if discuss_channel_id not in SlackRepository['messages_posted_by_channel_id']:
+            SlackRepository['messages_posted_by_channel_id'][discuss_channel_id] = []
+        SlackRepository['messages_posted_by_channel_id'][discuss_channel_id].append(
+            {'ts': str(PrimitiveFaker('random_int')), 'text': 'sometext'}
+        )
 
     def __queue_portal_topic_creation(self, portal_client, topic_id=1, topic_title='sometitle',
                                       topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):

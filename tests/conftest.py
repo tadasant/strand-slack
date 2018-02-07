@@ -69,6 +69,7 @@ def portal_client_factory():
 
 @pytest.fixture
 def portal_client(portal_client_factory):
+    portal_client_factory.clear_responses()
     yield portal_client_factory
     portal_client_factory.clear_responses()
 
@@ -76,6 +77,7 @@ def portal_client(portal_client_factory):
 @pytest.fixture
 def slack_client():
     """Simulates Slack's actual state. Include fixture if using Slack's returned values."""
+    clear_slack_state()
     yield
     clear_slack_state()
 
