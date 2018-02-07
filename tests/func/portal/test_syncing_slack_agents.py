@@ -1,5 +1,6 @@
 import json
 from copy import deepcopy
+from http.__init__ import HTTPStatus
 
 import pytest
 from flask import url_for
@@ -43,6 +44,14 @@ class TestSyncingSlackAgents(TestFunction):
 
 
 class TestPostingSlackAgents(TestSyncingSlackAgents):
+    def test_post_unauthorized(self, slack_agent_repository, slack_client_class, mocker):
+        target_url = url_for(endpoint=self.target_endpoint)
+        headers = deepcopy(self.default_headers)
+        del headers['Authorization']
+
+        response = self.client.post(path=target_url, headers=headers, data=json.dumps(self.default_payload))
+        assert response.status_code == HTTPStatus.UNAUTHORIZED
+
     def test_post_valid_installation(self, slack_agent_repository, slack_client_class, mocker):
         with pytest.raises(RepositoryException):
             slack_agent_repository.get_slack_bot_access_token(slack_team_id=self.fake_slack_team_id)

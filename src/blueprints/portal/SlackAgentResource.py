@@ -13,7 +13,7 @@ def authenticate_portal(func):
     token_regex = r'Token (.*)'
 
     def wrapper(*args, **kwargs):
-        authorization_header = request.headers['Authorization']
+        authorization_header = request.headers.get('Authorization')
         if authorization_header:
             matches = re.findall(token_regex, authorization_header)
             if len(matches) == 1:
