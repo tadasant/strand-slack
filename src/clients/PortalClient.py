@@ -11,22 +11,32 @@ class PortalClient:
     If there are GraphQL errors for the operation, will return the standard {'errors': [...]} GraphQL response format.
     """
 
-    def __init__(self, host, endpoint):
-        self.url = f'{host}{endpoint}'
+    def __init__(self, host, endpoint, email, password):
+        self.host = host
+        self.graphql_url = f'{host}{endpoint}'
+
+        token = self._get_token(email=email, password=password)
+        self.headers = {'Authorization': f'Token {token}'}
 
     def query(self, operation_definition):
         full_definition = f'query {operation_definition}'
-        response = requests.post(url=self.url, data={'query': full_definition})
+        response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
             raise PortalClientException('Query failed.', response)
         return response.json()
 
     def mutate(self, operation_definition):
         full_definition = f'mutation {operation_definition}'
-        response = requests.post(url=self.url, data={'query': full_definition})
+        response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
             raise PortalClientException('Mutation failed.', response)
         return response.json()
+
+    def _get_token(self, email, password):
+        response = requests.post(url=f'{self.host}auth-token/', data={email: email, password: password})
+        if response.status_code != 200:
+            raise PortalClientException('Authentication failed.', response)
+        return response.json()['token']
 
 
 class PortalClientException(Exception):
