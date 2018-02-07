@@ -77,13 +77,13 @@ class SlackClientWrapper:
         self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
         messages = response['messages']
         if len(messages) != 1:
-            self._raise_wrapper_exception(response, 'no messages in discuss', slack_team_id, slack_channel_id)
+            self._raise_wrapper_exception(response, 'no messages in channel', slack_team_id, slack_channel_id)
         return messages[0]
 
     def get_first_channel_message(self, slack_team_id, slack_channel_id):
         messages_info = self.get_channel_messages(slack_team_id=slack_team_id, slack_channel_id=slack_channel_id)
         if len(messages_info) == 0:
-            self._raise_wrapper_exception(messages_info, 'no messages in discuss', slack_team_id, slack_channel_id)
+            self._raise_wrapper_exception(messages_info, 'no messages in channel', slack_team_id, slack_channel_id)
         return messages_info[-1]
 
     def get_channel_messages(self, slack_team_id, slack_channel_id):

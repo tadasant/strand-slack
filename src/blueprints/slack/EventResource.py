@@ -22,17 +22,17 @@ class EventResource(SlackResource):
                 result = ({'challenge': event_request.challenge}, HTTPStatus.OK)
             elif event_request.event and event_request.event.is_message_channels_event:
                 if event_request.event.is_message and not event_request.event.hidden:
-                    discuss_channel_id = slack_agent_repository.get_discuss_channel_id(
+                    topic_channel_id = slack_agent_repository.get_topic_channel_id(
                         slack_team_id=event_request.team_id
                     )
-                    if event_request.event.channel == discuss_channel_id:
-                        self.logger.info('Detected message in #discuss channel')
-                        # TODO [CCS-75] Command to delete non-clippy #discuss channel messages
+                    if event_request.event.channel == topic_channel_id:
+                        self.logger.info('Detected message in topic channel')
+                        # TODO [CCS-75] Command to delete non-clippy topic channel messages
                         # command = None
                         # Thread(target=command.execute, daemon=True).start()
                     else:
                         # TODO [CCS-81] Check whether or not this is #discussions-X vs. other should happen here via db
-                        self.logger.info('Message in non-discuss channel')
+                        self.logger.info('Message in non-topic channel')
                         service = DiscussionMessageService(slack_client_wrapper=current_app.slack_client_wrapper,
                                                            portal_client_wrapper=current_app.portal_client_wrapper,
                                                            event_request=event_request)

@@ -72,8 +72,8 @@ class TestStartDiscussion(TestSlackFunction):
                                            slack_team_id=self.fake_interactive_component_request.team.id)
         self._queue_portal_topic_creation(portal_client=portal_client, topic_id=fake_topic_id)
         self._queue_portal_discussion_creation(portal_client=portal_client)
-        self.simulate_discuss_channel_initiation(slack_agent_repository=slack_agent_repository,
-                                                 slack_team_id=self.fake_interactive_component_request.team.id)
+        self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
+                                               slack_team_id=self.fake_interactive_component_request.team.id)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
@@ -96,7 +96,7 @@ class TestStartDiscussion(TestSlackFunction):
                 {'method': 'chat.postMessage'},  # initiate discussion
                 {'method': 'im.open'},
                 {'method': 'chat.postMessage'},  # DM user discussion info
-                {'method': 'channels.history'},  # Grabbing last post in #discuss
+                {'method': 'channels.history'},  # Grabbing last post in topic channel
                 {'method': 'chat.update'},  # Updating last post with topic info
                 {'method': 'chat.postMessage'},  # Re-posting last post
             ],
@@ -115,8 +115,8 @@ class TestStartDiscussion(TestSlackFunction):
                                            installer_user_id=fake_installer_user_id)
         self._queue_portal_topic_creation(portal_client=portal_client, topic_id=str(PrimitiveFaker('random_int')))
         self._queue_portal_discussion_creation(portal_client=portal_client)
-        self.simulate_discuss_channel_initiation(slack_agent_repository=slack_agent_repository,
-                                                 slack_team_id=self.fake_interactive_component_request.team.id)
+        self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
+                                               slack_team_id=self.fake_interactive_component_request.team.id)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
@@ -147,8 +147,8 @@ class TestStartDiscussion(TestSlackFunction):
         portal_client.set_next_response(None)  # To raise error on attempt w/out user
         self._queue_portal_user_and_topic_creation(portal_client=portal_client)
         self._queue_portal_discussion_creation(portal_client=portal_client)
-        self.simulate_discuss_channel_initiation(slack_agent_repository=slack_agent_repository,
-                                                 slack_team_id=self.fake_interactive_component_request.team.id)
+        self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
+                                               slack_team_id=self.fake_interactive_component_request.team.id)
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
@@ -175,7 +175,7 @@ class TestStartDiscussion(TestSlackFunction):
                 {'method': 'chat.postMessage'},  # initiate discussion
                 {'method': 'im.open'},
                 {'method': 'chat.postMessage'},  # DM user discussion info
-                {'method': 'channels.history'},  # Grabbing last post in #discuss
+                {'method': 'channels.history'},  # Grabbing last post in topic channel
                 {'method': 'chat.update'},  # Updating last post with topic info
                 {'method': 'chat.postMessage'},  # Re-posting last post
             ],

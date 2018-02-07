@@ -36,7 +36,7 @@ def discussion_initiation_dm(slack_channel_id):
     ''')
 
 
-def discuss_introduction():
+def topic_channel_introduction():
     return dedent(f'''
         This channel is a live view of the topics of all discussions going on right now.
 
@@ -44,7 +44,7 @@ def discuss_introduction():
     ''')
 
 
-def discuss_introduction_repost():
+def topic_channel_introduction_repost():
     return dedent(f'''
         I updated my last message with a new topic for discussion, check it out! :fire:
 
