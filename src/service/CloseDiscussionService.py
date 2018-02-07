@@ -1,10 +1,8 @@
 import re
 from threading import Thread
 
-from src.command.CloseChannelCommand import CloseChannelCommand
-from src.command.CloseDiscussionCommand import CloseDiscussionCommand
-from src.command.UpdateQueueCommand import UpdateQueueCommand
-from src.domain.repositories.SlackAgentRepository import slack_agent_repository
+from src.command.CloseDiscussionOnPortalCommand import CloseDiscussionOnPortalCommand
+from src.command.CloseDiscussionOnSlackCommand import CloseDiscussionOnSlackCommand
 from src.service.Service import Service
 
 
@@ -28,24 +26,15 @@ class CloseDiscussionService(Service):
     def execute(self):
         if self._is_discussion_channel():
             if self._user_is_authorized():
-                portal_command = CloseDiscussionCommand(portal_client_wrapper=self.portal_client_wrapper,
-                                                        slack_channel_id=self.slack_channel_id,
-                                                        slack_team_id=self.slack_team_id)
+                portal_command = CloseDiscussionOnPortalCommand(portal_client_wrapper=self.portal_client_wrapper,
+                                                                slack_channel_id=self.slack_channel_id,
+                                                                slack_team_id=self.slack_team_id)
                 Thread(target=portal_command.execute, daemon=True).start()
-                close_channel_command = CloseChannelCommand(slack_client_wrapper=self.slack_client_wrapper,
-                                                            slack_channel_id=self.slack_channel_id,
-                                                            slack_team_id=self.slack_team_id,
-                                                            slack_user_id=self.slack_user_id)
-                Thread(target=close_channel_command.execute, daemon=True).start()
-                discuss_slack_channel_id = slack_agent_repository.get_discuss_channel_id(
-                    slack_team_id=self.slack_team_id
-                )
-                update_queue_command = UpdateQueueCommand(slack_client_wrapper=self.slack_client_wrapper,
-                                                          discuss_slack_channel_id=discuss_slack_channel_id,
-                                                          discussion_slack_channel_id=self.slack_channel_id,
-                                                          slack_team_id=self.slack_team_id,
-                                                          slack_user_id=self.slack_user_id)
-                Thread(target=update_queue_command.execute, daemon=True).start()
+                slack_command = CloseDiscussionOnSlackCommand(slack_client_wrapper=self.slack_client_wrapper,
+                                                              slack_channel_id=self.slack_channel_id,
+                                                              slack_team_id=self.slack_team_id,
+                                                              slack_user_id=self.slack_user_id)
+                Thread(target=slack_command.execute, daemon=True).start()
 
     def _is_discussion_channel(self):
         # TODO [CCS-81] This check should happen via db in validator
