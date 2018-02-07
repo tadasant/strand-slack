@@ -1,4 +1,5 @@
 from src import create_app, slack_agent_repository
+from src.config import config
 from tests.factories.portalfactories import SlackAgentFactory
 from tests.testresources import TestSlackClient
 
@@ -15,7 +16,8 @@ class TestInitializingSlackApplicationInstallations:
 
         self._queue_response_from_portal(portal_client=portal_client)
 
-        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient, slack_verification_token='anything')
+        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient, slack_verification_token='anything',
+                   portal_verification_token=config['PORTAL_VERIFICATION_TOKEN'])
 
         assert portal_client.query.call_count == 1
         assert slack_agent_repository.get_slack_access_token(

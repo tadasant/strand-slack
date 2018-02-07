@@ -4,6 +4,7 @@ from copy import deepcopy
 import pytest
 from flask import url_for
 
+from src.config import config
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.portalfactories import SlackAgentFactory
@@ -37,6 +38,7 @@ class TestSyncingSlackAgents(TestFunction):
     }
     default_headers = {
         'Content-Type': 'application/json',
+        'Authorization': f'Token {config["PORTAL_VERIFICATION_TOKEN"]}'
     }
 
 
