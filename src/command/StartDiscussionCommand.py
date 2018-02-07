@@ -1,6 +1,7 @@
 from src.command.Command import Command
+from src.command.messages.TopicChannelMessage import TopicChannelMessage
 from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm, \
-    topic_channel_introduction_repost, topic_queue_message
+    topic_channel_introduction_repost
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
@@ -9,11 +10,13 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class StartDiscussionCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id,
+                 slack_team_domain):
         super().__init__(slack_team_id=slack_team_id, slack_client_wrapper=slack_client_wrapper,
                          portal_client_wrapper=portal_client_wrapper)
         self.submission = submission
         self.slack_user_id = slack_user_id
+        self.slack_team_domain = slack_team_domain
 
     def execute(self):
         """
@@ -54,7 +57,7 @@ class StartDiscussionCommand(Command):
                                                        tags=self.submission.tags
                                                    ))
             self._add_topic_to_topic_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
-                                             discussion_channel_id=slack_channel.id)
+                                             team_domain=self.slack_team_domain, discussion_channel_id=slack_channel.id)
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
@@ -97,17 +100,19 @@ class StartDiscussionCommand(Command):
                                                                       channel_name=channel_name)
         return ChannelSchema().load(slack_channel_info).data
 
-    def _add_topic_to_topic_channel(self, topic, original_poster_slack_user_id, discussion_channel_id):
+    def _add_topic_to_topic_channel(self, topic, original_poster_slack_user_id, team_domain, discussion_channel_id):
         topic_channel_id = slack_agent_repository.get_topic_channel_id(slack_team_id=self.slack_team_id)
         intro_message_info = self.slack_client_wrapper.get_last_channel_message(slack_team_id=self.slack_team_id,
                                                                                 slack_channel_id=topic_channel_id)
         intro_message = MessageSchema().load(intro_message_info).data
-        new_topic_message = topic_queue_message(discussion_channel_id=discussion_channel_id,
-                                                original_poster_slack_user_id=original_poster_slack_user_id,
-                                                title=topic.title,
-                                                tags=', '.join([tag.name for tag in topic.tags]))
+        topic_channel_post = TopicChannelMessage(original_poster_user_id=original_poster_slack_user_id,
+                                                 discussion_channel_id=discussion_channel_id,
+                                                 team_domain=team_domain, title=topic.title,
+                                                 tag_names=[tag.name for tag in topic.tags])
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id, slack_channel_id=topic_channel_id,
-                                                 new_text=new_topic_message, message_ts=intro_message.ts)
+                                                 new_text=topic_channel_post.text,
+                                                 attachments=topic_channel_post.attachments,
+                                                 message_ts=intro_message.ts)
         self.slack_client_wrapper.send_message(
             slack_team_id=self.slack_team_id,
             slack_channel_id=topic_channel_id,

@@ -14,15 +14,6 @@ def discussion_initiation_message(original_poster_slack_user_id, title, descript
     ''')
 
 
-def topic_queue_message(discussion_channel_id, original_poster_slack_user_id, title, tags):
-    return dedent(f'''
-        *Channel*: <#{discussion_channel_id}>
-        *OP*: <@{original_poster_slack_user_id}>
-        *Title*: {title}
-        *Tags*: {tags}
-    ''')
-
-
 def discussion_initiation_dm(slack_channel_id):
     return dedent(f'''
         Your discussion has been started at <#{slack_channel_id}>. Check it out!

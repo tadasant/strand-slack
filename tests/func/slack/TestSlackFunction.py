@@ -100,7 +100,7 @@ class TestSlackFunction(TestFunction):
             },
             "team": {
                 "id": slack_team_id,
-                "domain": "solutionloft"
+                "domain": fake_interactive_component_request.team.domain
             },
             "channel": {
                 "id": "D8YS0A9D1",
