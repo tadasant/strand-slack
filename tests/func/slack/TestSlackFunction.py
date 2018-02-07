@@ -56,8 +56,7 @@ class TestSlackFunction(TestFunction):
     def start_discussion(self, slack_agent_repository, slack_team_id, slack_client_class, portal_client, mocker,
                          topic_id=int(str(PrimitiveFaker('random_int')))):
         """
-            Starts a discussion on slack_team_id. It is required that there be mocker.spy set on portal_client.mutate
-            and slack_client_class.api_call prior to invoking this function.
+            Starts a discussion on slack_team_id.
 
             TODO This needs to be cleaned up. Create some sort of constructor for Slack payloads.
         """
@@ -69,8 +68,8 @@ class TestSlackFunction(TestFunction):
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=slack_team_id)
 
-        self._queue_portal_topic_creation(portal_client=portal_client, topic_id=topic_id)
-        self._queue_portal_discussion_creation(portal_client=portal_client)
+        self.__queue_portal_topic_creation(portal_client=portal_client, topic_id=topic_id)
+        self.__queue_portal_discussion_creation(portal_client=portal_client)
 
         fake_tags = [str(PrimitiveFaker('word')), str(PrimitiveFaker('word'))]
         fake_interactive_component_request = InteractiveComponentRequestFactory.create(
@@ -114,8 +113,8 @@ class TestSlackFunction(TestFunction):
         wait_until(condition=wait_condition)
         mocker.stopall()
 
-    def _queue_portal_topic_creation(self, portal_client, topic_id=1, topic_title='sometitle',
-                                     topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
+    def __queue_portal_topic_creation(self, portal_client, topic_id=1, topic_title='sometitle',
+                                      topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
         portal_client.set_next_response({
             'data': {
                 'createTopicFromSlack': {
@@ -132,7 +131,7 @@ class TestSlackFunction(TestFunction):
             }
         })
 
-    def _queue_portal_discussion_creation(self, portal_client):
+    def __queue_portal_discussion_creation(self, portal_client):
         portal_client.set_next_response({
             'data': {
                 'createDiscussionFromSlack': {

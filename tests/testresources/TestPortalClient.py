@@ -1,28 +1,33 @@
 import threading
 
+from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
 
 
 class TestPortalClient:
     def __init__(self, **kwargs):
         self.next_responses = []
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
+        self.logger = get_logger('TestPortalClient')
 
     # UTILITIES
 
     def set_next_response(self, response):
         # TODO [CCS-70] shouldn't use this feature. Will become mostly obsolete with CCS-81.
         with self.lock:
+            self.logger.info(f'Queueing {response}')
             self.next_responses.append(response)
 
     def clear_responses(self):
         with self.lock:
+            self.logger.info(f'Clearing all responses')
             self.next_responses = []
 
     # MOCKS
 
     def query(self, operation_definition):
         with self.lock:
+            self.logger.info(f'Query call: {operation_definition}')
             if self.next_responses:
                 result = self.next_responses[0]
                 self.next_responses = self.next_responses[1:]
@@ -35,6 +40,7 @@ class TestPortalClient:
 
     def mutate(self, operation_definition):
         with self.lock:
+            self.logger.info(f'Mutate call: {operation_definition}')
             if self.next_responses:
                 result = self.next_responses[0]
                 self.next_responses = self.next_responses[1:]

@@ -80,6 +80,16 @@ class SlackClientWrapper:
             self._raise_wrapper_exception(response, 'no messages in discuss', slack_team_id, slack_channel_id)
         return messages[0]
 
+    def get_first_channel_message(self, slack_team_id, slack_channel_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
+                                              channel=slack_channel_id, count=1000)
+        self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
+        messages = response['messages']
+        if len(messages) == 0:
+            self._raise_wrapper_exception(response, 'no messages in discuss', slack_team_id, slack_channel_id)
+        return messages[-1]
+
     def update_message(self, slack_team_id, slack_channel_id, new_text, message_ts):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.update', channel=slack_channel_id,
