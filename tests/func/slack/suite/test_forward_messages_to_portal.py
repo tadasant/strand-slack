@@ -8,7 +8,6 @@ from src.config import config
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import EventRequestFactory
 from tests.func.slack.TestSlackFunction import TestSlackFunction
-from tests.testresources.TestSlackClient import SlackRepository
 from tests.utils import wait_until
 
 
@@ -51,10 +50,13 @@ class TestForwardMessagesToPortal(TestSlackFunction):
     def test_post_valid_message_authenticated_slack(self, slack_client_class, portal_client, slack_client,
                                                     slack_agent_repository, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
-        discussion_channel_id = self._start_discussion_on_channel(portal_client=portal_client,
-                                                                  slack_agent_repository=slack_agent_repository,
-                                                                  slack_client_class=slack_client_class,
-                                                                  mocker=mocker)
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_event_request.team_id)
+        discussion_channel_id = self.start_discussion_on_channel(slack_team_id=self.fake_event_request.team_id,
+                                                                 portal_client=portal_client,
+                                                                 slack_agent_repository=slack_agent_repository,
+                                                                 slack_client_class=slack_client_class,
+                                                                 mocker=mocker)
         payload = deepcopy(self.default_payload)
         payload['event']['channel'] = discussion_channel_id
         self._queue_portal_message_creation(portal_client=portal_client)
@@ -72,10 +74,13 @@ class TestForwardMessagesToPortal(TestSlackFunction):
     def test_post_valid_reply_authenticated_slack(self, slack_client_class, portal_client, slack_client,
                                                   slack_agent_repository, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
-        discussion_channel_id = self._start_discussion_on_channel(portal_client=portal_client,
-                                                                  slack_agent_repository=slack_agent_repository,
-                                                                  slack_client_class=slack_client_class,
-                                                                  mocker=mocker)
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_event_request.team_id)
+        discussion_channel_id = self.start_discussion_on_channel(slack_team_id=self.fake_event_request.team_id,
+                                                                 portal_client=portal_client,
+                                                                 slack_agent_repository=slack_agent_repository,
+                                                                 slack_client_class=slack_client_class,
+                                                                 mocker=mocker)
         payload = deepcopy(self.default_payload)
         payload['event']['channel'] = discussion_channel_id
         payload['event']['thread_ts'] = str(PrimitiveFaker('msisdn'))
@@ -94,10 +99,13 @@ class TestForwardMessagesToPortal(TestSlackFunction):
     def test_post_valid_message_with_file_authenticated_slack(self, slack_client_class, portal_client, slack_client,
                                                               slack_agent_repository, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
-        discussion_channel_id = self._start_discussion_on_channel(portal_client=portal_client,
-                                                                  slack_agent_repository=slack_agent_repository,
-                                                                  slack_client_class=slack_client_class,
-                                                                  mocker=mocker)
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_event_request.team_id)
+        discussion_channel_id = self.start_discussion_on_channel(slack_team_id=self.fake_event_request.team_id,
+                                                                 portal_client=portal_client,
+                                                                 slack_agent_repository=slack_agent_repository,
+                                                                 slack_client_class=slack_client_class,
+                                                                 mocker=mocker)
         payload = deepcopy(self.default_payload)
         payload['event']['channel'] = discussion_channel_id
         payload['event']['subtype'] = 'file_share'
@@ -139,16 +147,6 @@ class TestForwardMessagesToPortal(TestSlackFunction):
         assert not outcome, 'Expected portal_client.mutate not to be called'
 
         assert HTTPStatus.OK == response.status_code
-
-    def _start_discussion_on_channel(self, portal_client, slack_agent_repository, slack_client_class, mocker):
-        self.start_discussion(slack_agent_repository=slack_agent_repository,
-                              slack_team_id=self.fake_event_request.team_id,
-                              slack_client_class=slack_client_class,
-                              portal_client=portal_client,
-                              mocker=mocker)
-        assert 1 == len(SlackRepository['created_channels_by_id'].items())
-        # return created channel id
-        return next(iter(SlackRepository['created_channels_by_id'].values()))['id']
 
     def _queue_portal_message_creation(self, portal_client):
         portal_client.set_next_response({

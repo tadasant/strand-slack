@@ -9,16 +9,17 @@ def get_logger(caller_name):
     logger = logging.getLogger(caller_name)
     logger.setLevel(log_level)
 
-    ch = logging.StreamHandler()
-    ch.setLevel(log_level)
+    if not len(logger.handlers):
+        ch = logging.StreamHandler()
+        ch.setLevel(log_level)
 
-    fh = logging.FileHandler(output_file)
-    fh.setLevel(log_level)
+        fh = logging.FileHandler(output_file)
+        fh.setLevel(log_level)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
-    ch.setFormatter(formatter)
-    fh.setFormatter(formatter)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(funcName)s - %(message)s')
+        ch.setFormatter(formatter)
+        fh.setFormatter(formatter)
 
-    logger.addHandler(ch)
-    logger.addHandler(fh)
+        logger.addHandler(ch)
+        logger.addHandler(fh)
     return logger

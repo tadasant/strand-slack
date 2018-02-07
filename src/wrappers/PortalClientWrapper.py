@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClientException
@@ -151,7 +153,7 @@ class PortalClientWrapper:
 
     def create_message(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
         operation_definition = f'''
-          mutation {{
+          {{
             createMessageFromSlack(input: {{text: "{text}",
                                             slackChannelId: "{slack_channel_id}", slackUserId: "{author_slack_user_id}",
                                             originSlackEventTs: "{slack_event_ts}"}}) {{
@@ -166,13 +168,28 @@ class PortalClientWrapper:
 
     def create_reply(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
         operation_definition = f'''
-          mutation {{
+          {{
             createReplyFromSlack(input: {{text: "{text}",
                                           messageOriginSlackEventTs: "{slack_thread_ts}",
                                           slackChannelId: "{slack_channel_id}",
                                           slackUserId: "{author_slack_user_id}",
                                           originSlackEventTs: "{slack_event_ts}"}}) {{
               reply {{
+                id
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
+    def close_discussion(self, slack_channel_id):
+        # TODO shouldn't rely on slackChannelId being unique (need slack_team_id as well)
+        operation_definition = f'''
+          {{
+            closeDiscussionFromSlack(input: {{slackChannelId: "{slack_channel_id}",
+                                            timeEnd: "{datetime.now(timezone.utc)}"}}) {{
+              discussion {{
                 id
               }}
             }}
