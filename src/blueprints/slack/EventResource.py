@@ -26,7 +26,10 @@ class EventResource(SlackResource):
                         slack_team_id=event_request.team_id
                     )
                     if event_request.event.channel == topic_channel_id:
-                        self.logger.info('Detected message in topic channel')
+                        bot_user_id = slack_agent_repository.get_slack_bot_user_id(event_request.team_id)
+                        if event_request.event.user != bot_user_id:
+                            self.logger.info('Detected non-bot message in topic channel')
+                            command =
                         # TODO [CCS-75] Command to delete non-clippy topic channel messages
                         # command = None
                         # Thread(target=command.execute, daemon=True).start()
