@@ -1,5 +1,6 @@
 from src.command.Command import Command
 from src.command.messages.formatted_text import topic_channel_introduction
+from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
@@ -35,12 +36,12 @@ class UpdateTopicChannelCommand(Command):
                     slack_channel_id=self.topic_channel_id,
                     text=topic_channel_introduction()
                 )
-                response_payload['text'] = f'Successfully set the topic channel to be <#{self.topic_channel_id}>.' \
+                response_payload['text'] = f'Successfully set the topic channel to be <#{self.topic_channel_id}>. ' \
                                            'If you want to change this later, just select a new option in the menu.'
             else:
-                response_payload['text'] = f'Unable to set the channel to be <#{self.topic_channel_id}>.' \
+                response_payload['text'] = f'Unable to set the channel to be <#{self.topic_channel_id}>. ' \
                                            'You must select a newly-created, empty channel. Please try again.'
-        except WrapperException as e:
+        except (WrapperException, RepositoryException) as e:
             self.logger.error(f'Something went wrong! {e}')
             response_payload['text'] = 'Something went wrong! Please try again or contact support@solutionloft.com'
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)

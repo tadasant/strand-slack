@@ -20,7 +20,7 @@ class UpdateQueueCommand(Command):
 
         entry_ts = potential_entry_matches[0]['ts']
         entry_original_text = potential_entry_matches[0]['text']
-        new_text = f'~{entry_original_text}~'  # strikeout
+        new_text = f'>>>{entry_original_text}'  # blockquote
 
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id,
                                                  slack_channel_id=self.topic_slack_channel_id, new_text=new_text,

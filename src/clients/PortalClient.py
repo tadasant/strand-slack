@@ -33,7 +33,7 @@ class PortalClient:
         return response.json()
 
     def _get_token(self, email, password):
-        response = requests.post(url=f'{self.host}auth-token/', data={email: email, password: password})
+        response = requests.post(url=f'{self.host}auth-token', data={'email': email, 'password': password})
         if response.status_code != 200:
             raise PortalClientException('Authentication failed.', response)
         return response.json()['token']
