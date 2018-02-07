@@ -106,15 +106,16 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 2
+            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 3
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have a calls and slack_client to have at least 1'
+        assert outcome, 'Expected portal_client to have a calls and slack_client to have at least 3'
 
         assert HTTPStatus.NO_CONTENT == response.status_code
         assert 'discussChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
+                {'method': 'channels.history'},  # validating if the channel is empty
                 {'method': 'channels.invite'},  # add bot to channel
                 {'method': 'chat.postMessage'},  # introduce channel
             ],
