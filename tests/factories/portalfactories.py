@@ -36,6 +36,6 @@ class SlackAgentFactory(factory.Factory):
         model = SlackAgent
 
     status = SlackAgentStatus.INITIATED.name
-    discuss_channel_id = factory.Faker('bban')
+    topic_channel_id = factory.Faker('bban')
     slack_team = factory.SubFactory(SlackTeamFactory)
     slack_application_installation = factory.SubFactory(SlackApplicationInstallationFactory)

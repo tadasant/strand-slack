@@ -31,7 +31,7 @@ class PortalClientWrapper:
             {
                 slackAgents {
                     status
-                    discussChannelId
+                    topicChannelId
                     slackTeam {
                         id
                     }
@@ -50,13 +50,13 @@ class PortalClientWrapper:
         return self._deserialize_response_body(response_body=response_body, ObjectSchema=SlackAgentSchema,
                                                path_to_object=['data', 'slackAgents'], many=True)
 
-    def update_discuss_channel_and_activate_agent(self, slack_team_id, discuss_channel_id):
+    def update_topic_channel_and_activate_agent(self, slack_team_id, topic_channel_id):
         operation_definition = f'''
             {{
-                updateSlackAgentDiscussChannelAndActivate(input: {{slackTeamId: "{slack_team_id}",
-                                                                discussChannelId: "{discuss_channel_id}"}}) {{
+                updateSlackAgentTopicChannelAndActivate(input: {{slackTeamId: "{slack_team_id}",
+                                                                topicChannelId: "{topic_channel_id}"}}) {{
                     slackAgent {{
-                        discussChannelId
+                        topicChannelId
                         status
                     }}
                 }}
@@ -65,7 +65,7 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         result = self._deserialize_response_body(
             response_body=response_body, ObjectSchema=SlackAgentSchema,
-            path_to_object=['data', 'updateSlackAgentDiscussChannelAndActivate', 'slackAgent']
+            path_to_object=['data', 'updateSlackAgentTopicChannelAndActivate', 'slackAgent']
         )
         assert result.status == SlackAgentStatus.ACTIVE, 'Call to activate Slack Agent oddly did not transition'
         return result

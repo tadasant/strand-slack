@@ -37,11 +37,11 @@ class CloseDiscussionService(Service):
                                                             slack_team_id=self.slack_team_id,
                                                             slack_user_id=self.slack_user_id)
                 Thread(target=close_channel_command.execute, daemon=True).start()
-                discuss_slack_channel_id = slack_agent_repository.get_discuss_channel_id(
+                topic_slack_channel_id = slack_agent_repository.get_topic_channel_id(
                     slack_team_id=self.slack_team_id
                 )
                 update_queue_command = UpdateQueueCommand(slack_client_wrapper=self.slack_client_wrapper,
-                                                          discuss_slack_channel_id=discuss_slack_channel_id,
+                                                          topic_slack_channel_id=topic_slack_channel_id,
                                                           discussion_slack_channel_id=self.slack_channel_id,
                                                           slack_team_id=self.slack_team_id,
                                                           slack_user_id=self.slack_user_id)

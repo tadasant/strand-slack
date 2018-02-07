@@ -3,7 +3,7 @@ from collections import namedtuple
 InitialOnboardingDmType = namedtuple('OnboardingDmType', 'callback_id action_id text attachment')
 
 _initial_onboarding_dm_callback_id = 'onboarding_dm'
-_initial_onboarding_dm_action_id = 'discuss_channel_list'
+_initial_onboarding_dm_action_id = 'topic_channel_list'
 INITIAL_ONBOARDING_DM = InitialOnboardingDmType(
     callback_id=_initial_onboarding_dm_callback_id,
     action_id=_initial_onboarding_dm_action_id,
