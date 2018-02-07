@@ -30,10 +30,10 @@ class TestCloseDiscussion(TestSlashCommand):
         response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 4
+            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 6
 
-        outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 1 calls, and slack_client to have 4+'
+        outcome = wait_until(condition=wait_condition, timeout=500)
+        assert outcome, 'Expected portal_client to have 1 calls, and slack_client to have 6+'
 
         assert HTTPStatus.NO_CONTENT == response.status_code
         assert 'closeDiscussionFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
@@ -42,6 +42,7 @@ class TestCloseDiscussion(TestSlashCommand):
             params_to_expecteds=[
                 {'method': 'chat.postMessage'},  # inform channel of closed discussion
                 {'method': 'channels.archive'},
+                {'method': 'chat.update'},  # update the queue message
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
