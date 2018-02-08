@@ -1,5 +1,6 @@
 from src.command.Command import Command
-from src.command.messages.TopicChannelIntroMessage import TopicChannelIntroMessage
+
+from src.command.message.messages import INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
@@ -31,12 +32,11 @@ class UpdateTopicChannelCommand(Command):
                 self.slack_client_wrapper.invite_user_to_channel(slack_team_id=self.slack_team_id,
                                                                  slack_channel_id=self.topic_channel_id,
                                                                  slack_user_id=slack_bot_user_id)
-                topic_channel_intro_message = TopicChannelIntroMessage(is_update=False)
                 self.slack_client_wrapper.send_message(
                     slack_team_id=self.slack_team_id,
                     slack_channel_id=self.topic_channel_id,
-                    text=topic_channel_intro_message.text,
-                    attachments=topic_channel_intro_message.attachments
+                    text=INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE.text,
+                    attachments=INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE.attachments
                 )
                 response_payload['text'] = f'Successfully set the topic channel to be <#{self.topic_channel_id}>. ' \
                                            'If you want to change this later, just select a new option in the menu.'

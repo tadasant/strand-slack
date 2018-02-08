@@ -1,13 +1,14 @@
 from marshmallow import Schema, fields, post_load
 
-from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
-from src.command.messages.post_topic_dialog import POST_TOPIC_DIALOG
+from src.command.button.buttons import POST_NEW_TOPIC_BUTTON
+from src.command.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.domain.models.Model import Model
+from src.domain.models.slack.Team import TeamSchema
+from src.domain.models.slack.User import UserSchema
 from src.domain.models.slack.requests.elements.Action import ActionSchema
 from src.domain.models.slack.requests.elements.Message import MessageSchema
 from src.domain.models.slack.requests.elements.Submission import SubmissionSchema
-from src.domain.models.slack.Team import TeamSchema
-from src.domain.models.slack.User import UserSchema
 
 
 class InteractiveComponentRequest(Model):
@@ -39,6 +40,10 @@ class InteractiveComponentRequest(Model):
     @property
     def is_post_topic_dialog_submission(self):
         return self.type == 'dialog_submission' and self.callback_id == POST_TOPIC_DIALOG.callback_id
+
+    @property
+    def is_post_new_topic_button_click(self):
+        return self.callback_id == POST_NEW_TOPIC_BUTTON.callback_id
 
     @property
     def selected_topic_channel_id(self):

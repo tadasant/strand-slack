@@ -1,33 +1,20 @@
 from textwrap import dedent
 
+from src.command.button.buttons import POST_NEW_TOPIC_BUTTON
+from src.command.message.Message import Message
 
-class TopicChannelIntroMessage:
+
+class TopicChannelIntroMessage(Message):
     """Message that sits at the bottom of the topic channel"""
 
     def __init__(self, is_update=True):
         """is_update should be False only on the first-ever topic channel post"""
         self._is_update = is_update
 
-        self.text = self._format_text()
-        self.attachments = self._format_attachments()
-
-    @property
-    def post_new_topic_button(self):
-        return {
-            'fallback': f'Can\'t display the button, please use `/codeclippy post`',
-            "callback_id": "post_new_topic",
-            "color": "#3AA3E3",
-            "attachment_type": "default",
-            "actions": [
-                {
-                    "name": "post",
-                    "text": "Post new topic",
-                    "style": "primary",
-                    "type": "button",
-                    "value": "post"
-                }
-            ]
-        }
+        super().__init__(
+            text=self._format_text(),
+            attachments=self._format_attachments()
+        )
 
     def _format_text(self):
         new_topic_text = '_I updated my last message with a new topic for discussion, check it out!_ :fire:\n'
@@ -40,4 +27,4 @@ class TopicChannelIntroMessage:
         ''')
 
     def _format_attachments(self):
-        return [self.post_new_topic_button]
+        return [POST_NEW_TOPIC_BUTTON.as_dict()]

@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 import factory
 from flask import url_for
 
-from src.command.messages.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.config import config
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, ActionFactory, MessageFactory
 from tests.func.slack.TestSlackFunction import TestSlackFunction

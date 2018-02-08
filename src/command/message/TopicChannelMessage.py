@@ -1,5 +1,7 @@
 import time
 
+# TODO [CCS-104] Move this to message_models.py & messages.py
+
 
 class TopicChannelMessage:
     def __init__(self, original_poster_user_id, discussion_channel_id, title, tag_names):

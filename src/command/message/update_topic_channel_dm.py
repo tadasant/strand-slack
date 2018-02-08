@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+# TODO [CCS-104] Move this to message_models.py & messages.py
+
 UpdateTopicChannelDmType = namedtuple('UpdateTopicChannelDmType', 'attachment_generator')
 
 

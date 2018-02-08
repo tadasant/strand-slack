@@ -1,7 +1,7 @@
 from src.command.Command import Command
-from src.command.messages.TopicChannelIntroMessage import TopicChannelIntroMessage
-from src.command.messages.TopicChannelMessage import TopicChannelMessage
-from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm
+from src.command.message.TopicChannelMessage import TopicChannelMessage
+from src.command.message.formatted_text import discussion_initiation_message, discussion_initiation_dm
+from src.command.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
@@ -111,10 +111,9 @@ class StartDiscussionCommand(Command):
                                                  new_text=topic_channel_post.text,
                                                  attachments=topic_channel_post.attachments,
                                                  message_ts=intro_message.ts)
-        topic_channel_intro_message = TopicChannelIntroMessage()
         self.slack_client_wrapper.send_message(
             slack_team_id=self.slack_team_id,
             slack_channel_id=topic_channel_id,
-            text=topic_channel_intro_message.text,
-            attachments=topic_channel_intro_message.attachments
+            text=TOPIC_CHANNEL_INTRO_MESSAGE.text,
+            attachments=TOPIC_CHANNEL_INTRO_MESSAGE.attachments
         )

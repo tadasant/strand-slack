@@ -1,6 +1,8 @@
 from textwrap import dedent
 
 
+# TODO [CCS-104] Move these to message_models.py & messages.py
+
 def discussion_initiation_message(original_poster_slack_user_id, title, description, tags):
     return dedent(f'''
         *OP*: <@{original_poster_slack_user_id}>

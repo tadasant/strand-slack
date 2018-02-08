@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+# TODO [CCS-104] Move this to message_models.py & messages.py
+
 InitialOnboardingDmType = namedtuple('OnboardingDmType', 'callback_id action_id text attachment')
 
 _initial_onboarding_dm_callback_id = 'onboarding_dm'
