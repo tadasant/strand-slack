@@ -11,3 +11,8 @@ class Action(Model):
         self.type = type
         self.value = value
         self.confirm = confirm
+
+    def as_dict(self):
+        result = super().as_dict()
+        result['confirm'] = self.confirm.as_dict()
+        return result

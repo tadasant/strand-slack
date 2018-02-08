@@ -2,7 +2,7 @@ from src.command.model.Model import Model
 
 
 class Attachment(Model):
-    def __init__(self, fallback, callback_id, color, attachment_type, actions):
+    def __init__(self, callback_id, color, attachment_type, actions, fallback=None):
         self.fallback = fallback
         self.callback_id = callback_id
         self.color = color
