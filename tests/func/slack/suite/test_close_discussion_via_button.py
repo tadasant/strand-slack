@@ -4,8 +4,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT, \
-    DISCUSSION_INTRO_ACTIONS_ATTACHMENT
+from src.command.model.attachment.attachments import DISCUSSION_INTRO_ACTIONS_ATTACHMENT
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.func.slack.TestButton import TestButton
 from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
