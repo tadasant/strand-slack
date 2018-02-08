@@ -1,5 +1,6 @@
 import factory
 
+from src.domain.models.slack.Channel import Channel
 from src.domain.models.slack.Team import Team
 from src.domain.models.slack.User import User
 from src.domain.models.slack.requests.EventRequest import EventRequest
@@ -50,6 +51,14 @@ class UserFactory(factory.Factory):
     id = factory.Faker('bban')
 
 
+class ChannelFactory(factory.Factory):
+    class Meta:
+        model = Channel
+
+    id = factory.Faker('bban')
+    name = factory.Faker('word')
+
+
 class SubmissionFactory(factory.Factory):
     class Meta:
         model = Submission
@@ -91,6 +100,7 @@ class InteractiveComponentRequestFactory(factory.Factory):
     callback_id = factory.Faker('word')
     team = factory.SubFactory(TeamFactory)
     user = factory.SubFactory(UserFactory)
+    channel = factory.SubFactory(ChannelFactory)
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')
 

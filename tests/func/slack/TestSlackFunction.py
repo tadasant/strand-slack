@@ -103,8 +103,8 @@ class TestSlackFunction(TestFunction):
                 "domain": "solutionloft"
             },
             "channel": {
-                "id": "D8YS0A9D1",
-                "name": "directmessage"
+                "id": fake_interactive_component_request.channel.id,
+                "name": fake_interactive_component_request.channel.name
             },
             "user": {
                 "id": fake_interactive_component_request.user.id,
