@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from src.command.button.buttons import POST_NEW_TOPIC_BUTTON
+from src.command.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
 from src.command.message.Message import Message
 
 
@@ -27,4 +27,4 @@ class TopicChannelIntroMessage(Message):
         ''')
 
     def _format_attachments(self):
-        return [POST_NEW_TOPIC_BUTTON.as_dict()]
+        return [TOPIC_CHANNEL_ACTIONS_ATTACHMENT.as_dict()]

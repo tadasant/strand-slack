@@ -1,4 +1,6 @@
 class Action:
+    """Includes buttons"""
+
     def __init__(self, name, text, style, type, value):
         self.name = name
         self.text = text

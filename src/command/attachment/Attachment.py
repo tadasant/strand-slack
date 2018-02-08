@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 
-class Button:
+class Attachment:
     def __init__(self, fallback, callback_id, color, attachment_type, actions):
         self.fallback = fallback
         self.callback_id = callback_id
