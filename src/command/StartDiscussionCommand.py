@@ -10,13 +10,11 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class StartDiscussionCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id,
-                 slack_team_domain):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id):
         super().__init__(slack_team_id=slack_team_id, slack_client_wrapper=slack_client_wrapper,
                          portal_client_wrapper=portal_client_wrapper)
         self.submission = submission
         self.slack_user_id = slack_user_id
-        self.slack_team_domain = slack_team_domain
 
     def execute(self):
         """
@@ -57,7 +55,7 @@ class StartDiscussionCommand(Command):
                                                        tags=self.submission.tags
                                                    ))
             self._add_topic_to_topic_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
-                                             team_domain=self.slack_team_domain, discussion_channel_id=slack_channel.id)
+                                             discussion_channel_id=slack_channel.id)
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
@@ -100,14 +98,14 @@ class StartDiscussionCommand(Command):
                                                                       channel_name=channel_name)
         return ChannelSchema().load(slack_channel_info).data
 
-    def _add_topic_to_topic_channel(self, topic, original_poster_slack_user_id, team_domain, discussion_channel_id):
+    def _add_topic_to_topic_channel(self, topic, original_poster_slack_user_id, discussion_channel_id):
         topic_channel_id = slack_agent_repository.get_topic_channel_id(slack_team_id=self.slack_team_id)
         intro_message_info = self.slack_client_wrapper.get_last_channel_message(slack_team_id=self.slack_team_id,
                                                                                 slack_channel_id=topic_channel_id)
         intro_message = MessageSchema().load(intro_message_info).data
         topic_channel_post = TopicChannelMessage(original_poster_user_id=original_poster_slack_user_id,
                                                  discussion_channel_id=discussion_channel_id,
-                                                 team_domain=team_domain, title=topic.title,
+                                                 title=topic.title,
                                                  tag_names=[tag.name for tag in topic.tags])
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id, slack_channel_id=topic_channel_id,
                                                  new_text=topic_channel_post.text,

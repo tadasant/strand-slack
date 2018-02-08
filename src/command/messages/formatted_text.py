@@ -18,7 +18,7 @@ def discussion_initiation_dm(slack_channel_id):
     return dedent(f'''
         Your discussion has been started at <#{slack_channel_id}>. Check it out!
 
-        Please `/codeclippy close` it (invoke the command inside the channel) when the discussion is over.
+        Please write `/codeclippy close` when the discussion is over.
     ''')
 
 
@@ -47,4 +47,10 @@ def close_discussion(closer_slack_user_id):
         At this time, no more messages will be allowed in this channel.
 
         This conversation will be archived and may be reviewed on www.codeclippy.com
+    ''')
+
+
+def block_topic_channel_message(attempted_message):
+    return dedent(f'''
+        I\'m sorry but users may not post in this channel. Here's the message you tried to send:\n\n{attempted_message}
     ''')
