@@ -2,10 +2,9 @@ import time
 
 
 class TopicChannelMessage:
-    def __init__(self, original_poster_user_id, discussion_channel_id, team_domain, title, tag_names):
+    def __init__(self, original_poster_user_id, discussion_channel_id, title, tag_names):
         self._original_poster_user_id = original_poster_user_id
         self._discussion_channel_id = discussion_channel_id
-        self._team_domain = team_domain
         self._title = title
         self._tag_names = [x.lower() for x in tag_names]
         self._ts = time.time()
@@ -24,9 +23,7 @@ class TopicChannelMessage:
             'fallback': f'*Title*: {self._title}',
             'color': '#32424a',
             'author_name': f'Posted by <@{self._original_poster_user_id}>',
-            'author_link': f'https://{self._team_domain}.slack.com/team/{self._original_poster_user_id}',
             'title': self._title,
-            'title_link': f'https://{self._team_domain}.slack.com/messages/{self._discussion_channel_id}'
         }
 
     def _format_tag_attachment(self):

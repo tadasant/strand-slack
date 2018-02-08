@@ -18,7 +18,7 @@ def discussion_initiation_dm(slack_channel_id):
     return dedent(f'''
         Your discussion has been started at <#{slack_channel_id}>. Check it out!
 
-        Please `/codeclippy close` it (invoke the command inside the channel) when the discussion is over.
+        Please write `/codeclippy close` when the discussion is over.
     ''')
 
 

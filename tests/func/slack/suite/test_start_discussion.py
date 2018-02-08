@@ -34,7 +34,7 @@ class TestStartDiscussion(TestSlackFunction):
         },
         "team": {
             "id": fake_interactive_component_request.team.id,
-            "domain": fake_interactive_component_request.team.domain
+            "domain": "solutionloft"
         },
         "channel": {
             "id": "D8YS0A9D1",

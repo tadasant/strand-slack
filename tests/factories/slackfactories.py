@@ -40,7 +40,6 @@ class TeamFactory(factory.Factory):
     class Meta:
         model = Team
 
-    domain = factory.Faker('word')
     id = factory.Faker('bban')
 
 

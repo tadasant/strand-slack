@@ -31,7 +31,6 @@ class InteractiveComponentResource(SlackResource):
             command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                              portal_client_wrapper=current_app.portal_client_wrapper,
                                              slack_team_id=r.team.id,
-                                             slack_team_domain=r.team.domain,
                                              submission=r.submission,
                                              slack_user_id=r.user.id)
             Thread(target=command.execute, daemon=True).start()
