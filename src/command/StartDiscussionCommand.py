@@ -104,8 +104,8 @@ class StartDiscussionCommand(Command):
         intro_message = MessageSchema().load(intro_message_info).data
         new_topic_message = topic_queue_message(discussion_channel_id=discussion_channel_id,
                                                 original_poster_slack_user_id=original_poster_slack_user_id,
-                                                title=topic.title, description=topic.description,
-                                                tags=topic.tags)
+                                                title=topic.title,
+                                                tags=', '.join([tag.name for tag in topic.tags]))
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id, slack_channel_id=topic_channel_id,
                                                  new_text=new_topic_message, message_ts=intro_message.ts)
         self.slack_client_wrapper.send_message(
