@@ -1,33 +1,40 @@
+import json
 from copy import deepcopy
-from http import HTTPStatus
 from urllib.parse import urlencode
 
 from flask import url_for
 
+from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT, \
+    DISCUSSION_INTRO_ACTIONS_ATTACHMENT
 from tests.common.PrimitiveFaker import PrimitiveFaker
-from tests.func.slack.TestSlashCommand import TestSlashCommand
+from tests.func.slack.TestButton import TestButton
+from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
 from tests.utils import wait_until
 
 
-class TestCloseDiscussion(TestSlashCommand):
-    def test_close_valid(self, portal_client, slack_agent_repository, slack_client_class, slack_client, mocker):
+class TestCloseDiscussionViaButton(TestButton):
+    default_payload = deepcopy(TestInteractiveComponent.default_payload)
+    default_payload['callback_id'] = DISCUSSION_INTRO_ACTIONS_ATTACHMENT.callback_id
+
+    def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, portal_client):
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
-                                           slack_team_id=self.fake_slash_command_request.team_id)
-        discussion_channel_id = self.start_discussion_on_channel(slack_team_id=self.fake_slash_command_request.team_id,
-                                                                 portal_client=portal_client,
-                                                                 slack_agent_repository=slack_agent_repository,
-                                                                 slack_client_class=slack_client_class,
-                                                                 mocker=mocker)
+                                           slack_team_id=self.fake_interactive_component_request.team.id)
+        discussion_channel_id = self.start_discussion_on_channel(
+            slack_team_id=self.fake_interactive_component_request.team.id,
+            portal_client=portal_client,
+            slack_agent_repository=slack_agent_repository,
+            slack_client_class=slack_client_class,
+            mocker=mocker
+        )
         self._queue_portal_close_discussion(portal_client=portal_client, discussion_id=str(PrimitiveFaker('bban')))
         payload = deepcopy(self.default_payload)
-        payload['command'] = '/codeclippy'
-        payload['text'] = 'close'
-        payload['channel_id'] = discussion_channel_id
+        payload['channel']['id'] = discussion_channel_id
         mocker.spy(portal_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
 
-        response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
+        response = self.client.post(path=target_url, headers=self.default_headers,
+                                    data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
             return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 6
@@ -35,7 +42,7 @@ class TestCloseDiscussion(TestSlashCommand):
         outcome = wait_until(condition=wait_condition)
         assert outcome, 'Expected portal_client to have 1 calls, and slack_client to have 6+'
 
-        assert HTTPStatus.NO_CONTENT == response.status_code
+        assert 200 <= response.status_code <= 300
         assert 'closeDiscussionFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
         assert discussion_channel_id in portal_client.mutate.call_args_list[0][1]['operation_definition']
         self.assert_values_in_call_args_list(
