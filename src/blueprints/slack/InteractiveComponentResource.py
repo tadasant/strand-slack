@@ -42,6 +42,7 @@ class InteractiveComponentResource(SlackResource):
                                           slack_team_id=r.team.id,
                                           slack_user_id=r.user.id)
             Thread(target=service.execute, daemon=True).start()
+            return '', HTTPStatus.NO_CONTENT
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)

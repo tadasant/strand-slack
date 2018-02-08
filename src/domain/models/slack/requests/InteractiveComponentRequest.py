@@ -12,8 +12,8 @@ from src.domain.models.slack.requests.elements.Submission import SubmissionSchem
 
 
 class InteractiveComponentRequest(Model):
-    def __init__(self, type, callback_id, team, user, trigger_id=None, response_url=None, actions=None, submission=None,
-                 original_message=None):
+    def __init__(self, callback_id, team, user, trigger_id=None, response_url=None, actions=None, submission=None,
+                 original_message=None, type=None):
         self.type = type
         self.actions = actions
         self.callback_id = callback_id
@@ -54,7 +54,7 @@ class InteractiveComponentRequest(Model):
 
 
 class InteractiveComponentRequestSchema(Schema):
-    type = fields.String(required=True)
+    type = fields.String()
     actions = fields.Nested(ActionSchema, many=True)
     callback_id = fields.String(required=True)
     team = fields.Nested(TeamSchema, required=True)
