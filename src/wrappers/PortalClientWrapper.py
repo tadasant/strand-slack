@@ -214,7 +214,7 @@ class PortalClientWrapper:
     def create_reply_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, slack_user):
         operation_definition = f'''
           {{
-            createReplyFromSlack(input: {{text: "{text}",
+            createUserAndReplyFromSlack(input: {{text: "{text}",
                                           messageOriginSlackEventTs: "{slack_thread_ts}",
                                           slackChannelId: "{slack_channel_id}",
                                           authorSlackUser: {{
