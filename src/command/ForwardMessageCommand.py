@@ -2,6 +2,7 @@ import re
 
 from src.command.Command import Command
 from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.models.portal.SlackUser import SlackUserSchema
 
 
 class ForwardMessageCommand(Command):
@@ -29,8 +30,27 @@ class ForwardMessageCommand(Command):
                                                               slack_event_ts=self.slack_event.ts,
                                                               author_slack_user_id=self.slack_event.user)
             except WrapperException as e:
-                self.logger.error(f'Failed to store message: {self.slack_event}')
-                raise e
+                # TODO [CCS-15/CCS-81] caching user info to avoid relying on error
+                if e.errors and e.errors[0]['message'] == 'SlackUser matching query does not exist.':
+                    self.logger.info('Tried to forward message for unknown user. Retrying with user creation.')
+                    slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_event.user,
+                                                                              slack_team_id=self.slack_team_id)
+                    slack_user = SlackUserSchema().load(slack_user_info).data
+                    if self.slack_event.is_reply:
+                        self.portal_client_wrapper.create_reply_and_user(text=self.slack_event.text,
+                                                                         slack_channel_id=self.slack_event.channel,
+                                                                         slack_event_ts=self.slack_event.ts,
+                                                                         slack_thread_ts=self.slack_event.thread_ts,
+                                                                         slack_user=slack_user)
+                    else:
+                        # regular message
+                        self.portal_client_wrapper.create_message_and_user(text=self.slack_event.text,
+                                                                           slack_channel_id=self.slack_event.channel,
+                                                                           slack_event_ts=self.slack_event.ts,
+                                                                           slack_user=slack_user)
+                else:
+                    self.logger.error(f'Failed to store message: {self.slack_event}')
+                    raise e
 
     def _is_discussion_message(self):
         # TODO [CCS-81] This check should happen via db in processor
