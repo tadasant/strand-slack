@@ -118,6 +118,12 @@ class SlackClientWrapper:
                                               channel=slack_channel_id)
         self._validate_response_ok(response, 'archive_channel', slack_team_id, slack_channel_id)
 
+    def delete_message(self, slack_team_id, slack_channel_id, message_ts):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='chat.delete', channel=slack_channel_id,
+                                              ts=message_ts)
+        self._validate_response_ok(response, 'delete_message', slack_team_id, slack_channel_id, message_ts)
+
     def _get_slack_client(self, slack_team_id, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
         repo = slack_agent_repository

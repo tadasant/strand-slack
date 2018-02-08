@@ -48,3 +48,9 @@ def close_discussion(closer_slack_user_id):
 
         This conversation will be archived and may be reviewed on www.codeclippy.com
     ''')
+
+
+def block_topic_channel_message(attempted_message):
+    return dedent(f'''
+        I\'m sorry but users may not post in this channel. Here's the message you tried to send:\n\n{attempted_message}
+    ''')
