@@ -4,7 +4,6 @@ from threading import Thread
 from flask import request, current_app
 
 from src.blueprints.slack.SlackResource import SlackResource
-from src.command.DeleteTopicChannelMessageCommand import DeleteTopicChannelMessageCommand
 from src.domain.models.slack.requests.EventRequest import EventRequestSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.service.TopicChannelMessageService import TopicChannelMessageService
