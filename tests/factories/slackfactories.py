@@ -1,6 +1,7 @@
 import factory
 
 from src.domain.models.slack.Team import Team
+from src.domain.models.slack.User import User
 from src.domain.models.slack.requests.EventRequest import EventRequest
 from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
 from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
@@ -39,12 +40,13 @@ class TeamFactory(factory.Factory):
     class Meta:
         model = Team
 
+    domain = factory.Faker('word')
     id = factory.Faker('bban')
 
 
 class UserFactory(factory.Factory):
     class Meta:
-        model = Team
+        model = User
 
     id = factory.Faker('bban')
 

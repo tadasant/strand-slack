@@ -32,7 +32,7 @@ class TestCloseDiscussion(TestSlashCommand):
         def wait_condition():
             return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 6
 
-        outcome = wait_until(condition=wait_condition, timeout=500)
+        outcome = wait_until(condition=wait_condition)
         assert outcome, 'Expected portal_client to have 1 calls, and slack_client to have 6+'
 
         assert HTTPStatus.NO_CONTENT == response.status_code
