@@ -1,7 +1,7 @@
 from src.command.Command import Command
-from src.command.messages.TopicChannelMessage import TopicChannelMessage
-from src.command.messages.formatted_text import discussion_initiation_message, discussion_initiation_dm, \
-    topic_channel_introduction_repost
+from src.command.message.TopicChannelMessage import TopicChannelMessage
+from src.command.message.formatted_text import discussion_initiation_message, discussion_initiation_dm
+from src.command.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema
@@ -114,5 +114,6 @@ class StartDiscussionCommand(Command):
         self.slack_client_wrapper.send_message(
             slack_team_id=self.slack_team_id,
             slack_channel_id=topic_channel_id,
-            text=topic_channel_introduction_repost()
+            text=TOPIC_CHANNEL_INTRO_MESSAGE.text,
+            attachments=TOPIC_CHANNEL_INTRO_MESSAGE.attachments
         )

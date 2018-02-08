@@ -1,6 +1,8 @@
 from textwrap import dedent
 
 
+# TODO [CCS-104] Move these to message_models.py & messages.py
+
 def discussion_initiation_message(original_poster_slack_user_id, title, description, tags):
     return dedent(f'''
         *OP*: <@{original_poster_slack_user_id}>
@@ -19,24 +21,6 @@ def discussion_initiation_dm(slack_channel_id):
         Your discussion has been started at <#{slack_channel_id}>. Check it out!
 
         Please write `/codeclippy close` when the discussion is over.
-    ''')
-
-
-def topic_channel_introduction():
-    return dedent(f'''
-        This channel is a live view of the topics of all discussions going on right now.
-
-        `/codeclippy post` to start another one!
-    ''')
-
-
-def topic_channel_introduction_repost():
-    return dedent(f'''
-        I updated my last message with a new topic for discussion, check it out! :fire:
-
-        This channel is a live view of the topics of all discussions going on right now.
-
-        `/codeclippy post` to start another one!
     ''')
 
 

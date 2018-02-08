@@ -4,10 +4,10 @@ from threading import Thread
 from flask import current_app, request
 
 from src.blueprints.slack.SlackResource import SlackResource
-from src.command.SendUserPostTopicDialogCommand import SendUserPostTopicDialogCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequestSchema
-from src.service.CloseDiscussionService import CloseDiscussionService
+from src.service.type.CloseDiscussionService import CloseDiscussionService
+from src.service.type.PostNewTopicService import PostNewTopicService
 
 
 class SlashCommandResource(SlackResource):
@@ -19,11 +19,11 @@ class SlashCommandResource(SlackResource):
         slash_command_request = SlashCommandRequestSchema().load(payload).data
         r = slash_command_request
         if r.is_post_topic:
-            command = SendUserPostTopicDialogCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                                     trigger_id=r.trigger_id,
-                                                     slack_team_id=r.team_id,
-                                                     slack_user_id=r.user_id)
-            Thread(target=command.execute, daemon=True).start()
+            service = PostNewTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
+                                          trigger_id=r.trigger_id,
+                                          slack_team_id=r.team_id,
+                                          slack_user_id=r.user_id)
+            Thread(target=service.execute, daemon=True).start()
         elif r.is_close_discussion:
             # TODO [CCS-81] Authenticating user is OP/admin should happen here via DB
             service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,

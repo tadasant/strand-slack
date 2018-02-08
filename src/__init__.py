@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from src.blueprints import slack, portal
+from src.common.logging import get_logger
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
@@ -14,20 +15,26 @@ from src.wrappers.SlackClientWrapper import SlackClientWrapper
 
 
 def handle_slack_integration_exception(error):
+    logger = get_logger('Flask')
     response = jsonify({'error': error.message if error.message else repr(error)})
     response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    logger.error(response)
     return response
 
 
 def handle_validation_exception(error):
+    logger = get_logger('Flask')
     response = jsonify({'error': error.messages})
     response.status_code = HTTPStatus.BAD_REQUEST
+    logger.error(response)
     return response
 
 
 def handle_authorization_exception(error):
+    logger = get_logger('Flask')
     response = jsonify({'error': error.message if error.message else repr(error)})
     response.status_code = HTTPStatus.UNAUTHORIZED
+    logger.error(response)
     return response
 
 

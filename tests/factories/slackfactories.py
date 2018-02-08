@@ -92,6 +92,7 @@ class InteractiveComponentRequestFactory(factory.Factory):
     team = factory.SubFactory(TeamFactory)
     user = factory.SubFactory(UserFactory)
     response_url = factory.Faker('url')
+    trigger_id = factory.Faker('md5')
 
 
 class SlashCommandRequestFactory(factory.Factory):
