@@ -9,6 +9,7 @@ from src.command.StartDiscussionCommand import StartDiscussionCommand
 from src.command.UpdateTopicChannelCommand import UpdateTopicChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequestSchema
+from src.service.type.PostNewTopicService import PostNewTopicService
 
 
 class InteractiveComponentResource(SlackResource):
@@ -35,6 +36,12 @@ class InteractiveComponentResource(SlackResource):
                                              slack_user_id=r.user.id)
             Thread(target=command.execute, daemon=True).start()
             return {}, HTTPStatus.OK
+        elif r.is_post_new_topic_button_click:
+            service = PostNewTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
+                                          trigger_id=r.trigger_id,
+                                          slack_team_id=r.team.id,
+                                          slack_user_id=r.user.id)
+            Thread(target=service.execute, daemon=True).start()
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)

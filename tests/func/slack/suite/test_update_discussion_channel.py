@@ -79,7 +79,7 @@ class TestUpdateDiscussionChannel(TestSlackFunction):
             "ts": "1517014969.000145"
         },
         "response_url": fake_interactive_component_request.response_url,
-        "trigger_id": "304946943568.10642948979.fde99265c25c102dc631e6cd49ac4535"
+        "trigger_id": fake_interactive_component_request.trigger_id
     }
 
     def test_post_valid_unauthenticated_slack(self):

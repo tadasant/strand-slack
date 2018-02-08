@@ -3,8 +3,8 @@ from threading import Thread
 from src.command.ForwardMessageCommand import ForwardMessageCommand
 from src.domain.models.slack.unpersisted.DiscussionMessage import DiscussionMessage
 from src.service.Service import Service
-from src.service.discussionmessage.MessageFilePublicizer import MessageFilePublicizer
-from src.service.discussionmessage.MessageTextFormatter import MessageTextFormatter
+from src.service.subservice.MessageFilePublicizer import MessageFilePublicizer
+from src.service.subservice.MessageTextFormatter import MessageTextFormatter
 
 
 class DiscussionMessageService(Service):

@@ -12,7 +12,7 @@ from src.domain.models.slack.requests.elements.Submission import SubmissionSchem
 
 
 class InteractiveComponentRequest(Model):
-    def __init__(self, type, callback_id, team, user, response_url=None, actions=None, submission=None,
+    def __init__(self, type, callback_id, team, user, trigger_id=None, response_url=None, actions=None, submission=None,
                  original_message=None):
         self.type = type
         self.actions = actions
@@ -22,6 +22,7 @@ class InteractiveComponentRequest(Model):
         self.response_url = response_url
         self.submission = submission
         self.user = user
+        self.trigger_id = trigger_id
 
     @property
     def is_topic_channel_selection(self):
@@ -61,6 +62,7 @@ class InteractiveComponentRequestSchema(Schema):
     response_url = fields.String()
     submission = fields.Nested(SubmissionSchema)
     user = fields.Nested(UserSchema, required=True)
+    trigger_id = fields.String()
 
     @post_load
     def make_interactive_component_request(self, data):
