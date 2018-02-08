@@ -64,10 +64,10 @@ class SlackClientWrapper:
                                               user=slack_user_id)
         self._validate_response_ok(response, 'invite_user_to_channel', slack_team_id, slack_channel_id, slack_user_id)
 
-    def send_message(self, slack_team_id, slack_channel_id, text):
+    def send_message(self, slack_team_id, slack_channel_id, text, attachments=None):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.postMessage',
-                                              channel=slack_channel_id, text=text)
+                                              channel=slack_channel_id, text=text, attachments=attachments)
         self._validate_response_ok(response, 'send_message', slack_team_id, slack_channel_id, text)
 
     def get_last_channel_message(self, slack_team_id, slack_channel_id):

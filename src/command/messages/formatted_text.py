@@ -22,24 +22,6 @@ def discussion_initiation_dm(slack_channel_id):
     ''')
 
 
-def topic_channel_introduction():
-    return dedent(f'''
-        This channel is a live view of the topics of all discussions going on right now.
-
-        `/codeclippy post` to start another one!
-    ''')
-
-
-def topic_channel_introduction_repost():
-    return dedent(f'''
-        I updated my last message with a new topic for discussion, check it out! :fire:
-
-        This channel is a live view of the topics of all discussions going on right now.
-
-        `/codeclippy post` to start another one!
-    ''')
-
-
 def close_discussion(closer_slack_user_id):
     return dedent(f'''
         <@{closer_slack_user_id}> has marked this discussion as closed.
