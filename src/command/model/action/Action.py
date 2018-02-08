@@ -14,5 +14,5 @@ class Action(Model):
 
     def as_dict(self):
         result = super().as_dict()
-        result['confirm'] = self.confirm.as_dict()
+        result['confirm'] = self.confirm.as_dict() if self.confirm else self.confirm
         return result

@@ -44,9 +44,9 @@ class DiscussionInitiationMessage(Message):
             *Title*: {title}
             *Description*: {description}
             *Tags*: {tags}
-    
+
             <@{original_poster_slack_user_id}>: please `/codeclippy close` this discussion when you are done
-    
+
             Do not post sensitive information! A transcript of this discussion will be available on www.codeclippy.com.
         ''')
 
