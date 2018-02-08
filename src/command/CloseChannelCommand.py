@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.command.message.formatted_text import close_discussion
+from src.command.model.message.formatted_text import close_discussion
 
 
 class CloseChannelCommand(Command):

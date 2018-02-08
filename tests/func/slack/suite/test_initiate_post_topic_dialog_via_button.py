@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
+from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
 from tests.func.slack.TestButton import TestButton
 from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
 from tests.utils import wait_until

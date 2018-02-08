@@ -1,3 +1,0 @@
-from src.command.attachment.attachment_models import TopicChannelActionsAttachment
-
-TOPIC_CHANNEL_ACTIONS_ATTACHMENT = TopicChannelActionsAttachment()

@@ -1,7 +1,7 @@
 from textwrap import dedent
 
-from src.command.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
-from src.command.message.Message import Message
+from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
+from src.command.model.message.Message import Message
 
 
 class TopicChannelIntroMessage(Message):

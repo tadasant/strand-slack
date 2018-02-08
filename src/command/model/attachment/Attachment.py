@@ -1,7 +1,7 @@
-from copy import deepcopy
+from src.command.model.Model import Model
 
 
-class Attachment:
+class Attachment(Model):
     def __init__(self, fallback, callback_id, color, attachment_type, actions):
         self.fallback = fallback
         self.callback_id = callback_id
@@ -10,6 +10,6 @@ class Attachment:
         self.actions = actions
 
     def as_dict(self):
-        result = deepcopy(vars(self))
-        result['actions'] = [vars(action) for action in self.actions]
+        result = super().as_dict()
+        result['actions'] = [action.as_dict() for action in self.actions]
         return result

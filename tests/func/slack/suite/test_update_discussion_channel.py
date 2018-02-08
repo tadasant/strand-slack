@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.model.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
 from tests.utils import wait_until
 

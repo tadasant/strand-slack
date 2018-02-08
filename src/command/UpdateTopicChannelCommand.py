@@ -1,6 +1,6 @@
 from src.command.Command import Command
 
-from src.command.message.messages import INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE
+from src.command.model.message.messages import INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository

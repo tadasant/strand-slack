@@ -1,5 +1,5 @@
-from src.command.action.actions import POST_NEW_TOPIC_BUTTON
-from src.command.attachment.Attachment import Attachment
+from src.command.model.action.actions import POST_NEW_TOPIC_BUTTON
+from src.command.model.attachment.Attachment import Attachment
 
 
 class TopicChannelActionsAttachment(Attachment):

@@ -1,7 +1,7 @@
 from src.command.Command import Command
-from src.command.message.TopicChannelMessage import TopicChannelMessage
-from src.command.message.formatted_text import discussion_initiation_message, discussion_initiation_dm
-from src.command.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE
+from src.command.model.message.TopicChannelMessage import TopicChannelMessage
+from src.command.model.message.formatted_text import discussion_initiation_message, discussion_initiation_dm
+from src.command.model.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackUser import SlackUserSchema
 from src.domain.models.slack.Channel import ChannelSchema

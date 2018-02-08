@@ -1,8 +1,8 @@
 from marshmallow import Schema, fields, post_load
 
-from src.command.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
-from src.command.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
-from src.command.message.post_topic_dialog import POST_TOPIC_DIALOG
+from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
+from src.command.model.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.domain.models.Model import Model
 from src.domain.models.slack.Team import TeamSchema
 from src.domain.models.slack.User import UserSchema

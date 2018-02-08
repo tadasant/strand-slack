@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.message.post_topic_dialog import POST_TOPIC_DIALOG
+from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.config import config
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import InteractiveComponentRequestFactory, SubmissionFactory
