@@ -22,8 +22,6 @@ class TestDiscussionStatusUpdates(TestFunction):
 
     # For setup
     default_payload = {
-        'discussion_id': 'doesnt matter',
-        'status': 'doesnt matter',
         'slack_channel_id': fake_discussion_status_request.slack_channel_id,
         'slack_team_id': fake_discussion_status_request.slack_team_id,
     }
