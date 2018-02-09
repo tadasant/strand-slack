@@ -64,7 +64,8 @@ class TestPortalClient:
                         }
                     }
                 }}}
-            elif 'createTopicFromSlack' in operation_definition:
+            elif 'createTopicFromSlack' in operation_definition or 'createMessageFromSlack' in operation_definition \
+                    or 'createReplyFromSlack' in operation_definition:
                 # Assuming that portal does not have the user in the request
                 raise WrapperException(wrapper_name='PortalClient', message='',
                                        errors=[{'message': 'SlackUser matching query does not exist.'}])

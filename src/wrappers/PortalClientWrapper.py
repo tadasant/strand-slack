@@ -166,6 +166,34 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
+    def create_message_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_user):
+        operation_definition = f'''
+          {{
+            createUserAndMessageFromSlack(input: {{text: "{text}",
+                                            slackChannelId: "{slack_channel_id}",
+                                            slackUser: {{
+                                              id: "{slack_user.id}",
+                                              name: "{slack_user.name}",
+                                              firstName: "{slack_user.profile.first_name}",
+                                              lastName: "{slack_user.profile.last_name}",
+                                              realName: "{slack_user.real_name}",
+                                              displayName: "{slack_user.profile.display_name}",
+                                              email: "{slack_user.profile.email}",
+                                              avatar72: "{slack_user.profile.image_72}",
+                                              isBot: {str(slack_user.is_bot).lower()},
+                                              isAdmin: {str(slack_user.is_admin).lower()},
+                                              slackTeamId: "{slack_user.team_id}"
+                                            }},
+                                            originSlackEventTs: "{slack_event_ts}"}}) {{
+              message {{
+                id
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
     def create_reply(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
         operation_definition = f'''
           {{
@@ -174,6 +202,35 @@ class PortalClientWrapper:
                                           slackChannelId: "{slack_channel_id}",
                                           slackUserId: "{author_slack_user_id}",
                                           originSlackEventTs: "{slack_event_ts}"}}) {{
+              reply {{
+                id
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
+    def create_reply_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, slack_user):
+        operation_definition = f'''
+          {{
+            createUserAndReplyFromSlack(input: {{text: "{text}",
+                                          originSlackEventTs: "{slack_thread_ts}",
+                                          slackChannelId: "{slack_channel_id}",
+                                          slackUser: {{
+                                            id: "{slack_user.id}",
+                                            name: "{slack_user.name}",
+                                            firstName: "{slack_user.profile.first_name}",
+                                            lastName: "{slack_user.profile.last_name}",
+                                            realName: "{slack_user.real_name}",
+                                            displayName: "{slack_user.profile.display_name}",
+                                            email: "{slack_user.profile.email}",
+                                            avatar72: "{slack_user.profile.image_72}",
+                                            isBot: {str(slack_user.is_bot).lower()},
+                                            isAdmin: {str(slack_user.is_admin).lower()},
+                                            slackTeamId: "{slack_user.team_id}"
+                                          }},
+                                          messageOriginSlackEventTs: "{slack_event_ts}"}}) {{
               reply {{
                 id
               }}
