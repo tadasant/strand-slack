@@ -9,6 +9,7 @@ from src.command.StartDiscussionCommand import StartDiscussionCommand
 from src.command.UpdateTopicChannelCommand import UpdateTopicChannelCommand
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequestSchema
+from src.service.type.CloseDiscussionService import CloseDiscussionService
 from src.service.type.PostNewTopicService import PostNewTopicService
 
 
@@ -43,6 +44,13 @@ class InteractiveComponentResource(SlackResource):
                                           slack_user_id=r.user.id)
             Thread(target=service.execute, daemon=True).start()
             return '', HTTPStatus.NO_CONTENT
+        elif r.is_close_discussion_click:
+            service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,
+                                             portal_client_wrapper=current_app.portal_client_wrapper,
+                                             slack_team_id=r.team.id,
+                                             slack_user_id=r.user.id,
+                                             slack_channel_id=r.channel.id)
+            Thread(target=service.execute, daemon=True).start()
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)

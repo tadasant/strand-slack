@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.command.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
+from src.command.model.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 
 
 class InitiateAgentOnboardingCommand(Command):

@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.command.message.formatted_text import block_topic_channel_message
+from src.command.model.message.formatted_text import block_topic_channel_message
 
 
 class InformTopicChannelMessageDeletedCommand(Command):

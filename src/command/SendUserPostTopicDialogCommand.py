@@ -1,5 +1,5 @@
 from src.command.Command import Command
-from src.command.message.post_topic_dialog import POST_TOPIC_DIALOG
+from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 
 
 class SendUserPostTopicDialogCommand(Command):
