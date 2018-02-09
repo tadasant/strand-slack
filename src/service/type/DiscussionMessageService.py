@@ -18,7 +18,7 @@ class DiscussionMessageService(Service):
         Outputs:
         * Request to Portal (Message/Reply, User)
 
-        Normalize Message's text & attachments, create
+        Normalize Message's text & attachments, forward them to the Portal
     """
 
     def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request):
