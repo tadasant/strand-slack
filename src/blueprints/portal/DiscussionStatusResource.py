@@ -16,10 +16,12 @@ class StaleDiscussionStatusResource(PortalResource):
         args = request.get_json()
         slack_channel_id = args['slack_channel_id']
         slack_team_id = args['slack_team_id']
+        original_poster_slack_user_id = args['original_poster_slack_user_id']
         service = DiscussionStatusChangeService(slack_client_wrapper=current_app.slack_client_wrapper,
                                                 portal_client_wrapper=current_app.portal_client_wrapper,
                                                 slack_team_id=slack_team_id,
                                                 slack_channel_id=slack_channel_id,
+                                                original_poster_slack_user_id=original_poster_slack_user_id,
                                                 discussion_status=DiscussionStatus.STALE)
         Thread(target=service.execute, daemon=True).start()
 
@@ -34,10 +36,12 @@ class ClosedDiscussionStatusResource(PortalResource):
         args = request.get_json()
         slack_channel_id = args['slack_channel_id']
         slack_team_id = args['slack_team_id']
+        original_poster_slack_user_id = args['original_poster_slack_user_id']
         service = DiscussionStatusChangeService(slack_client_wrapper=current_app.slack_client_wrapper,
                                                 portal_client_wrapper=current_app.portal_client_wrapper,
                                                 slack_team_id=slack_team_id,
                                                 slack_channel_id=slack_channel_id,
+                                                original_poster_slack_user_id=original_poster_slack_user_id,
                                                 discussion_status=DiscussionStatus.CLOSED)
         Thread(target=service.execute, daemon=True).start()
 
