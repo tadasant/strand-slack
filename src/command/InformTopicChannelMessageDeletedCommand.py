@@ -11,7 +11,7 @@ class InformTopicChannelMessageDeletedCommand(Command):
 
     def execute(self):
         log_msg = f'Executing InformTopicChannelMessageDeletedCommand for {self.slack_team_id} with user ' \
-                  '{self.slack_user_id}'
+                  f'{self.slack_user_id}'
         self.logger.info(log_msg)
         user_info = self.slack_client_wrapper.get_user_info(slack_team_id=self.slack_team_id,
                                                             slack_user_id=self.slack_user_id)

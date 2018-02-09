@@ -52,3 +52,14 @@ class DiscussionInitiationMessage(Message):
 
     def _format_attachments(self):
         return [DISCUSSION_INTRO_ACTIONS_ATTACHMENT]
+
+
+class StaleDiscussionMessage(Message):
+    def __init__(self):
+        super().__init__(
+            text=dedent(f'''
+                There hasn't been much activity here for a while!
+                
+                We'll close this up in about 30 minutes if nobody has anything else to add.
+            ''')
+        )
