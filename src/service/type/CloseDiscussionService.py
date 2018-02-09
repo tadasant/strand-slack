@@ -43,8 +43,7 @@ class CloseDiscussionService(Service):
                 update_queue_command = UpdateQueueCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                           topic_slack_channel_id=topic_slack_channel_id,
                                                           discussion_slack_channel_id=self.slack_channel_id,
-                                                          slack_team_id=self.slack_team_id,
-                                                          slack_user_id=self.slack_user_id)
+                                                          slack_team_id=self.slack_team_id)
                 Thread(target=update_queue_command.execute, daemon=True).start()
 
     def _is_discussion_channel(self):
