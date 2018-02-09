@@ -16,3 +16,4 @@ class MarkDiscussionPendingClosed(Command):
         self.logger.info(log_msg)
         self.slack_client_wrapper.send_message(slack_team_id=self.slack_team_id, slack_channel_id=self.slack_channel_id,
                                                text=STALE_DISCUSSION_MESSAGE.text)
+        self.portal_client_wrapper.mark_discussion_as_pending_closed(slack_channel_id=self.slack_channel_id)
