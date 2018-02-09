@@ -15,7 +15,7 @@ class TestCloseDiscussionViaButton(TestButton):
     default_payload = deepcopy(TestInteractiveComponent.default_payload)
     default_payload['callback_id'] = DISCUSSION_INTRO_ACTIONS_ATTACHMENT.callback_id
 
-    def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, portal_client):
+    def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, portal_client, slack_client):
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)

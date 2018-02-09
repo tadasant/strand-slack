@@ -2,12 +2,10 @@ from src.command.Command import Command
 
 
 class UpdateQueueCommand(Command):
-    def __init__(self, slack_client_wrapper, topic_slack_channel_id, discussion_slack_channel_id, slack_team_id,
-                 slack_user_id):
+    def __init__(self, slack_client_wrapper, topic_slack_channel_id, discussion_slack_channel_id, slack_team_id):
         super().__init__(slack_client_wrapper=slack_client_wrapper, slack_team_id=slack_team_id)
         self.topic_slack_channel_id = topic_slack_channel_id
         self.discussion_slack_channel_id = discussion_slack_channel_id
-        self.slack_user_id = slack_user_id
 
     def execute(self):
         log_msg = f'Executing UpdateQueueCommand for {self.slack_team_id} for chan {self.discussion_slack_channel_id}'
