@@ -171,7 +171,7 @@ class PortalClientWrapper:
           {{
             createUserAndMessageFromSlack(input: {{text: "{text}",
                                             slackChannelId: "{slack_channel_id}",
-                                            authorSlackUser: {{
+                                            slackUser: {{
                                               id: "{slack_user.id}",
                                               name: "{slack_user.name}",
                                               firstName: "{slack_user.profile.first_name}",
@@ -215,9 +215,9 @@ class PortalClientWrapper:
         operation_definition = f'''
           {{
             createUserAndReplyFromSlack(input: {{text: "{text}",
-                                          messageOriginSlackEventTs: "{slack_thread_ts}",
+                                          originSlackEventTs: "{slack_thread_ts}",
                                           slackChannelId: "{slack_channel_id}",
-                                          authorSlackUser: {{
+                                          slackUser: {{
                                             id: "{slack_user.id}",
                                             name: "{slack_user.name}",
                                             firstName: "{slack_user.profile.first_name}",
@@ -230,7 +230,7 @@ class PortalClientWrapper:
                                             isAdmin: {str(slack_user.is_admin).lower()},
                                             slackTeamId: "{slack_user.team_id}"
                                           }},
-                                          originSlackEventTs: "{slack_event_ts}"}}) {{
+                                          messageOriginSlackEventTs: "{slack_event_ts}"}}) {{
               reply {{
                 id
               }}
