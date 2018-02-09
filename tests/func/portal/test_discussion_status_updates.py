@@ -45,8 +45,33 @@ class TestDiscussionStatusUpdates(TestFunction):
         response = self.client.post(path=target_url, headers=headers, data=json.dumps(self.default_payload))
         assert response.status_code == HTTPStatus.UNAUTHORIZED
 
-    def test_post_valid_stale(self, slack_agent_repository, slack_client_class, mocker):
-        pass
+    def test_post_valid_stale(self, slack_agent_repository, slack_client_class, portal_client, slack_client, mocker):
+        self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
+                                           slack_team_id=self.fake_discussion_status_request.slack_team_id)
+        discussion_channel_id = self.start_discussion_on_channel(
+            slack_team_id=self.fake_discussion_status_request.slack_team_id,
+            portal_client=portal_client,
+            slack_agent_repository=slack_agent_repository,
+            slack_client_class=slack_client_class,
+            mocker=mocker
+        )
+        mocker.spy(slack_client_class, 'api_call')
+        target_url = url_for(endpoint='portal.stalediscussionstatusresource')
+        payload = deepcopy(self.default_payload)
+        payload['slack_channel_id'] = discussion_channel_id
+
+        response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+
+        outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count >= 1)
+        assert outcome, 'Expected slack_client to have 1+ calls'
+
+        assert 200 <= response.status_code <= 300
+        self.assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {'method': 'chat.postMessage'},  # inform participants of pending closed discussion
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )
 
     def test_post_valid_closed(self, slack_client_class, mocker, slack_agent_repository, portal_client, slack_client):
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
@@ -58,7 +83,6 @@ class TestDiscussionStatusUpdates(TestFunction):
             slack_client_class=slack_client_class,
             mocker=mocker
         )
-        mocker.spy(portal_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint='portal.closeddiscussionstatusresource')
         payload = deepcopy(self.default_payload)
