@@ -10,9 +10,11 @@ class Action(Model):
         self.style = style
         self.type = type
         self.value = value
-        self.confirm = confirm
+        if confirm:
+            self.confirm = confirm
 
     def as_dict(self):
         result = super().as_dict()
-        result['confirm'] = self.confirm.as_dict() if self.confirm else self.confirm
+        if 'confirm' in vars(self):
+            result['confirm'] = self.confirm.as_dict()
         return result

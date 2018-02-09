@@ -283,5 +283,4 @@ class PortalClientWrapper:
         """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
             message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
             raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])

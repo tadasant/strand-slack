@@ -55,7 +55,7 @@ class StartDiscussionCommand(Command):
             self.slack_client_wrapper.send_message(slack_team_id=self.slack_team_id,
                                                    slack_channel_id=slack_channel.id,
                                                    text=DISCUSSION_INITIATION_MESSAGE.text,
-                                                   attachments=DISCUSSION_INITIATION_MESSAGE.attachments)
+                                                   attachments=DISCUSSION_INITIATION_MESSAGE.as_dict()['attachments'])
             self._add_topic_to_topic_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
                                              discussion_channel_id=slack_channel.id)
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
@@ -117,5 +117,5 @@ class StartDiscussionCommand(Command):
             slack_team_id=self.slack_team_id,
             slack_channel_id=topic_channel_id,
             text=TOPIC_CHANNEL_INTRO_MESSAGE.text,
-            attachments=TOPIC_CHANNEL_INTRO_MESSAGE.attachments
+            attachments=TOPIC_CHANNEL_INTRO_MESSAGE.as_dict()['attachments']
         )

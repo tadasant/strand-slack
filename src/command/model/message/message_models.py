@@ -28,7 +28,7 @@ class TopicChannelIntroMessage(Message):
         ''')
 
     def _format_attachments(self):
-        return [TOPIC_CHANNEL_ACTIONS_ATTACHMENT.as_dict()]
+        return [TOPIC_CHANNEL_ACTIONS_ATTACHMENT]
 
 
 class DiscussionInitiationMessage(Message):
