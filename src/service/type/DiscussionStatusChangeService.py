@@ -1,6 +1,6 @@
 from threading import Thread
 
-from src import slack_agent_repository
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.command.CloseChannelCommand import CloseChannelCommand
 from src.command.UpdateQueueCommand import UpdateQueueCommand
 from src.domain.models.portal.Discussion import DiscussionStatus
