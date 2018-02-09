@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT
+from src.command.model.action.actions import POST_NEW_TOPIC_BUTTON
 from tests.func.slack.TestButton import TestButton
 from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
 from tests.utils import wait_until
@@ -12,7 +12,7 @@ from tests.utils import wait_until
 
 class TestInitiatePostTopicDialogViaButton(TestButton):
     default_payload = deepcopy(TestInteractiveComponent.default_payload)
-    default_payload['callback_id'] = TOPIC_CHANNEL_ACTIONS_ATTACHMENT.callback_id
+    default_payload['actions'][0]['name'] = POST_NEW_TOPIC_BUTTON.name
 
     def test_valid_post_command(self, slack_client_class, mocker, slack_agent_repository):
         mocker.spy(slack_client_class, 'api_call')
