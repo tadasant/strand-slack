@@ -56,16 +56,23 @@ class TestDiscussionStatusUpdates(TestFunction):
             mocker=mocker
         )
         mocker.spy(slack_client_class, 'api_call')
+        mocker.spy(portal_client, 'mutate')
         target_url = url_for(endpoint='portal.stalediscussionstatusresource')
         payload = deepcopy(self.default_payload)
         payload['slack_channel_id'] = discussion_channel_id
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
-        outcome = wait_until(condition=lambda: slack_client_class.api_call.call_count >= 1)
-        assert outcome, 'Expected slack_client to have 1+ calls'
+        def wait_condition():
+            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 1
+
+        outcome = wait_until(condition=wait_condition)
+        assert outcome, 'Expected portal_client to have 1 call and slack_client to have 1+ calls'
 
         assert 200 <= response.status_code <= 300
+        assert 'markDiscussionAsPendingClosedFromSlack' in portal_client.mutate.call_args_list[0][1][
+            'operation_definition']
+        assert discussion_channel_id in portal_client.mutate.call_args_list[0][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'chat.postMessage'},  # inform participants of pending closed discussion

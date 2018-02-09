@@ -261,7 +261,7 @@ class PortalClientWrapper:
           {{
             markDiscussionAsPendingClosedFromSlack(input: {{slackChannelId: "{slack_channel_id}"}}) {{
               discussion {{
-                statu`s
+                status
               }}
             }}
           }}
