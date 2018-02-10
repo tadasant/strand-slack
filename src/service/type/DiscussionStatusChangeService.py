@@ -1,5 +1,6 @@
 from threading import Thread
 
+from src.command.MarkDiscussionPendingClosed import MarkDiscussionPendingClosed
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.command.CloseChannelCommand import CloseChannelCommand
 from src.command.UpdateQueueCommand import UpdateQueueCommand
@@ -40,6 +41,8 @@ class DiscussionStatusChangeService(Service):
                                                       slack_team_id=self.slack_team_id)
             Thread(target=update_queue_command.execute, daemon=True).start()
         else:
-            assert False, 'unimplemented'
-            assert self.discussion_status == DiscussionStatus.STALE, f'Unimpl status change {self.discussion_status}'
-            # TODO next ticket * If STALE, sends a message to the channel informing participants & inform portal we did
+            command = MarkDiscussionPendingClosed(slack_client_wrapper=self.slack_client_wrapper,
+                                                  portal_client_wrapper=self.portal_client_wrapper,
+                                                  slack_team_id=self.slack_team_id,
+                                                  slack_channel_id=self.slack_channel_id)
+            Thread(target=command.execute, daemon=True).start()

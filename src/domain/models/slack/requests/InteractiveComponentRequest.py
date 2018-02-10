@@ -1,7 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT, \
-    DISCUSSION_INTRO_ACTIONS_ATTACHMENT
+from src.command.model.action.actions import POST_NEW_TOPIC_BUTTON, CLOSE_DISCUSSION_BUTTON
 from src.command.model.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.domain.models.Model import Model
@@ -47,11 +46,11 @@ class InteractiveComponentRequest(Model):
 
     @property
     def is_post_new_topic_button_click(self):
-        return self.callback_id == TOPIC_CHANNEL_ACTIONS_ATTACHMENT.callback_id
+        return self.actions and self.actions[0].name == POST_NEW_TOPIC_BUTTON.name
 
     @property
     def is_close_discussion_click(self):
-        return self.callback_id == DISCUSSION_INTRO_ACTIONS_ATTACHMENT.callback_id
+        return self.actions and self.actions[0].name == CLOSE_DISCUSSION_BUTTON.name
 
     @property
     def selected_topic_channel_id(self):

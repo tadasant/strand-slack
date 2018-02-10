@@ -18,7 +18,7 @@ class TopicChannelMessage:
         return f'New topic posted. Join the discussion :arrow_right: <#{self._discussion_channel_id}>'
 
     def _format_attachments(self):
-        return [self._format_title_attachment(), self._format_tag_attachment()]
+        return [self._format_title_attachment()]
 
     def _format_title_attachment(self):
         return {
@@ -26,14 +26,7 @@ class TopicChannelMessage:
             'color': '#32424a',
             'author_name': f'Posted by <@{self._original_poster_user_id}>',
             'title': self._title,
-        }
-
-    def _format_tag_attachment(self):
-        return {
-            'fallback': f'*Tags*: {", ".join(self._tag_names)}',
-            'color': '#32424a',
-            'author_name': ", ".join(self._tag_names),
-            'fields': [],
+            'text': ", ".join(self._tag_names),
             'footer': 'CodeClippy',
             'footer_icon': 'https://i.imgur.com/kPCJwwl.png',
             'ts': self._ts

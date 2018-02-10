@@ -18,7 +18,7 @@ def handle_slack_integration_exception(error):
     logger = get_logger('Flask')
     response = jsonify({'error': error.message if error.message else repr(error)})
     response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
-    logger.error(response)
+    logger.error(response.data)
     return response
 
 
@@ -26,7 +26,7 @@ def handle_validation_exception(error):
     logger = get_logger('Flask')
     response = jsonify({'error': error.messages})
     response.status_code = HTTPStatus.BAD_REQUEST
-    logger.error(response)
+    logger.error(response.data)
     return response
 
 
@@ -34,7 +34,7 @@ def handle_authorization_exception(error):
     logger = get_logger('Flask')
     response = jsonify({'error': error.message if error.message else repr(error)})
     response.status_code = HTTPStatus.UNAUTHORIZED
-    logger.error(response)
+    logger.error(response.data)
     return response
 
 

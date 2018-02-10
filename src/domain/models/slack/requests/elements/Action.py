@@ -1,15 +1,17 @@
-from collections import namedtuple
-
 from marshmallow import Schema, fields, post_load
 
 from src.domain.models.slack.requests.elements.Option import OptionSchema
 
-Action = namedtuple(typename='Action', field_names='name selected_options')
+
+class Action:
+    def __init__(self, name, selected_options=None):
+        self.name = name
+        self.selected_options = selected_options
 
 
 class ActionSchema(Schema):
     name = fields.String(required=True)
-    selected_options = fields.Nested(OptionSchema, required=True, many=True)
+    selected_options = fields.Nested(OptionSchema, many=True)
 
     @post_load
     def make_action(self, data):

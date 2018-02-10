@@ -36,7 +36,7 @@ class UpdateTopicChannelCommand(Command):
                     slack_team_id=self.slack_team_id,
                     slack_channel_id=self.topic_channel_id,
                     text=INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE.text,
-                    attachments=INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE.attachments
+                    attachments=INITIAL_TOPIC_CHANNEL_INTRO_MESSAGE.as_dict()['attachments']
                 )
                 response_payload['text'] = f'Successfully set the topic channel to be <#{self.topic_channel_id}>. ' \
                                            'If you want to change this later, just select a new option in the menu.'

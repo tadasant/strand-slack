@@ -255,6 +255,20 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
+    def mark_discussion_as_pending_closed(self, slack_channel_id):
+        # TODO shouldn't rely on slackChannelId being unique (need slack_team_id as well)
+        operation_definition = f'''
+          {{
+            markDiscussionAsPendingClosedFromSlack(input: {{slackChannelId: "{slack_channel_id}"}}) {{
+              discussion {{
+                status
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)
@@ -269,5 +283,4 @@ class PortalClientWrapper:
         """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
             message = f'Errors when calling PortalClient. Body: {response_body}'
-            self.logger.error(message)
             raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])

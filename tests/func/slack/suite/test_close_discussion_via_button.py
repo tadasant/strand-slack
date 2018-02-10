@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
-from src.command.model.attachment.attachments import DISCUSSION_INTRO_ACTIONS_ATTACHMENT
+from src.command.model.action.actions import CLOSE_DISCUSSION_BUTTON
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.func.slack.TestButton import TestButton
 from tests.func.slack.TestInteractiveComponent import TestInteractiveComponent
@@ -13,7 +13,7 @@ from tests.utils import wait_until
 
 class TestCloseDiscussionViaButton(TestButton):
     default_payload = deepcopy(TestInteractiveComponent.default_payload)
-    default_payload['callback_id'] = DISCUSSION_INTRO_ACTIONS_ATTACHMENT.callback_id
+    default_payload['actions'][0]['name'] = CLOSE_DISCUSSION_BUTTON.name
 
     def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, portal_client, slack_client):
         target_url = url_for(endpoint=self.target_endpoint)

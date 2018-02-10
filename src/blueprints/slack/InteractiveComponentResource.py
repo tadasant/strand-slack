@@ -16,7 +16,7 @@ from src.service.type.PostNewTopicService import PostNewTopicService
 class InteractiveComponentResource(SlackResource):
     def post(self):
         """Receive an interactive component (e.g. menu, dialog box) payload"""
-        self.logger.info(f'Processing InteractiveComponent request: {request}')
+        self.logger.info(f'Processing InteractiveComponent request: {request.__dict__}')
         payload = json.loads(request.form['payload'])
         self._authenticate(payload)
         interactive_component_request = InteractiveComponentRequestSchema().load(payload).data
@@ -51,6 +51,7 @@ class InteractiveComponentResource(SlackResource):
                                              slack_user_id=r.user.id,
                                              slack_channel_id=r.channel.id)
             Thread(target=service.execute, daemon=True).start()
+            return '', HTTPStatus.NO_CONTENT
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)
