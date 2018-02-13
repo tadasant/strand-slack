@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClientException
@@ -240,12 +238,12 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def close_discussion(self, slack_channel_id):
+    def close_discussion(self, slack_channel_id, slack_user_id):
         # TODO shouldn't rely on slackChannelId being unique (need slack_team_id as well)
         operation_definition = f'''
           {{
             closeDiscussionFromSlack(input: {{slackChannelId: "{slack_channel_id}",
-                                            timeEnd: "{datetime.now(timezone.utc)}"}}) {{
+                                            slackUserId: "{slack_user_id}"}}) {{
               discussion {{
                 id
               }}
