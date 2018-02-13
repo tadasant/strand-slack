@@ -108,7 +108,7 @@ class PortalClientWrapper:
                                                       realName: "{slack_user.real_name}",
                                                       displayName: "{slack_user.profile.display_name}",
                                                       email: "{slack_user.profile.email}",
-                                                      avatar72: "{slack_user.profile.image_72}",
+                                                      image72: "{slack_user.profile.image_72}",
                                                       isBot: {str(slack_user.is_bot).lower()},
                                                       isAdmin: {str(slack_user.is_admin).lower()},
                                                       slackTeamId: "{slack_user.team_id}"
@@ -177,7 +177,7 @@ class PortalClientWrapper:
                                               realName: "{slack_user.real_name}",
                                               displayName: "{slack_user.profile.display_name}",
                                               email: "{slack_user.profile.email}",
-                                              avatar72: "{slack_user.profile.image_72}",
+                                              image72: "{slack_user.profile.image_72}",
                                               isBot: {str(slack_user.is_bot).lower()},
                                               isAdmin: {str(slack_user.is_admin).lower()},
                                               slackTeamId: "{slack_user.team_id}"
@@ -223,7 +223,7 @@ class PortalClientWrapper:
                                             realName: "{slack_user.real_name}",
                                             displayName: "{slack_user.profile.display_name}",
                                             email: "{slack_user.profile.email}",
-                                            avatar72: "{slack_user.profile.image_72}",
+                                            image72: "{slack_user.profile.image_72}",
                                             isBot: {str(slack_user.is_bot).lower()},
                                             isAdmin: {str(slack_user.is_admin).lower()},
                                             slackTeamId: "{slack_user.team_id}"
