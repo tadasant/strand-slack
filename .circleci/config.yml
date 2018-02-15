@@ -30,7 +30,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest -n 6 --flake8 --pep8
+            pytest --flake8 --pep8
 
       - store_artifacts:
           path: test-reports
