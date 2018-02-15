@@ -30,7 +30,8 @@ class CloseDiscussionService(Service):
             if self._user_is_authorized():
                 portal_command = CloseDiscussionCommand(portal_client_wrapper=self.portal_client_wrapper,
                                                         slack_channel_id=self.slack_channel_id,
-                                                        slack_team_id=self.slack_team_id)
+                                                        slack_team_id=self.slack_team_id,
+                                                        slack_user_id=self.slack_user_id)
                 Thread(target=portal_command.execute, daemon=True).start()
                 close_channel_command = CloseChannelCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                             slack_channel_id=self.slack_channel_id,
