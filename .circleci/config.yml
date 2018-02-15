@@ -35,8 +35,6 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-<<<<<<< Updated upstream
-=======
 
   push-to-staging:
     docker:
@@ -81,4 +79,3 @@ workflows:
       - push-to-staging:
           requires:
             - hold-for-staging
->>>>>>> Stashed changes
