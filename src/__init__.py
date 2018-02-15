@@ -44,6 +44,8 @@ def create_app(portal_client, SlackClientClass, slack_verification_token, portal
     app.register_blueprint(portal.blueprint, url_prefix='/portal')
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
 
+    app.add_url_rule('/health', None, lambda: 'Ok')
+
     app.register_error_handler(UnauthorizedException, handle_authorization_exception)
     app.register_error_handler(ValidationError, handle_validation_exception)
     app.register_error_handler(RepositoryException, handle_slack_integration_exception)
