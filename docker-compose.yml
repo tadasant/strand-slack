@@ -1,0 +1,6 @@
+# This docker-compose is for developing locally
+version: '2'
+services:
+  project:
+    build: .
+    entrypoint: python run.py
