@@ -55,7 +55,7 @@ jobs:
       - run:
           name: Login to aws
           command: |
-            sudo pip install -U awscli
+            sudo pip install awscli==1.14.36
             eval $(aws ecr get-login --no-include-email --region us-east-1)
 
       - run:
