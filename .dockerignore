@@ -4,6 +4,7 @@
 Dockerfile
 pytest.ini
 tests/
+config/
 .circleci/
 .git/
 .gitignore

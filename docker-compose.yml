@@ -4,3 +4,5 @@ services:
   project:
     build: .
     entrypoint: python run.py
+    ports:
+      - "5000"
