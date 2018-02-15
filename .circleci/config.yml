@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Push to ECR
           command: |
-            repo_url=repo_url=037670161673.dkr.ecr.us-east-1.amazonaws.com
+            repo_url=037670161673.dkr.ecr.us-east-1.amazonaws.com
             docker tag slack-app-staging:latest $repo_url/slack-app-staging:latest
             docker push $repo_url/slack-app-staging:latest
 
