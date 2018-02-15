@@ -35,11 +35,6 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Pluralize workflows
 
   push-to-staging:
     docker:
