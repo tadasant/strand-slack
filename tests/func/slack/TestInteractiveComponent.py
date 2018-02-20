@@ -52,7 +52,7 @@ class TestInteractiveComponent(TestSlackFunction):
         "is_app_unfurl": False,
         "original_message": {
             "text": fake_interactive_component_request.original_message.text,
-            "username": "CodeClippy",
+            "username": "Strand",
             "bot_id": "B8Y9T3Z3J",
             "attachments": [
                 {

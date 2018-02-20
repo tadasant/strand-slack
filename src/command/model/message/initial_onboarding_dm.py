@@ -9,7 +9,7 @@ _initial_onboarding_dm_action_id = 'topic_channel_list'
 INITIAL_ONBOARDING_DM = InitialOnboardingDmType(
     callback_id=_initial_onboarding_dm_callback_id,
     action_id=_initial_onboarding_dm_action_id,
-    text="Hey there! I'm your CodeClippy agent :sleuth_or_spy:\n\nWhat channel should I use for "
+    text="Hey there! I'm your Strand agent :sleuth_or_spy:\n\nWhat channel should I use for "
          "showing discussion topics?",
     attachment={
         "fallback": "Upgrade your Slack client to use messages like these.",

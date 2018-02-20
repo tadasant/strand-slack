@@ -24,7 +24,7 @@ class TopicChannelIntroMessage(Message):
             {new_topic_prepended}
             _This channel is a live view of the topics of all discussions going on right now._
 
-             Type `/codeclippy post`, or click below to start another one!
+             Type `/strand post`, or click below to start another one!
         ''')
 
     def _format_attachments(self):
@@ -45,9 +45,9 @@ class DiscussionInitiationMessage(Message):
             *Description*: {description}
             *Tags*: {tags}
 
-            <@{original_poster_slack_user_id}>: please `/codeclippy close` this discussion when you are done
+            <@{original_poster_slack_user_id}>: please `/strand close` this discussion when you are done
 
-            Do not post sensitive information! A transcript of this discussion will be available on www.codeclippy.com.
+            Do not post sensitive information! A transcript of this discussion will be available on www.trystrand.com.
         ''')
 
     def _format_attachments(self):

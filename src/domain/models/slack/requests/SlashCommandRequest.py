@@ -15,11 +15,11 @@ class SlashCommandRequest(Model):
 
     @property
     def is_post_topic(self):
-        return self.command == '/codeclippy' and (self.text == 'post' or self.text == '')
+        return self.command == '/strand' and (self.text == 'post' or self.text == '')
 
     @property
     def is_close_discussion(self):
-        return self.command == '/codeclippy' and self.text == 'close'
+        return self.command == '/strand' and self.text == 'close'
 
 
 class SlashCommandRequestSchema(Schema):

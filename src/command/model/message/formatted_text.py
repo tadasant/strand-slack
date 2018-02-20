@@ -10,9 +10,9 @@ def discussion_initiation_message(original_poster_slack_user_id, title, descript
         *Description*: {description}
         *Tags*: {tags}
 
-        <@{original_poster_slack_user_id}>: please `/codeclippy close` this discussion when you are done
+        <@{original_poster_slack_user_id}>: please `/strand close` this discussion when you are done
 
-        Do not post sensitive information! A transcript of this discussion will be available on www.codeclippy.com.
+        Do not post sensitive information! A transcript of this discussion will be available on www.trystrand.com.
     ''')
 
 
@@ -20,7 +20,7 @@ def discussion_initiation_dm(slack_channel_id):
     return dedent(f'''
         Your discussion has been started at <#{slack_channel_id}>. Check it out!
 
-        Please write `/codeclippy close` when the discussion is over.
+        Please write `/strand close` when the discussion is over.
     ''')
 
 
@@ -30,7 +30,7 @@ def close_discussion(closer_slack_user_id):
 
         At this time, no more messages will be allowed in this channel.
 
-        This conversation will be archived and may be reviewed on www.codeclippy.com
+        This conversation will be archived and may be reviewed on www.trystrand.com
     ''')
 
 

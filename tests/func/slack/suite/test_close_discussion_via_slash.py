@@ -21,7 +21,7 @@ class TestCloseDiscussionViaSlash(TestSlashCommand):
                                                                  mocker=mocker)
         self._queue_portal_close_discussion(portal_client=portal_client, discussion_id=str(PrimitiveFaker('bban')))
         payload = deepcopy(self.default_payload)
-        payload['command'] = '/codeclippy'
+        payload['command'] = '/strand'
         payload['text'] = 'close'
         payload['channel_id'] = discussion_channel_id
         mocker.spy(portal_client, 'mutate')
