@@ -44,6 +44,6 @@ class UpdateTopicChannelCommand(Command):
                 response_payload['text'] = f'Unable to set the channel to be <#{self.topic_channel_id}>. ' \
                                            'You must select a newly-created, empty channel. Please try again.'
         except (WrapperException, RepositoryException) as e:
-            self.logger.error(f'Something went wrong! {e}')
+            self.logger.error(f'Something went wrong! {e.message}')
             response_payload['text'] = 'Something went wrong! Please try again or contact support@solutionloft.com'
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
