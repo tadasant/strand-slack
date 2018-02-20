@@ -3,7 +3,7 @@ import re
 from flask import current_app, request
 from flask_restful import Resource
 
-from src import get_logger
+from src.common.logging import get_logger
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 
 
