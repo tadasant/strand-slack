@@ -3,6 +3,7 @@ import re
 from flask import current_app, request
 from flask_restful import Resource
 
+from src.common.logging import get_logger
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 
 
@@ -13,6 +14,7 @@ class PortalResource(Resource):
         token_regex = r'Token (.*)'
 
         def wrapper(*args, **kwargs):
+            get_logger('Flask').debug(f'Request args: {request.get_json()}')
             authorization_header = request.headers.get('Authorization')
             if authorization_header:
                 matches = re.findall(token_regex, authorization_header)
