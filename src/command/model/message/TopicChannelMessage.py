@@ -27,7 +27,7 @@ class TopicChannelMessage:
             'author_name': f'Posted by <@{self._original_poster_user_id}>',
             'title': self._title,
             'text': ", ".join(self._tag_names),
-            'footer': 'CodeClippy',
+            'footer': 'Strand',
             'footer_icon': 'https://i.imgur.com/kPCJwwl.png',
             'ts': self._ts
         }

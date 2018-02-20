@@ -1,4 +1,4 @@
-# CodeClippy Slack
+# Strand Slack
 
 [![CodeFactor](https://www.codefactor.io/repository/github/solutionloft/code-clippy-slack/badge)](https://www.codefactor.io/repository/github/solutionloft/code-clippy-slack)
 
@@ -15,7 +15,7 @@ You can also run `ptw` to run pytest-watch
 ## Running the application
 First, set up `config/development.config.json`
 
-Note that you'll need code-clippy-portal running on `PORTAL_HOST`
+Note that you'll need strand-api running on `PORTAL_HOST`
 
 If you're using PyCharm, simply use the "Run (Local)" run configuration to start the Flask server.
 
@@ -25,7 +25,7 @@ If not, `cd` into the root directory and run `python3 run.py`
 ## Using ngrok for development
 ngrok sets up a tunnel online so that we have an external URL to tell Slack about.
 
-This is useful because much of code-clippy-slack relies on triggers from Slack callbacks over the wire.
+This is useful because much of strand-slack relies on triggers from Slack callbacks over the wire.
 
 Steps to use ngrok:
 1) Download ngrok, unzip, and put the script somewhere in your $PATH (likely `/usr/bin/local`)

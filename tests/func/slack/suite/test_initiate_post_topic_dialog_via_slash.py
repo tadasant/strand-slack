@@ -10,7 +10,7 @@ from tests.utils import wait_until
 
 class TestInitiatePostTopicDialogViaSlash(TestSlashCommand):
     default_payload = deepcopy(TestSlashCommand.default_payload)
-    default_payload['command'] = '/codeclippy'
+    default_payload['command'] = '/strand'
 
     def test_valid_post_command(self, slack_client_class, mocker, slack_agent_repository):
         mocker.spy(slack_client_class, 'api_call')
