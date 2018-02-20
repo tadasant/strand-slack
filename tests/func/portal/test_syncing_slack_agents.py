@@ -103,7 +103,8 @@ class TestPuttingSlackAgents(TestSyncingSlackAgents):
     def test_put_valid_existing_installation(self, slack_agent_repository):
         target_url = url_for(endpoint=self.target_endpoint)
         # Adding one so it's pre-existing
-        self.client.TestPostingSlackAgents(path=target_url, headers=self.default_headers, data=json.dumps(self.default_payload))
+        self.client.TestPostingSlackAgents(path=target_url, headers=self.default_headers,
+                                           data=json.dumps(self.default_payload))
         assert slack_agent_repository.get_slack_bot_access_token(
             slack_team_id=self.fake_slack_team_id) == self.fake_slack_bot_access_token
 
