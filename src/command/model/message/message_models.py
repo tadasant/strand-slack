@@ -60,6 +60,8 @@ class StaleDiscussionMessage(Message):
             text=dedent(f'''
                 There hasn't been much activity here for a while!
 
-                We'll close this up in about 30 minutes if nobody has anything else to add.
+                We'll close this up in about an hour if nobody has anything else to add.
+
+                If you want to keep this discussion open, send a message in this channel.
             ''')
         )
