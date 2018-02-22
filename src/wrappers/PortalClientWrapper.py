@@ -99,6 +99,9 @@ class PortalClientWrapper:
         )
 
     def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
+        title = title.replace('"', r'\"')
+        description = description.replace('"', r'\"').replace('\n', '\\n')
+        tag_names = [name.replace('"', r'\"') for name in tag_names]
         operation_definition = f'''
             {{
               createUserAndTopicFromSlack(input: {{title: "{title}",
