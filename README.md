@@ -13,9 +13,11 @@ Without PyCharm, `cd` into the root directory and run `pytest --flake8 --pep8 --
 You can also run `ptw` to run pytest-watch
 
 ## Running the application
-First, set up `config/development.config.json`
-
 Note that you'll need strand-api running on `PORTAL_HOST`
+
+Make sure you've created a superuser with username `ccs`, email `ccs@solutionloft.com` and password `randomPassword`.
+
+`$ python manage.py createsuperuser --username ccs`.
 
 If you're using PyCharm, simply use the "Run (Local)" run configuration to start the Flask server.
 
