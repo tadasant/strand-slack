@@ -70,6 +70,9 @@ class PortalClientWrapper:
 
     def create_topic(self, title, description, original_poster_slack_user_id, tag_names):
         # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
+        title = title.replace('"', r'\"')
+        description = description.replace('"', r'\"')
+        tag_names = [name.replace('"', r'\"') for name in tag_names]
         operation_definition = f'''
           {{
             createTopicFromSlack(input: {{title: "{title}",

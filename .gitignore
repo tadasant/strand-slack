@@ -3,7 +3,6 @@ workspace.xml
 *.iml
 venv
 .cache
-config/development.config.json
 logs/*
 misc.xml
 .coverage
