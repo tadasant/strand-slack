@@ -47,7 +47,7 @@ class DiscussionInitiationMessage(Message):
 
             <@{original_poster_slack_user_id}>: please `/strand close` this discussion when you are done
 
-            Do not post sensitive information! A transcript of this discussion will be available on www.trystrand.com.
+            Do not post sensitive information! Transcripts of these discussions are stored.
         ''')
 
     def _format_attachments(self):
