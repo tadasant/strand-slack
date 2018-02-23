@@ -16,7 +16,7 @@ class TestInitiatePostTopicDialogViaSlash(TestSlashCommand):
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         payload = deepcopy(self.default_payload)
-        payload['text'] = ''
+        payload['text'] = 'post'
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_slash_command_request.team_id)
 

@@ -15,6 +15,7 @@ class TestGetHelpViaSlash(TestSlashCommand):
                                            slack_team_id=self.fake_slash_command_request.team_id)
         payload = deepcopy(self.default_payload)
         payload['command'] = '/strand'
+        payload['text'] = 'help'
         mocker.spy(slack_client_class, 'api_call')
 
         response = self.client.post(path=target_url, headers=self.default_headers, data=urlencode(payload))
