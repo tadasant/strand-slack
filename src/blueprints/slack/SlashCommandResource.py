@@ -8,6 +8,7 @@ from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlac
 from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequestSchema
 from src.service.type.CloseDiscussionService import CloseDiscussionService
 from src.service.type.PostNewTopicService import PostNewTopicService
+from src.service.type.ProvideHelpService import ProvideHelpService
 
 
 class SlashCommandResource(SlackResource):
@@ -31,6 +32,10 @@ class SlashCommandResource(SlackResource):
                                              slack_team_id=r.team_id,
                                              slack_user_id=r.user_id,
                                              slack_channel_id=r.channel_id)
+            Thread(target=service.execute, daemon=True).start()
+        elif r.is_help:
+            service = ProvideHelpService(slack_client_wrapper=current_app.slack_client_wrapper, slack_team_id=r.team_id,
+                                         slack_user_id=r.user_id, slack_channel_id=r.channel_id)
             Thread(target=service.execute, daemon=True).start()
         else:
             message = f'Could not interpret slack request: {r}'

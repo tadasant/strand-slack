@@ -15,11 +15,15 @@ class SlashCommandRequest(Model):
 
     @property
     def is_post_topic(self):
-        return self.command == '/strand' and (self.text == 'post' or self.text == '')
+        return self.command == '/strand' and self.text == 'post'
 
     @property
     def is_close_discussion(self):
         return self.command == '/strand' and self.text == 'close'
+
+    @property
+    def is_help(self):
+        return self.command == '/strand'
 
 
 class SlashCommandRequestSchema(Schema):
