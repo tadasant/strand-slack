@@ -64,9 +64,9 @@ class CloseDiscussionService(Service):
         return user_info['is_admin']
 
     def _user_is_original_poster(self):
-        intro_message_info = self.slack_client_wrapper.get_first_channel_message(slack_team_id=self.slack_team_id,
+        intro_message = self.slack_client_wrapper.get_first_channel_message(slack_team_id=self.slack_team_id,
                                                                                  slack_channel_id=self.slack_channel_id)
-        if 'OP' not in intro_message_info['text']:
+        if 'OP' not in intro_message.text:
             self.logger.warning('Couldn\'t find the actual intro message for authorizing OP. Assuming OP.')
             return True
-        return self.slack_user_id in intro_message_info['text']
+        return self.slack_user_id in intro_message.text

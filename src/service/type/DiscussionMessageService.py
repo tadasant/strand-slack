@@ -1,7 +1,7 @@
 from threading import Thread
 
 from src.command.ForwardMessageCommand import ForwardMessageCommand
-from src.domain.models.slack.unpersisted.DiscussionMessage import DiscussionMessage
+from src.domain.models.slack.unpersisted.SlackMessage import SlackMessage
 from src.service.Service import Service
 from src.service.subservice.MessageFilePublicizer import MessageFilePublicizer
 from src.service.subservice.MessageTextFormatter import MessageTextFormatter
@@ -28,7 +28,7 @@ class DiscussionMessageService(Service):
 
     def execute(self):
         slack_team_id = self.event_request.team_id
-        discussion_message = DiscussionMessage(**self.event_request.event.__dict__)
+        discussion_message = SlackMessage(**self.event_request.event.__dict__)
         if discussion_message.subtype == 'file_share':
             file_publicizer = MessageFilePublicizer(event=self.event_request.event,
                                                     slack_client_wrapper=self.slack_client_wrapper,
