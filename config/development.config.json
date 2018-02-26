@@ -7,7 +7,7 @@
   "PORTAL_USER_EMAIL": "ccs@solutionloft.com",
   "PORTAL_USER_PASSWORD": "randomPassword",
   "HOST": "0.0.0.0",
-  "PORT": 5000,
+  "PORT": 4000,
   "SLACK_VERIFICATION_TOKEN": "NkbCRv4Xt0SWJt5MDbktJmwQ",
   "PORTAL_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo"
 }
