@@ -25,11 +25,12 @@ def test_doesnt_send_onboarding_message_on_topic_channel_update(slack_client_cla
         status=SlackAgentStatus.ACTIVE,
         slack_team=SlackTeam(id=fake_slack_team_id),
         topic_channel_id=fake_slack_agent.topic_channel_id,
-        slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
-                                                                    installer=SlackUser(id=fake_installer_id),
-                                                                    bot_access_token='doesnt matter',
-                                                                    bot_user_id='doesnt matter'))
-    )
+        slack_application_installation=SlackApplicationInstallation(
+            access_token=fake_slack_access_token,
+            installer=SlackUser(id=fake_installer_id),
+            bot_access_token=fake_slack_bot_access_token,
+            bot_user_id=fake_slack_agent.slack_application_installation.bot_user_id)
+    ))
 
     # WHEN: A request comes from API with an updated topic channel ID
     target_url = url_for(endpoint='portal.slackagentresource')

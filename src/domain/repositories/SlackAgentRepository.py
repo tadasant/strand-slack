@@ -33,7 +33,7 @@ class SlackAgentRepository:
         return self._slack_agents_by_team_id[slack_team_id].slack_application_installation.installer.id
 
     def get_slack_agent(self, slack_team_id):
-        return self._slack_agents_by_team_id[slack_team_id]
+        return self._slack_agents_by_team_id[slack_team_id] if slack_team_id in self._slack_agents_by_team_id else None
 
     def set_slack_agents(self, slack_agents):
         self._slack_agents_by_team_id = {x.slack_team.id: x for x in slack_agents}
