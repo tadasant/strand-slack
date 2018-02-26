@@ -3,6 +3,7 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_
 
 from src.common.logging import get_logger
 from src.domain.models.exceptions.WrapperException import WrapperException
+from src.domain.models.slack.unpersisted.SlackMessage import SlackMessageSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
@@ -86,12 +87,21 @@ class SlackClientWrapper:
         return messages[0]
 
     def get_first_channel_message(self, slack_team_id, slack_channel_id):
-        messages_info = self.get_channel_messages(slack_team_id=slack_team_id, slack_channel_id=slack_channel_id)
-        if len(messages_info) == 0:
-            self._raise_wrapper_exception(messages_info, 'no messages in channel', slack_team_id, slack_channel_id)
-        return messages_info[-1]
+        messages = self.get_channel_messages(slack_team_id=slack_team_id, slack_channel_id=slack_channel_id)
+        if len(messages) == 0:
+            self._raise_wrapper_exception(messages, 'no messages in channel', slack_team_id, slack_channel_id)
+        return messages[-1]
 
     def get_channel_messages(self, slack_team_id, slack_channel_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
+                                              channel=slack_channel_id, count=1000)
+        self._validate_response_ok(response, 'get_last_channel_message', slack_team_id, slack_channel_id)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
+                                               path_to_object=['messages'], many=True)
+
+    def get_channel_messages_depr(self, slack_team_id, slack_channel_id):
+        # Deprecated. TODO Decommission this
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
         response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
                                               channel=slack_channel_id, count=1000)
@@ -128,6 +138,15 @@ class SlackClientWrapper:
         response = self.standard_retrier.call(slack_client.api_call, method='chat.delete', channel=slack_channel_id,
                                               ts=message_ts)
         self._validate_response_ok(response, 'delete_message', slack_team_id, slack_channel_id, message_ts)
+
+    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
+        """Deserializes response_body[**path_to_object] using ObjectSchema"""
+        result_json = response_body
+        for key in path_to_object:
+            result_json = result_json[key]
+        if many:
+            return [ObjectSchema().load(x).data for x in result_json]
+        return ObjectSchema().load(result_json).data
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
