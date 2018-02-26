@@ -28,6 +28,6 @@ class TopicChannelMessage:
             'title': self._title,
             'text': ", ".join(self._tag_names),
             'footer': 'Strand',
-            'footer_icon': 'https://i.imgur.com/kPCJwwl.png',
+            'footer_icon': 'https://s3.amazonaws.com/strand-public-assets/strand-logo.png',
             'ts': self._ts
         }
