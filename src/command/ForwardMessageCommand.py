@@ -30,7 +30,7 @@ class ForwardMessageCommand(Command):
                                                               slack_event_ts=self.slack_event.ts,
                                                               author_slack_user_id=self.slack_event.user)
             except WrapperException as e:
-                # TODO [CCS-15/CCS-81] caching user info to avoid relying on error
+                # TODO [SLA-15/SLA-81] caching user info to avoid relying on error
                 if e.errors and e.errors[0]['message'] == 'User matching query does not exist.':
                     self.logger.info('Tried to forward message for unknown user. Retrying with user creation.')
                     slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_event.user,
@@ -57,7 +57,7 @@ class ForwardMessageCommand(Command):
                     raise e
 
     def _is_discussion_message(self):
-        # TODO [CCS-81] This check should happen via db in processor
+        # TODO [SLA-81] This check should happen via db in processor
         calling_channel_id = self.slack_event.channel
         calling_channel_info = self.slack_client_wrapper.get_channel_info(slack_team_id=self.slack_team_id,
                                                                           slack_channel_id=calling_channel_id)

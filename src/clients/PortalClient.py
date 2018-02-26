@@ -1,4 +1,4 @@
-# TODO [CCS-61] test this / effectively treat it as an independent package (or use an existing graphql client?)
+# TODO [SLA-61] test this / effectively treat it as an independent package (or use an existing graphql client?)
 import requests
 
 

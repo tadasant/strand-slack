@@ -22,7 +22,7 @@ class DiscussionMessageService(Service):
     """
 
     def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request):
-        # TODO [CCS-81] assert event_request.is_discussion_message
+        # TODO [SLA-81] assert event_request.is_discussion_message
         super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
         self.event_request = event_request
 
