@@ -17,8 +17,11 @@ class SlackMessage(Model):
         self.ts = kwargs.get('ts')
         self.subtype = kwargs.get('subtype')
         self.text = kwargs.get('text')
-        self.attachments = kwargs.get('attachments')
         self.file_url = file_url
+
+    @property
+    def is_join_message(self):
+        return self.subtype == 'channel_join'
 
 
 class SlackMessageSchema(Schema):
@@ -29,7 +32,6 @@ class SlackMessageSchema(Schema):
     subtype = fields.String(allow_none=True)
     text = fields.String()
     file_url = fields.String(allow_none=True)
-    attachments = fields.String(many=True, allow_none=True)
 
     @post_load
     def make_slack_message(self, data):
