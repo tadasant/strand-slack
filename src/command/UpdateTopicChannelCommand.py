@@ -22,9 +22,7 @@ class UpdateTopicChannelCommand(Command):
             'replace_original': False,
         }
         try:
-            messages = self.slack_client_wrapper.get_channel_messages(slack_team_id=self.slack_team_id,
-                                                                      slack_channel_id=self.topic_channel_id)
-            if len(messages) == 0:
+            if self._empty_out_channel():
                 self.portal_client_wrapper.update_topic_channel_and_activate_agent(
                     slack_team_id=self.slack_team_id,
                     topic_channel_id=self.topic_channel_id)
@@ -42,8 +40,21 @@ class UpdateTopicChannelCommand(Command):
                                            'If you want to change this later, just select a new option in the menu.'
             else:
                 response_payload['text'] = f'Unable to set the channel to be <#{self.topic_channel_id}>. ' \
-                                           'You must select a newly-created, empty channel. Please try again.'
+                                           'You must select a newly-created channel that you are a member of. ' \
+                                           'Please try again.'
         except (WrapperException, RepositoryException) as e:
             self.logger.error(f'Something went wrong! {e.message}')
             response_payload['text'] = 'Something went wrong! Please try again or contact support@solutionloft.com'
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
+
+    def _empty_out_channel(self):
+        messages = self.slack_client_wrapper.get_channel_messages(slack_team_id=self.slack_team_id,
+                                                                  slack_channel_id=self.topic_channel_id)
+        if not all(m.is_join_message for m in messages):
+            # Some messages must be non-join messages
+            return False
+
+        for message in messages:
+            self.slack_client_wrapper.delete_message(slack_team_id=self.slack_team_id,
+                                                     slack_channel_id=self.topic_channel_id, message_ts=message.ts)
+        return True
