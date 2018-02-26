@@ -36,7 +36,7 @@ class EventResource(SlackResource):
                         Thread(target=service.execute, daemon=True).start()
 
                     else:
-                        # TODO [CCS-81] Check whether or not this is #discussions-X vs. other should happen here via db
+                        # TODO [SLA-81] Check whether or not this is #discussions-X vs. other should happen here via db
                         self.logger.info('Message in non-topic channel')
                         service = DiscussionMessageService(slack_client_wrapper=current_app.slack_client_wrapper,
                                                            portal_client_wrapper=current_app.portal_client_wrapper,

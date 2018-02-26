@@ -13,7 +13,7 @@ class CloseDiscussionService(Service):
         Closes the discussion
 
         Actions:
-        * Checks if slack user is OP or admin (will refactor out to validator in CCS-81 TODO)
+        * Checks if slack user is OP or admin (will refactor out to validator in SLA-81 TODO)
 
         Outputs:
         * Request to Portal (close discussion)
@@ -48,14 +48,14 @@ class CloseDiscussionService(Service):
                 Thread(target=update_queue_command.execute, daemon=True).start()
 
     def _is_discussion_channel(self):
-        # TODO [CCS-81] This check should happen via db in validator
+        # TODO [SLA-81] This check should happen via db in validator
         calling_channel_info = self.slack_client_wrapper.get_channel_info(slack_team_id=self.slack_team_id,
                                                                           slack_channel_id=self.slack_channel_id)
         calling_channel_name = calling_channel_info['name']
         return re.fullmatch(pattern=r'discussion-(\d+)', string=calling_channel_name) is not None
 
     def _user_is_authorized(self):
-        # TODO [CCS-81] This check should happen via db in validator
+        # TODO [SLA-81] This check should happen via db in validator
         return self._user_is_slack_admin() or self._user_is_original_poster()
 
     def _user_is_slack_admin(self):

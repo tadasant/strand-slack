@@ -69,7 +69,7 @@ class StartDiscussionCommand(Command):
                                                            ' :see_no_evil: Please contact support@solutionloft.com')
 
     def _create_topic(self):
-        # TODO [CCS-60] move tag parsing to useful validation (maybe derived attr on Submission)
+        # TODO [SLA-60] move tag parsing to useful validation (maybe derived attr on Submission)
         tag_names = [x.strip() for x in self.submission.tags.split(',')]
         try:
             topic = self.portal_client_wrapper.create_topic(title=self.submission.title,
@@ -77,7 +77,7 @@ class StartDiscussionCommand(Command):
                                                             original_poster_slack_user_id=self.slack_user_id,
                                                             tag_names=tag_names)
         except WrapperException as e:
-            # TODO [CCS-15] caching user info to avoid relying on error
+            # TODO [SLA-15] caching user info to avoid relying on error
             if e.errors and e.errors[0]['message'] == 'SlackUser matching query does not exist.':
                 self.logger.info('Tried to create topic for unknown user. Retrying with user creation.')
                 slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_user_id,
