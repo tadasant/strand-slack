@@ -12,7 +12,7 @@ def discussion_initiation_message(original_poster_slack_user_id, title, descript
 
         <@{original_poster_slack_user_id}>: please `/strand close` this discussion when you are done
 
-        Do not post sensitive information! A transcript of this discussion will be available on www.trystrand.com.
+        Do not post sensitive information! Transcripts of these discussions are stored.
     ''')
 
 
@@ -30,7 +30,7 @@ def close_discussion(closer_slack_user_id):
 
         At this time, no more messages will be allowed in this channel.
 
-        This conversation will be archived and may be reviewed on www.trystrand.com
+        This conversation will now be archived.
     ''')
 
 

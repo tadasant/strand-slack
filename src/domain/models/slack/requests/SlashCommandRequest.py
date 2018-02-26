@@ -14,8 +14,12 @@ class SlashCommandRequest(Model):
         self.channel_id = channel_id
 
     @property
+    def is_strand_command(self):
+        return self.command == '/strand'
+
+    @property
     def is_post_topic(self):
-        return self.command == '/strand' and (self.text == 'post' or self.text == '')
+        return self.command == '/strand' and self.text == 'post'
 
     @property
     def is_close_discussion(self):
