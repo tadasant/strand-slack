@@ -20,9 +20,11 @@ class SlackAgentResource(PortalResource):
             # presumably, this was an oauth update, so we're re-sending the onboarding message
             # TODO this code needs to be refactored (should be within 0.2). See discussion-9 on Strand.
             # TODO [SLA-28] probably want a different message if installing a second time
-            InitiateAgentOnboardingCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                           slack_team_id=slack_agent.slack_team.id,
-                                           installer_id=slack_agent.slack_application_installation.installer.id).execute()
+            InitiateAgentOnboardingCommand(
+                slack_client_wrapper=current_app.slack_client_wrapper,
+                slack_team_id=slack_agent.slack_team.id,
+                installer_id=slack_agent.slack_application_installation.installer.id
+            ).execute()
 
         return SlackAgentSchema().dump(slack_agent)
 
