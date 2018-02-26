@@ -33,6 +33,11 @@ class SlackClientWrapper:
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments)
 
+    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        self.standard_retrier.call(slack_client.api_call, method='chat.postEphemeral', channel=slack_channel_id,
+                                   text=text, user=slack_user_id)
+
     def post_to_response_url(self, response_url, payload):
         response_retrier = self.standard_retrier.copy(wait=wait_fixed(0.5), stop=stop_after_attempt(4))
         response = response_retrier.call(fn=requests.post, url=response_url,
