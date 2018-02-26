@@ -22,9 +22,7 @@ class UpdateTopicChannelCommand(Command):
             'replace_original': False,
         }
         try:
-            messages = self.slack_client_wrapper.get_channel_messages(slack_team_id=self.slack_team_id,
-                                                                      slack_channel_id=self.topic_channel_id)
-            if len(messages) == 0:
+            if self._empty_out_channel():
                 self.portal_client_wrapper.update_topic_channel_and_activate_agent(
                     slack_team_id=self.slack_team_id,
                     topic_channel_id=self.topic_channel_id)
@@ -47,3 +45,10 @@ class UpdateTopicChannelCommand(Command):
             self.logger.error(f'Something went wrong! {e.message}')
             response_payload['text'] = 'Something went wrong! Please try again or contact support@solutionloft.com'
         self.slack_client_wrapper.post_to_response_url(response_url=self.response_url, payload=response_payload)
+
+    def _empty_out_channel(self):
+        # deletes all non-user messages from the channel if those are the only ones that exist
+        messages = self.slack_client_wrapper.get_channel_messages(slack_team_id=self.slack_team_id,
+                                                                  slack_channel_id=self.topic_channel_id)
+
+        return len(messages) == 0
