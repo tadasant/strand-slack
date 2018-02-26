@@ -47,7 +47,7 @@ class DiscussionInitiationMessage(Message):
 
             <@{original_poster_slack_user_id}>: please `/strand close` this discussion when you are done
 
-            Do not post sensitive information! A transcript of this discussion will be available on www.trystrand.com.
+            Do not post sensitive information! Transcripts of these discussions are stored.
         ''')
 
     def _format_attachments(self):
@@ -65,3 +65,21 @@ class StaleDiscussionMessage(Message):
                 If you want to keep this discussion open, send a message in this channel.
             ''')
         )
+
+
+class HelpMessage(Message):
+    def __init__(self, topic_channel_id):
+        super().__init__(
+            text=self._format_text(topic_channel_id=topic_channel_id),
+        )
+
+    def _format_text(self, topic_channel_id):
+        return dedent(f'''
+            Strand helps you have discussions within your team.
+
+            Start a discussion with `/strand post`, or close an ongoing discussion with `/strand close`.
+
+            Read more about Strand at www.trystrand.com/teams
+
+            Head over to <#{topic_channel_id}> to see all the ongoing discussions on your team!
+        ''')
