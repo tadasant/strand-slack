@@ -3,6 +3,7 @@ from threading import Thread
 
 from src.command.CloseChannelCommand import CloseChannelCommand
 from src.command.CloseDiscussionCommand import CloseDiscussionCommand
+from src.command.InformUserUnauthorizedCommand import InformUserUnauthorizedCommand
 from src.command.UpdateQueueCommand import UpdateQueueCommand
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.service.Service import Service
@@ -46,6 +47,14 @@ class CloseDiscussionService(Service):
                                                           discussion_slack_channel_id=self.slack_channel_id,
                                                           slack_team_id=self.slack_team_id)
                 Thread(target=update_queue_command.execute, daemon=True).start()
+            else:
+                inform_user_unauthorized_command = InformUserUnauthorizedCommand(
+                    slack_client_wrapper=self.slack_client_wrapper,
+                    slack_channel_id=self.slack_channel_id,
+                    slack_team_id=self.slack_team_id,
+                    slack_user_id=self.slack_user_id
+                )
+                Thread(target=inform_user_unauthorized_command.execute, daemon=True).start()
 
     def _is_discussion_channel(self):
         # TODO [CCS-81] This check should happen via db in validator
@@ -64,9 +73,9 @@ class CloseDiscussionService(Service):
         return user_info['is_admin']
 
     def _user_is_original_poster(self):
-        intro_message = self.slack_client_wrapper.get_first_channel_message(slack_team_id=self.slack_team_id,
-                                                                                 slack_channel_id=self.slack_channel_id)
-        if 'OP' not in intro_message.text:
+        intro_message = self.slack_client_wrapper.get_discussion_channel_intro_message(slack_team_id=self.slack_team_id,
+                                                                                       discussion_channel_id=self.slack_channel_id)
+        if not intro_message or 'OP' not in intro_message.text:
             self.logger.warning('Couldn\'t find the actual intro message for authorizing OP. Assuming OP.')
             return True
         return self.slack_user_id in intro_message.text
