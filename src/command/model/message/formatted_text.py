@@ -38,3 +38,7 @@ def block_topic_channel_message(attempted_message):
     return dedent(f'''
         I\'m sorry but users may not post in this channel. Here's the message you tried to send:\n\n{attempted_message}
     ''')
+
+
+def unauthorized_message():
+    return 'I\'m sorry, you\'re not authorized to perform this action :see_no_evil:'
