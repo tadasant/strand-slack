@@ -13,7 +13,7 @@ class TestPortalClient:
     # UTILITIES
 
     def set_next_response(self, response):
-        # TODO [CCS-70] shouldn't use this feature. Will become mostly obsolete with CCS-81.
+        # TODO [SLA-70] shouldn't use this feature. Will become mostly obsolete with SLA-81.
         with self.lock:
             self.logger.info(f'Queueing {response}')
             self.next_responses.append(response)

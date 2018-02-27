@@ -13,7 +13,7 @@ def clear_slack_state():
 
 
 class TestSlackClient:
-    """TODO should be able to deprecate most of this after CCS-81 refactoring"""
+    """TODO should be able to deprecate most of this after SLA-81 refactoring"""
     def __init__(self, token, *args, **kwargs):
         self.token = token
         self.logger = get_logger('TestSlackClient')

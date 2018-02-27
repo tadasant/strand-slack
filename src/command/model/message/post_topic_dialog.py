@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-# TODO [CCS-104] Move this to message_models.py & messages.py
+# TODO [SLA-104] Move this to message_models.py & messages.py
 
 PostTopicDialogType = namedtuple('PostTopicDialogType', 'callback_id value')
 

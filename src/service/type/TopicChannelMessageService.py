@@ -15,7 +15,7 @@ class TopicChannelMessageService(Service):
     """
 
     def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request, bot_user_id):
-        # TODO [CCS-81] assert event_request.is_topic_channel_message
+        # TODO [SLA-81] assert event_request.is_topic_channel_message
         super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
         self.event_request = event_request
         self.bot_user_id = bot_user_id
