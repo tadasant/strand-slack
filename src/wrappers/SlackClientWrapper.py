@@ -86,11 +86,13 @@ class SlackClientWrapper:
             self._raise_wrapper_exception(response, 'no messages in channel', slack_team_id, slack_channel_id)
         return messages[0]
 
-    def get_first_channel_message(self, slack_team_id, slack_channel_id):
-        messages = self.get_channel_messages(slack_team_id=slack_team_id, slack_channel_id=slack_channel_id)
-        if len(messages) == 0:
-            self._raise_wrapper_exception(messages, 'no messages in channel', slack_team_id, slack_channel_id)
-        return messages[-1]
+    def get_discussion_channel_intro_message(self, slack_team_id, discussion_channel_id):
+        # TODO deprecate with 0.2 (brittle way of determining OP)
+        messages = self.get_channel_messages(slack_team_id=slack_team_id, slack_channel_id=discussion_channel_id)
+        for message in messages:
+            if 'OP' in message.text:
+                return message
+        return None
 
     def get_channel_messages(self, slack_team_id, slack_channel_id):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)

@@ -15,7 +15,7 @@ class TopicChannelMessageService(Service):
     """
 
     def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request, bot_user_id):
-        # TODO [CCS-81] assert event_request.is_topic_channel_message
+        # TODO [SLA-81] assert event_request.is_topic_channel_message
         super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
         self.event_request = event_request
         self.bot_user_id = bot_user_id
@@ -30,10 +30,12 @@ class TopicChannelMessageService(Service):
                 message_ts=self.event_request.event.ts,
             )
             Thread(target=delete_command.execute, daemon=True).start()
-            inform_command = InformTopicChannelMessageDeletedCommand(
-                slack_client_wrapper=self.slack_client_wrapper,
-                slack_team_id=self.event_request.team_id,
-                slack_user_id=self.event_request.event.user,
-                attempted_text=self.event_request.event.text
-            )
-            Thread(target=inform_command.execute, daemon=True).start()
+            if not self.event_request.event.is_system_message:
+                self.logger.info('Detected that this message was not sent by the system')
+                inform_command = InformTopicChannelMessageDeletedCommand(
+                    slack_client_wrapper=self.slack_client_wrapper,
+                    slack_team_id=self.event_request.team_id,
+                    slack_user_id=self.event_request.event.user,
+                    attempted_text=self.event_request.event.text
+                )
+                Thread(target=inform_command.execute, daemon=True).start()

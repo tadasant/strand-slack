@@ -1,6 +1,6 @@
 import time
 
-# TODO [CCS-104] Move this to message_models.py & messages.py
+# TODO [SLA-104] Move this to message_models.py & messages.py
 
 
 class TopicChannelMessage:
@@ -28,6 +28,6 @@ class TopicChannelMessage:
             'title': self._title,
             'text': ", ".join(self._tag_names),
             'footer': 'Strand',
-            'footer_icon': 'https://i.imgur.com/kPCJwwl.png',
+            'footer_icon': 'https://s3.amazonaws.com/strand-public-assets/strand-logo.png',
             'ts': self._ts
         }

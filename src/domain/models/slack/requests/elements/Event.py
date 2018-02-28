@@ -28,6 +28,11 @@ class Event(Model):
         return self.type == 'message'
 
     @property
+    def is_system_message(self):
+        """Message that wasn't actually sent by a user"""
+        return self.is_message and self.subtype == 'channel_join'
+
+    @property
     def is_reply(self):
         return self.is_message and self.thread_ts
 

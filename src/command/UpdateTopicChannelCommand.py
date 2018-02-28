@@ -22,7 +22,10 @@ class UpdateTopicChannelCommand(Command):
             'replace_original': False,
         }
         try:
-            if self._empty_out_channel():
+            prior_topic_channel_id = slack_agent_repository.get_topic_channel_id(slack_team_id=self.slack_team_id)
+            if prior_topic_channel_id == self.topic_channel_id:
+                response_payload['text'] = f'Your topic channel is already set to <#{self.topic_channel_id}>!'
+            elif self._empty_out_channel():
                 self.portal_client_wrapper.update_topic_channel_and_activate_agent(
                     slack_team_id=self.slack_team_id,
                     topic_channel_id=self.topic_channel_id)
