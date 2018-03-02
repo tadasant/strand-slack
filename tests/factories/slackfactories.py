@@ -66,6 +66,7 @@ class SubmissionFactory(factory.Factory):
     title = factory.Faker('paragraph')
     description = factory.Faker('paragraph')
     tags = factory.Faker('paragraph')
+    share_with_current_channel = False
 
 
 class FileFactory(factory.Factory):

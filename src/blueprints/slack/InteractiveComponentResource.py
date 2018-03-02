@@ -34,14 +34,16 @@ class InteractiveComponentResource(SlackResource):
                                              portal_client_wrapper=current_app.portal_client_wrapper,
                                              slack_team_id=r.team.id,
                                              submission=r.submission,
-                                             slack_user_id=r.user.id)
+                                             slack_user_id=r.user.id,
+                                             slack_channel_id=r.channel.id)
             Thread(target=command.execute, daemon=True).start()
             return {}, HTTPStatus.OK
         elif r.is_post_new_topic_button_click:
             service = PostNewTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
                                           trigger_id=r.trigger_id,
                                           slack_team_id=r.team.id,
-                                          slack_user_id=r.user.id)
+                                          slack_user_id=r.user.id,
+                                          slack_channel_id=r.channel.id)
             Thread(target=service.execute, daemon=True).start()
             return '', HTTPStatus.NO_CONTENT
         elif r.is_close_discussion_click:

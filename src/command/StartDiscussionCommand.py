@@ -1,4 +1,5 @@
 from src.command.Command import Command
+from src.command.model.message.ChannelMessage import ChannelMessage
 from src.command.model.message.TopicChannelMessage import TopicChannelMessage
 from src.command.model.message.formatted_text import discussion_initiation_dm
 from src.command.model.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE, DiscussionInitiationMessage
@@ -10,11 +11,13 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class StartDiscussionCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id):
+    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, submission, slack_user_id,
+                 slack_channel_id):
         super().__init__(slack_team_id=slack_team_id, slack_client_wrapper=slack_client_wrapper,
                          portal_client_wrapper=portal_client_wrapper)
         self.submission = submission
         self.slack_user_id = slack_user_id
+        self.slack_channel_id = slack_channel_id
 
     def execute(self):
         """
@@ -56,8 +59,14 @@ class StartDiscussionCommand(Command):
                                                    slack_channel_id=slack_channel.id,
                                                    text=DISCUSSION_INITIATION_MESSAGE.text,
                                                    attachments=DISCUSSION_INITIATION_MESSAGE.as_dict()['attachments'])
+
             self._add_topic_to_topic_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
                                              discussion_channel_id=slack_channel.id)
+
+            if self.submission.share_with_current_channel:
+                self._add_topic_to_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
+                                           discussion_channel_id=slack_channel.id, channel_id=self.slack_channel_id)
+
             self.slack_client_wrapper.send_dm_to_user(slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
                                                       text=discussion_initiation_dm(slack_channel_id=slack_channel.id))
@@ -118,4 +127,16 @@ class StartDiscussionCommand(Command):
             slack_channel_id=topic_channel_id,
             text=TOPIC_CHANNEL_INTRO_MESSAGE.text,
             attachments=TOPIC_CHANNEL_INTRO_MESSAGE.as_dict()['attachments']
+        )
+
+    def _add_topic_to_channel(self, topic, original_poster_slack_user_id, discussion_channel_id, channel_id):
+        channel_post = ChannelMessage(original_poster_user_id=original_poster_slack_user_id,
+                                      discussion_channel_id=discussion_channel_id,
+                                      title=topic.title,
+                                      tag_names=[tag.name for tag in topic.tags])
+        self.slack_client_wrapper.send_message(
+            slack_team_id=self.slack_team_id,
+            slack_channel_id=channel_id,
+            text=channel_post.text,
+            attachments=channel_post.attachments
         )
