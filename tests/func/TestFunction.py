@@ -123,6 +123,15 @@ class TestFunction:
         condition = len([x for x in params_to_expecteds if x is not None]) == 0
         assert condition if expect_succeed else not condition, f'{params_to_expecteds} vs. {params_to_actuals}'
 
+    def assert_value_in_call_args_list(self, param_to_expect, call_args_list, expect_to_succeed=True):
+        """
+        Asserts that each item in params_to_expect matches the item in the same position in call_args_list
+        :param params_to_expecteds: e.g. [{'paramname': 'expectedval', 'param2name': 'expected2val}]
+        """
+        params_to_actual = [x[1] for x in call_args_list]
+        assert any(all(item in param_to_actual.items() for item in param_to_expect.items()) for param_to_actual in
+                   params_to_actual) == expect_to_succeed
+
     def simulate_topic_channel_initiation(self, slack_agent_repository, slack_team_id):
         topic_channel_id = slack_agent_repository.get_topic_channel_id(slack_team_id=slack_team_id)
         if topic_channel_id not in SlackRepository['messages_posted_by_channel_id']:

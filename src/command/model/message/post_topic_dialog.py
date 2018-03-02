@@ -58,7 +58,7 @@ POST_TOPIC_DIALOG_WITH_CHANNEL_OPTION = PostTopicDialogType(
                 'hint': 'Please separate with commas. E.g. "Python, React, MySQL"',
             },
             {
-                'label': 'Share with current channel?',
+                'label': 'Share with channel?',
                 'name': 'share_with_current_channel',
                 'type': 'select',
                 'value': 'false',
