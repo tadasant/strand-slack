@@ -125,8 +125,8 @@ class TestFunction:
 
     def assert_value_in_call_args_list(self, param_to_expect, call_args_list, expect_to_succeed=True):
         """
-        Asserts that each item in params_to_expect matches the item in the same position in call_args_list
-        :param params_to_expecteds: e.g. [{'paramname': 'expectedval', 'param2name': 'expected2val}]
+        Asserts that there is (or is not) an item matching the param_to_expect in the call_args_list
+        :param param_to_expect: e.g. {'paramname': 'expected_val'}
         """
         params_to_actual = [x[1] for x in call_args_list]
         assert any(all(item in param_to_actual.items() for item in param_to_expect.items()) for param_to_actual in
