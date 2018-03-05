@@ -1,5 +1,6 @@
 from src.common.logging import get_logger
 from tests.common.PrimitiveFaker import PrimitiveFaker
+from tests.factories.slackfactories import ChannelFactory
 
 SlackRepository = {
     'created_channels_by_id': {},
@@ -32,7 +33,7 @@ class TestSlackClient:
         elif method == 'users.info':
             return {'ok': True, 'user': {'id': 'someid', 'profile': {'image_72': 'url.com'}, 'is_admin': True}}
         elif method == 'channels.create':
-            channel_id = str(PrimitiveFaker('bban'))
+            channel_id = ChannelFactory.build().id
             channel_name = kwargs.get('name')
             SlackRepository['created_channels_by_id'][channel_id] = {'id': channel_id, 'name': channel_name}
             return {'ok': True, 'channel': {'id': channel_id, 'name': channel_name}}

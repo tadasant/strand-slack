@@ -8,6 +8,7 @@ from src.domain.models.slack.requests.EventRequest import EventRequestSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.service.type.TopicChannelMessageService import TopicChannelMessageService
 from src.service.type.DiscussionMessageService import DiscussionMessageService
+from src.service.type.ProvideHelpService import ProvideHelpService
 
 
 class EventResource(SlackResource):
@@ -22,7 +23,7 @@ class EventResource(SlackResource):
             if event_request.is_verification_request:
                 result = ({'challenge': event_request.challenge}, HTTPStatus.OK)
             elif event_request.event and event_request.event.is_message_channels_event:
-                if event_request.event.is_message and not event_request.event.hidden:
+                if not event_request.event.hidden:
                     topic_channel_id = slack_agent_repository.get_topic_channel_id(
                         slack_team_id=event_request.team_id
                     )
@@ -42,6 +43,14 @@ class EventResource(SlackResource):
                                                            portal_client_wrapper=current_app.portal_client_wrapper,
                                                            event_request=event_request)
                         Thread(target=service.execute, daemon=True).start()
+            elif event_request.event and event_request.event.is_message_dm_event:
+                self.logger.info('Help message in DM')
+                service = ProvideHelpService(slack_client_wrapper=current_app.slack_client_wrapper,
+                                             slack_team_id=event_request.team_id,
+                                             slack_user_id=event_request.event.user,
+                                             slack_channel_id=event_request.event.channel)
+                Thread(target=service.execute, daemon=True).start()
+
         finally:
             # Slack will keep re-sending if we don't respond 200 OK, even in exception case on our end
             return result

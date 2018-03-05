@@ -1,6 +1,4 @@
-from random import choice
-
-import factory
+import factory.fuzzy
 
 from src.domain.models.slack.Channel import Channel
 from src.domain.models.slack.Team import Team
@@ -57,7 +55,7 @@ class ChannelFactory(factory.Factory):
     class Meta:
         model = Channel
 
-    id = factory.LazyFunction(lambda: choice(['C', 'D', 'G']) + '0G9QF9GW')
+    id = factory.fuzzy.FuzzyText(length=9, prefix='C')
     name = factory.Faker('word')
 
 
@@ -86,7 +84,7 @@ class EventFactory(factory.Factory):
 
     type = factory.Faker('word')
     user = factory.Faker('bban')
-    channel = factory.Faker('bban')
+    channel = factory.fuzzy.FuzzyText(length=9, prefix='C')
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
     subtype = factory.Faker('word')

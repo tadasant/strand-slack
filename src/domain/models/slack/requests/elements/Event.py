@@ -19,8 +19,14 @@ class Event(Model):
 
     @property
     def is_message_channels_event(self):
-        if self.type == 'message':
-            return self.channel and self.user and self.text and self.ts
+        if self.type == 'message' and self.channel:
+            return self.user and self.text and self.ts and self.channel.startswith('C')
+        return False
+
+    @property
+    def is_message_dm_event(self):
+        if self.type == 'message' and self.channel:
+            return self.user and self.text and self.ts and self.channel.startswith('D')
         return False
 
     @property
