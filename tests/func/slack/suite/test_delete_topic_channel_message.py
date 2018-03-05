@@ -15,7 +15,6 @@ class TestDeleteTopicChannelMessage(TestEvent):
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_event_request.team_id)
         topic_channel_id = slack_agent_repository.get_topic_channel_id(slack_team_id=self.fake_event_request.team_id)
-
         payload = deepcopy(self.default_payload)
         payload['event']['channel'] = topic_channel_id
         mocker.spy(slack_client_class, 'api_call')

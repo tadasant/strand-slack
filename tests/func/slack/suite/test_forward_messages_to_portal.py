@@ -22,7 +22,6 @@ class TestForwardMessagesToPortal(TestEvent):
                                                                  mocker=mocker)
         payload = deepcopy(self.default_payload)
         payload['event']['channel'] = discussion_channel_id
-        print(discussion_channel_id)
         self._queue_portal_message_creation(portal_client=portal_client)
         mocker.spy(portal_client, 'mutate')
 
