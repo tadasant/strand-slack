@@ -1,3 +1,5 @@
+from random import choice
+
 import factory
 
 from src.domain.models.slack.Channel import Channel
@@ -55,7 +57,7 @@ class ChannelFactory(factory.Factory):
     class Meta:
         model = Channel
 
-    id = factory.Faker('bban')
+    id = factory.LazyFunction(lambda: choice(['C', 'D', 'G']) + '0G9QF9GW')
     name = factory.Faker('word')
 
 
@@ -66,6 +68,7 @@ class SubmissionFactory(factory.Factory):
     title = factory.Faker('paragraph')
     description = factory.Faker('paragraph')
     tags = factory.Faker('paragraph')
+    share_with_current_channel = False
 
 
 class FileFactory(factory.Factory):
