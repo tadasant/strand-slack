@@ -1,6 +1,6 @@
 from src.command.Command import Command
-from src.command.model.message.ChannelMessage import ChannelMessage
-from src.command.model.message.TopicChannelMessage import TopicChannelMessage
+from src.command.model.message.message_models import ChannelTopicShareMessage
+from src.command.model.message.TopicChannelTopicShareMessage import TopicChannelTopicShareMessage
 from src.command.model.message.formatted_text import discussion_initiation_dm
 from src.command.model.message.messages import TOPIC_CHANNEL_INTRO_MESSAGE, DiscussionInitiationMessage
 from src.domain.models.exceptions.WrapperException import WrapperException
@@ -63,6 +63,7 @@ class StartDiscussionCommand(Command):
             self._add_topic_to_topic_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
                                              discussion_channel_id=slack_channel.id)
 
+            # TODO: Move this type of logic to a service
             if self.submission.share_with_current_channel:
                 self._add_topic_to_channel(topic=topic, original_poster_slack_user_id=self.slack_user_id,
                                            discussion_channel_id=slack_channel.id, channel_id=self.slack_channel_id)
@@ -114,10 +115,10 @@ class StartDiscussionCommand(Command):
         intro_message_info = self.slack_client_wrapper.get_last_channel_message(slack_team_id=self.slack_team_id,
                                                                                 slack_channel_id=topic_channel_id)
         intro_message = MessageSchema().load(intro_message_info).data
-        topic_channel_post = TopicChannelMessage(original_poster_user_id=original_poster_slack_user_id,
-                                                 discussion_channel_id=discussion_channel_id,
-                                                 title=topic.title,
-                                                 tag_names=[tag.name for tag in topic.tags])
+        topic_channel_post = TopicChannelTopicShareMessage(original_poster_user_id=original_poster_slack_user_id,
+                                                           discussion_channel_id=discussion_channel_id,
+                                                           title=topic.title,
+                                                           tag_names=[tag.name for tag in topic.tags])
         self.slack_client_wrapper.update_message(slack_team_id=self.slack_team_id, slack_channel_id=topic_channel_id,
                                                  new_text=topic_channel_post.text,
                                                  attachments=topic_channel_post.attachments,
@@ -130,10 +131,10 @@ class StartDiscussionCommand(Command):
         )
 
     def _add_topic_to_channel(self, topic, original_poster_slack_user_id, discussion_channel_id, channel_id):
-        channel_post = ChannelMessage(original_poster_user_id=original_poster_slack_user_id,
-                                      discussion_channel_id=discussion_channel_id,
-                                      title=topic.title,
-                                      tag_names=[tag.name for tag in topic.tags])
+        channel_post = ChannelTopicShareMessage(original_poster_user_id=original_poster_slack_user_id,
+                                                discussion_channel_id=discussion_channel_id,
+                                                title=topic.title,
+                                                tag_names=[tag.name for tag in topic.tags])
         self.slack_client_wrapper.send_message(
             slack_team_id=self.slack_team_id,
             slack_channel_id=channel_id,
