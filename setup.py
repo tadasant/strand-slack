@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='strand-slack',
-      version='0.1.0',
+      version='0.1.2',
       description='Strand Slack Integration',
       author='Strand',
       author_email='hello@trystrand.com',
