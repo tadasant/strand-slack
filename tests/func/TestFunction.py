@@ -14,7 +14,7 @@ from src.domain.models.portal.SlackApplicationInstallation import SlackApplicati
 from src.domain.models.portal.SlackTeam import SlackTeam
 from src.domain.models.portal.SlackUser import SlackUser
 from tests.common.PrimitiveFaker import PrimitiveFaker
-from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory
+from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory, ChannelFactory
 from tests.testresources.TestSlackClient import SlackRepository
 from tests.utils import wait_until
 
@@ -36,7 +36,7 @@ class TestFunction:
         slack_agent_repository.add_slack_agent(slack_agent=SlackAgent(
             status=SlackAgentStatus.ACTIVE,
             slack_team=SlackTeam(id=slack_team_id),
-            topic_channel_id=str(PrimitiveFaker('bban')),
+            topic_channel_id=ChannelFactory.build().id,
             slack_application_installation=SlackApplicationInstallation(access_token='doesnt matter',
                                                                         installer=SlackUser(id=installer_user_id),
                                                                         bot_access_token='doesnt matter',

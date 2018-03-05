@@ -89,7 +89,6 @@ class TestStartDiscussion(TestSlackFunction):
         assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
         assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
         assert str(fake_topic_id) in portal_client.mutate.call_args_list[1][1]['operation_definition']
-        print(slack_client_class.api_call.call_args_list)
         self.assert_values_in_call_args_list(
             params_to_expecteds=params_to_expect,
             call_args_list=slack_client_class.api_call.call_args_list
