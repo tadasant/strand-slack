@@ -26,7 +26,7 @@ class Event(Model):
     @property
     def is_help_message_dm_event(self):
         if self.type == 'message' and self.channel:
-            return self.user and self.text and self.ts and self.channel.startswith('D') and self.text.contains('help')
+            return self.user and self.text and self.ts and self.channel.startswith('D') and 'help' in self.text.lower()
         return False
 
     @property
