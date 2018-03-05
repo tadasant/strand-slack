@@ -1,3 +1,5 @@
+import json
+
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.clients.PortalClient import PortalClientException
@@ -70,15 +72,15 @@ class PortalClientWrapper:
 
     def create_topic(self, title, description, original_poster_slack_user_id, tag_names):
         # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
-        title = title.replace('"', r'\"')
-        description = description.replace('"', r'\"').replace('\n', '\\n')
-        tag_names = [name.replace('"', r'\"') for name in tag_names]
+        title = json.dumps(title)
+        description = json.dumps(description)
+        tag_names = [json.dumps(name) for name in tag_names]
         operation_definition = f'''
           {{
-            createTopicFromSlack(input: {{title: "{title}",
-                                          description: "{description}",
+            createTopicFromSlack(input: {{title: {title},
+                                          description: {description},
                                           originalPosterSlackUserId: "{original_poster_slack_user_id}",
-                                          tags: [{','.join([f'{{name: "{name}"}}' for name in tag_names])}]
+                                          tags: [{','.join([f'{{name: {name}}}' for name in tag_names])}]
                                         }})
             {{
               topic {{
@@ -99,13 +101,14 @@ class PortalClientWrapper:
         )
 
     def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
-        title = title.replace('"', r'\"')
-        description = description.replace('"', r'\"').replace('\n', '\\n')
-        tag_names = [name.replace('"', r'\"') for name in tag_names]
+        title = json.dumps(title)
+        description = json.dumps(description)
+        tag_names = [json.dumps(name) for name in tag_names]
+
         operation_definition = f'''
             {{
-              createUserAndTopicFromSlack(input: {{title: "{title}",
-                                                    description: "{description}",
+              createUserAndTopicFromSlack(input: {{title: {title},
+                                                    description: {description},
                                                     originalPosterSlackUser: {{
                                                       id: "{slack_user.id}",
                                                       name: "{slack_user.name}",
@@ -120,7 +123,7 @@ class PortalClientWrapper:
                                                       slackTeamId: "{slack_user.team_id}"
                                                     }},
                                                     tags: [
-                                                        {','.join([f'{{name: "{name}"}}' for name in tag_names])}
+                                                        {','.join([f'{{name: {name}}}' for name in tag_names])}
                                                     ]}}) {{
                 topic {{
                   id
@@ -156,9 +159,11 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_message(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
+        text = json.dumps(text)
+
         operation_definition = f'''
           {{
-            createMessageFromSlack(input: {{text: "{text}",
+            createMessageFromSlack(input: {{text: {text},
                                             slackChannelId: "{slack_channel_id}", slackUserId: "{author_slack_user_id}",
                                             originSlackEventTs: "{slack_event_ts}"}}) {{
               message {{
@@ -171,9 +176,11 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_message_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_user):
+        text = json.dumps(text)
+
         operation_definition = f'''
           {{
-            createUserAndMessageFromSlack(input: {{text: "{text}",
+            createUserAndMessageFromSlack(input: {{text: {text},
                                             slackChannelId: "{slack_channel_id}",
                                             slackUser: {{
                                               id: "{slack_user.id}",
@@ -199,9 +206,11 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_reply(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
+        text = json.dumps(text)
+
         operation_definition = f'''
           {{
-            createReplyFromSlack(input: {{text: "{text}",
+            createReplyFromSlack(input: {{text: {text},
                                           messageOriginSlackEventTs: "{slack_thread_ts}",
                                           slackChannelId: "{slack_channel_id}",
                                           slackUserId: "{author_slack_user_id}",
@@ -216,9 +225,11 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_reply_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, slack_user):
+        text = json.dumps(text)
+
         operation_definition = f'''
           {{
-            createUserAndReplyFromSlack(input: {{text: "{text}",
+            createUserAndReplyFromSlack(input: {{text: {text},
                                           originSlackEventTs: "{slack_thread_ts}",
                                           slackChannelId: "{slack_channel_id}",
                                           slackUser: {{

@@ -6,6 +6,7 @@ from src import WrapperException
 from src.domain.models.portal.SlackProfile import SlackProfile
 from src.domain.models.portal.SlackUser import SlackUser
 from src.wrappers.PortalClientWrapper import PortalClientWrapper
+from tests.common.PrimitiveFaker import PrimitiveFaker
 
 
 def test_handles_double_quotes_in_new_topic(portal_client, mocker):
@@ -83,3 +84,65 @@ def test_handles_newlines_in_new_topic_with_user(portal_client, mocker):
 
     assert 'abc\\\"123\\\"' in portal_client.mutate.call_args[1]['operation_definition']
     assert 'abc234\\nline2' in portal_client.mutate.call_args[1]['operation_definition']
+
+
+def test_handles_newlines_and_quotes_in_message(portal_client, mocker):
+    mocker.spy(portal_client, 'mutate')
+    portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
+    with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
+        portal_client_wrapper.create_message(
+            text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
+            slack_channel_id=str(PrimitiveFaker('bban')),
+            slack_event_ts="1520007783.127152",
+            author_slack_user_id=1,
+        )
+
+    assert '"Once upon a \\"time\\"\\nIn a \\"galaxy\\" *far*, _far_ \\"away\\"..."' in \
+           portal_client.mutate.call_args[1]['operation_definition']
+
+
+def test_handles_newlines_and_quotes_in_message_with_new_user(portal_client, mocker):
+    mocker.spy(portal_client, 'mutate')
+    portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
+    with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
+        portal_client_wrapper.create_message_and_user_as_author(
+            text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
+            slack_channel_id=str(PrimitiveFaker('bban')),
+            slack_event_ts="1520007783.127152",
+            slack_user=SlackUser(id=1, profile=SlackProfile(image_72='url')),
+        )
+
+    assert '"Once upon a \\"time\\"\\nIn a \\"galaxy\\" *far*, _far_ \\"away\\"..."' in \
+           portal_client.mutate.call_args[1]['operation_definition']
+
+
+def test_handles_newlines_and_quotes_in_reply(portal_client, mocker):
+    mocker.spy(portal_client, 'mutate')
+    portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
+    with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
+        portal_client_wrapper.create_reply(
+            text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
+            slack_channel_id=str(PrimitiveFaker('bban')),
+            slack_event_ts="1520007997.137676",
+            slack_thread_ts="1520007783.127152",
+            author_slack_user_id=1,
+        )
+
+    assert '"Once upon a \\"time\\"\\nIn a \\"galaxy\\" *far*, _far_ \\"away\\"..."' in \
+           portal_client.mutate.call_args[1]['operation_definition']
+
+
+def test_handles_newlines_and_quotes_in_reply_with_new_user(portal_client, mocker):
+    mocker.spy(portal_client, 'mutate')
+    portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
+    with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
+        portal_client_wrapper.create_reply_and_user_as_author(
+            text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
+            slack_channel_id=str(PrimitiveFaker('bban')),
+            slack_event_ts="1520007997.137676",
+            slack_thread_ts="1520007783.127152",
+            slack_user=SlackUser(id=1, profile=SlackProfile(image_72='url')),
+        )
+
+    assert '"Once upon a \\"time\\"\\nIn a \\"galaxy\\" *far*, _far_ \\"away\\"..."' in \
+           portal_client.mutate.call_args[1]['operation_definition']
