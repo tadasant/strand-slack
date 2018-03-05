@@ -43,7 +43,7 @@ class EventResource(SlackResource):
                                                            portal_client_wrapper=current_app.portal_client_wrapper,
                                                            event_request=event_request)
                         Thread(target=service.execute, daemon=True).start()
-            elif event_request.event and event_request.event.is_help_message_dm_event:
+            elif event_request.event and event_request.event.is_message_dm_event:
                 self.logger.info('Help message in DM')
                 service = ProvideHelpService(slack_client_wrapper=current_app.slack_client_wrapper,
                                              slack_team_id=event_request.team_id,
