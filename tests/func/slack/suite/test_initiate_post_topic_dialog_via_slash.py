@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 
 from flask import url_for
 
+from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG, POST_TOPIC_DIALOG_WITH_CHANNEL_OPTION
 from tests.func.slack.TestSlashCommand import TestSlashCommand
 from tests.utils import wait_until
 
@@ -12,11 +13,12 @@ class TestInitiatePostTopicDialogViaSlash(TestSlashCommand):
     default_payload = deepcopy(TestSlashCommand.default_payload)
     default_payload['command'] = '/strand'
 
-    def test_valid_post_command(self, slack_client_class, mocker, slack_agent_repository):
+    def validate_post_command(self, slack_client_class, mocker, slack_agent_repository, channel_id, dialog):
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         payload = deepcopy(self.default_payload)
         payload['text'] = 'post'
+        payload['channel_id'] = channel_id
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_slash_command_request.team_id)
 
@@ -29,8 +31,17 @@ class TestInitiatePostTopicDialogViaSlash(TestSlashCommand):
             params_to_expecteds=[
                 {
                     'method': 'dialog.open',
-                    'trigger_id': self.fake_slash_command_request.trigger_id
+                    'trigger_id': self.fake_slash_command_request.trigger_id,
+                    'dialog': dialog
                 }
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
+
+    def test_valid_post_command_without_channel_option(self, slack_client_class, mocker, slack_agent_repository):
+        self.validate_post_command(slack_client_class, mocker, slack_agent_repository, 'D0G9QPY56',
+                                   POST_TOPIC_DIALOG.value)
+
+    def test_valid_post_command_with_channel_option(self, slack_client_class, mocker, slack_agent_repository):
+        self.validate_post_command(slack_client_class, mocker, slack_agent_repository, 'C0G9QPY56',
+                                   POST_TOPIC_DIALOG_WITH_CHANNEL_OPTION.value)

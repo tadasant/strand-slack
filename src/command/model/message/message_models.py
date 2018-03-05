@@ -1,8 +1,55 @@
+import time
 from textwrap import dedent
 
 from src.command.model.attachment.attachments import TOPIC_CHANNEL_ACTIONS_ATTACHMENT, \
     DISCUSSION_INTRO_ACTIONS_ATTACHMENT
 from src.command.model.message.Message import Message
+
+
+class TopicShareMessage(Message):
+    def __init__(self, original_poster_user_id, discussion_channel_id, title, tag_names):
+        self._original_poster_user_id = original_poster_user_id
+        self._discussion_channel_id = discussion_channel_id
+        self._title = title
+        self._tag_names = [x.lower() for x in tag_names]
+        self._ts = time.time()
+
+        self.text = self._format_text()
+        self.attachments = self._format_attachments()
+        super().__init__(text=self.text, attachments=self.attachments)
+
+    def _format_text(self):
+        return f'New topic posted. Join the discussion :arrow_right: <#{self._discussion_channel_id}>'
+
+    def _format_attachments(self):
+        return [self._format_title_attachment()]
+
+    def _format_title_attachment(self):
+        return {
+            'fallback': f'*Title*: {self._title}',
+            'color': '#32424a',
+            'author_name': f'Posted by <@{self._original_poster_user_id}>',
+            'title': self._title,
+            'text': ", ".join(self._tag_names),
+            'footer': 'Strand',
+            'footer_icon': 'https://s3.amazonaws.com/strand-public-assets/strand-logo.png',
+            'ts': self._ts
+        }
+
+    def as_dict(self):
+        result = super().as_dict()
+        result['attachments'] = self.attachments
+        return result
+
+
+class ChannelTopicShareMessage(TopicShareMessage):
+    def __init__(self, original_poster_user_id, discussion_channel_id, title, tag_names):
+        super().__init__(original_poster_user_id=original_poster_user_id, discussion_channel_id=discussion_channel_id,
+                         title=title, tag_names=tag_names)
+
+    def _format_text(self):
+        return f'<@{self._original_poster_user_id}> just shared a topic with this channel. ' \
+               f'Join the discussion :arrow_right: <#{self._discussion_channel_id}>'
 
 
 class TopicChannelIntroMessage(Message):

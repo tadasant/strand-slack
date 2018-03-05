@@ -24,7 +24,8 @@ class SlashCommandResource(SlackResource):
                 service = PostNewTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
                                               trigger_id=r.trigger_id,
                                               slack_team_id=r.team_id,
-                                              slack_user_id=r.user_id)
+                                              slack_user_id=r.user_id,
+                                              slack_channel_id=r.channel_id)
             elif r.is_close_discussion:
                 # TODO [SLA-81] Authenticating user is OP/admin should happen here via DB
                 service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,
