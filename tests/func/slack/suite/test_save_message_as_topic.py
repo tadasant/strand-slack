@@ -4,7 +4,6 @@ from http import HTTPStatus
 
 from flask import url_for
 
-from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.func.slack.TestEvent import TestEvent
 from tests.testresources.TestSlackClient import SlackRepository
 from tests.utils import wait_until
