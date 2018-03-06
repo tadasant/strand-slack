@@ -141,6 +141,6 @@ class SavedMessageAsTopicMessage(Message):
     def _format_text(self, topic_channel_id):
         return dedent(f'''
             The message you reacted to has been successfully saved. :boom:
-            
+
             To save more topics, simply react to a post with :floppy_disk:!
         ''')

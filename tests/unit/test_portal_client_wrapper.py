@@ -13,7 +13,7 @@ def test_handles_double_quotes_in_new_topic(portal_client, mocker):
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_topic(
+        portal_client_wrapper.create_topic_from_slack(
             title='"abc"123',
             description='ab"c23"4',
             tag_names=['a"b"c', '1234'],
@@ -34,6 +34,9 @@ def test_handles_double_quotes_in_new_topic(portal_client, mocker):
             tags {
               name
             }
+            originalPoster {
+              id
+            }
           }
         }
       }
@@ -44,7 +47,7 @@ def test_handles_newlines_in_new_topic(portal_client, mocker):
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_topic(
+        portal_client_wrapper.create_topic_from_slack(
             title='abc123',
             description='abc234\nline2',
             tag_names=['abc', '1234'],
@@ -65,6 +68,9 @@ def test_handles_newlines_in_new_topic(portal_client, mocker):
             tags {
               name
             }
+            originalPoster {
+              id
+            }
           }
         }
       }
@@ -75,7 +81,7 @@ def test_handles_newlines_in_new_topic_with_user(portal_client, mocker):
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_topic_and_user_as_original_poster(
+        portal_client_wrapper.create_topic_and_user_as_original_poster_from_slack(
             title='abc"123"',
             description='abc234\nline2',
             tag_names=['abc', '1234'],
@@ -90,7 +96,7 @@ def test_handles_newlines_and_quotes_in_message(portal_client, mocker):
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_message(
+        portal_client_wrapper.create_message_from_slack(
             text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
             slack_channel_id=str(PrimitiveFaker('bban')),
             slack_event_ts="1520007783.127152",
@@ -105,7 +111,7 @@ def test_handles_newlines_and_quotes_in_message_with_new_user(portal_client, moc
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_message_and_user_as_author(
+        portal_client_wrapper.create_message_and_user_as_author_from_slack(
             text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
             slack_channel_id=str(PrimitiveFaker('bban')),
             slack_event_ts="1520007783.127152",
@@ -120,7 +126,7 @@ def test_handles_newlines_and_quotes_in_reply(portal_client, mocker):
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_reply(
+        portal_client_wrapper.create_reply_from_slack(
             text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
             slack_channel_id=str(PrimitiveFaker('bban')),
             slack_event_ts="1520007997.137676",
@@ -136,7 +142,7 @@ def test_handles_newlines_and_quotes_in_reply_with_new_user(portal_client, mocke
     mocker.spy(portal_client, 'mutate')
     portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
     with pytest.raises(WrapperException):  # TODO not ideal; won't need when portal client queuing is removed
-        portal_client_wrapper.create_reply_and_user_as_author(
+        portal_client_wrapper.create_reply_and_user_as_author_from_slack(
             text='Once upon a "time"\nIn a "galaxy" *far*, _far_ "away"...',
             slack_channel_id=str(PrimitiveFaker('bban')),
             slack_event_ts="1520007997.137676",
