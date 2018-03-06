@@ -16,11 +16,11 @@ class SaveMessageAsTopicCommand(Command):
         self.slack_message_ts = slack_message_ts
 
     def execute(self):
-        slack_message = self.slack_client_wrapper.get_channel_message_by_timestamp(slack_team_id=self.slack_team_id,
-                                                                                   slack_channel_id=
-                                                                                   self.slack_channel_id,
-                                                                                   latest=self.slack_message_ts,
-                                                                                   oldest=self.slack_message_ts)
+        slack_message = self.slack_client_wrapper.\
+            get_channel_message_by_timestamp(slack_team_id=self.slack_team_id,
+                                             slack_channel_id=self.slack_channel_id,
+                                             latest=self.slack_message_ts,
+                                             oldest=self.slack_message_ts)
         text_formatter = MessageTextFormatter(discussion_message=slack_message)
         slack_message.text = text_formatter.format_text()
 
