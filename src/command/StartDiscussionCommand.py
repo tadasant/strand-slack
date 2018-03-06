@@ -33,8 +33,8 @@ class StartDiscussionCommand(Command):
         try:
             topic = self._create_topic()
             slack_channel = self._create_channel(topic=topic)
-            self.portal_client_wrapper.create_discussion(topic_id=topic.id, slack_channel=slack_channel,
-                                                         slack_team_id=self.slack_team_id)
+            self.portal_client_wrapper.create_discussion_from_slack(topic_id=topic.id, slack_channel=slack_channel,
+                                                                    slack_team_id=self.slack_team_id)
             slack_bot_user_id = slack_agent_repository.get_slack_bot_user_id(slack_team_id=self.slack_team_id)
 
             # invite bot
@@ -82,10 +82,10 @@ class StartDiscussionCommand(Command):
         # TODO [SLA-60] move tag parsing to useful validation (maybe derived attr on Submission)
         tag_names = [x.strip() for x in self.submission.tags.split(',')]
         try:
-            topic = self.portal_client_wrapper.create_topic(title=self.submission.title,
-                                                            description=self.submission.description,
-                                                            original_poster_slack_user_id=self.slack_user_id,
-                                                            tag_names=tag_names)
+            topic = self.portal_client_wrapper.create_topic_from_slack(title=self.submission.title,
+                                                                       description=self.submission.description,
+                                                                       original_poster_slack_user_id=self.slack_user_id,
+                                                                       tag_names=tag_names)
         except WrapperException as e:
             # TODO [SLA-15] caching user info to avoid relying on error
             if e.errors and e.errors[0]['message'] == 'SlackUser matching query does not exist.':
@@ -93,7 +93,7 @@ class StartDiscussionCommand(Command):
                 slack_user_info = self.slack_client_wrapper.get_user_info(slack_user_id=self.slack_user_id,
                                                                           slack_team_id=self.slack_team_id)
                 slack_user = SlackUserSchema().load(slack_user_info).data
-                topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster(
+                topic = self.portal_client_wrapper.create_topic_and_user_as_original_poster_from_slack(
                     title=self.submission.title,
                     description=self.submission.description,
                     slack_user=slack_user,

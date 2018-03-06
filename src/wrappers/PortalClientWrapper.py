@@ -70,7 +70,7 @@ class PortalClientWrapper:
         assert result.status == SlackAgentStatus.ACTIVE, 'Call to activate Slack Agent oddly did not transition'
         return result
 
-    def create_topic(self, title, description, original_poster_slack_user_id, tag_names):
+    def create_topic_from_slack(self, title, description, original_poster_slack_user_id, tag_names):
         # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
         title = json.dumps(title)
         description = json.dumps(description)
@@ -100,7 +100,7 @@ class PortalClientWrapper:
             path_to_object=['data', 'createTopicFromSlack', 'topic']
         )
 
-    def create_topic_and_user_as_original_poster(self, title, description, slack_user, tag_names):
+    def create_topic_and_user_as_original_poster_from_slack(self, title, description, slack_user, tag_names):
         title = json.dumps(title)
         description = json.dumps(description)
         tag_names = [json.dumps(name) for name in tag_names]
@@ -108,23 +108,23 @@ class PortalClientWrapper:
         operation_definition = f'''
             {{
               createUserAndTopicFromSlack(input: {{title: {title},
-                                                    description: {description},
-                                                    originalPosterSlackUser: {{
-                                                      id: "{slack_user.id}",
-                                                      name: "{slack_user.name}",
-                                                      firstName: "{slack_user.profile.first_name}",
-                                                      lastName: "{slack_user.profile.last_name}",
-                                                      realName: "{slack_user.real_name}",
-                                                      displayName: "{slack_user.profile.display_name}",
-                                                      email: "{slack_user.profile.email}",
-                                                      image72: "{slack_user.profile.image_72}",
-                                                      isBot: {str(slack_user.is_bot).lower()},
-                                                      isAdmin: {str(slack_user.is_admin).lower()},
-                                                      slackTeamId: "{slack_user.team_id}"
-                                                    }},
-                                                    tags: [
-                                                        {','.join([f'{{name: {name}}}' for name in tag_names])}
-                                                    ]}}) {{
+                                                   description: {description},
+                                                   originalPosterSlackUser: {{
+                                                     id: "{slack_user.id}",
+                                                     name: "{slack_user.name}",
+                                                     firstName: "{slack_user.profile.first_name}",
+                                                     lastName: "{slack_user.profile.last_name}",
+                                                     realName: "{slack_user.real_name}",
+                                                     displayName: "{slack_user.profile.display_name}",
+                                                     email: "{slack_user.profile.email}",
+                                                     image72: "{slack_user.profile.image_72}",
+                                                     isBot: {str(slack_user.is_bot).lower()},
+                                                     isAdmin: {str(slack_user.is_admin).lower()},
+                                                     slackTeamId: "{slack_user.team_id}"
+                                                   }},
+                                                   tags: [
+                                                       {','.join([f'{{name: {name}}}' for name in tag_names])}
+                                                   ]}}) {{
                 topic {{
                   id
                   title
@@ -142,7 +142,7 @@ class PortalClientWrapper:
             path_to_object=['data', 'createUserAndTopicFromSlack', 'topic']
         )
 
-    def create_discussion(self, topic_id, slack_channel, slack_team_id):
+    def create_discussion_from_slack(self, topic_id, slack_channel, slack_team_id):
         operation_definition = f'''
         {{
             createDiscussionFromSlack(input: {{discussion: {{topicId: {topic_id}}},
@@ -158,13 +158,14 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def create_message(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
+    def create_message_from_slack(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
         text = json.dumps(text)
 
         operation_definition = f'''
           {{
             createMessageFromSlack(input: {{text: {text},
-                                            slackChannelId: "{slack_channel_id}", slackUserId: "{author_slack_user_id}",
+                                            slackChannelId: "{slack_channel_id}",
+                                            slackUserId: "{author_slack_user_id}",
                                             originSlackEventTs: "{slack_event_ts}"}}) {{
               message {{
                 id
@@ -205,7 +206,7 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def create_reply(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
+    def create_reply_from_slack(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
         text = json.dumps(text)
 
         operation_definition = f'''
@@ -230,22 +231,22 @@ class PortalClientWrapper:
         operation_definition = f'''
           {{
             createUserAndReplyFromSlack(input: {{text: {text},
-                                          originSlackEventTs: "{slack_thread_ts}",
-                                          slackChannelId: "{slack_channel_id}",
-                                          slackUser: {{
-                                            id: "{slack_user.id}",
-                                            name: "{slack_user.name}",
-                                            firstName: "{slack_user.profile.first_name}",
-                                            lastName: "{slack_user.profile.last_name}",
-                                            realName: "{slack_user.real_name}",
-                                            displayName: "{slack_user.profile.display_name}",
-                                            email: "{slack_user.profile.email}",
-                                            image72: "{slack_user.profile.image_72}",
-                                            isBot: {str(slack_user.is_bot).lower()},
-                                            isAdmin: {str(slack_user.is_admin).lower()},
-                                            slackTeamId: "{slack_user.team_id}"
-                                          }},
-                                          messageOriginSlackEventTs: "{slack_event_ts}"}}) {{
+                                                 originSlackEventTs: "{slack_thread_ts}",
+                                                 slackChannelId: "{slack_channel_id}",
+                                                 slackUser: {{
+                                                   id: "{slack_user.id}",
+                                                   name: "{slack_user.name}",
+                                                   firstName: "{slack_user.profile.first_name}",
+                                                   lastName: "{slack_user.profile.last_name}",
+                                                   realName: "{slack_user.real_name}",
+                                                   displayName: "{slack_user.profile.display_name}",
+                                                   email: "{slack_user.profile.email}",
+                                                   image72: "{slack_user.profile.image_72}",
+                                                   isBot: {str(slack_user.is_bot).lower()},
+                                                   isAdmin: {str(slack_user.is_admin).lower()},
+                                                   slackTeamId: "{slack_user.team_id}"
+                                                 }},
+                                                 messageOriginSlackEventTs: "{slack_event_ts}"}}) {{
               reply {{
                 id
               }}
@@ -260,7 +261,7 @@ class PortalClientWrapper:
         operation_definition = f'''
           {{
             closeDiscussionFromSlack(input: {{slackChannelId: "{slack_channel_id}",
-                                            slackUserId: "{slack_user_id}"}}) {{
+                                              slackUserId: "{slack_user_id}"}}) {{
               discussion {{
                 id
               }}

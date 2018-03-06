@@ -105,6 +105,17 @@ class SlackClientWrapper:
         return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
                                                path_to_object=['messages'], many=True)
 
+    def get_channel_message_by_timestamp(self, slack_team_id, slack_channel_id, latest, oldest):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
+                                              channel=slack_channel_id, latest=latest, oldest=oldest, inclusive=1)
+        self._validate_response_ok(response, 'get_channel_message_by_timestamp', slack_team_id, slack_channel_id,
+                                   latest, oldest)
+        message = self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
+                                                  path_to_object=['messages', 0], many=False,
+                                                  channel=slack_channel_id)
+        return message
+
     def get_channel_messages_depr(self, slack_team_id, slack_channel_id):
         # Deprecated. TODO Decommission this
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False)
@@ -144,14 +155,14 @@ class SlackClientWrapper:
                                               ts=message_ts)
         self._validate_response_ok(response, 'delete_message', slack_team_id, slack_channel_id, message_ts)
 
-    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
+    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False, **kwargs):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""
         result_json = response_body
         for key in path_to_object:
             result_json = result_json[key]
         if many:
-            return [ObjectSchema().load(x).data for x in result_json]
-        return ObjectSchema().load(result_json).data
+            return [ObjectSchema().load(dict(**x, **kwargs)).data for x in result_json]
+        return ObjectSchema().load(dict(**result_json, **kwargs)).data
 
     def _get_slack_client(self, slack_team_id, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
