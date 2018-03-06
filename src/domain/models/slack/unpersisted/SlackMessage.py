@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from marshmallow import Schema, fields, post_load
 
 from src.domain.models.Model import Model
@@ -22,6 +24,10 @@ class SlackMessage(Model):
     @property
     def is_join_message(self):
         return self.subtype == 'channel_join'
+
+    @property
+    def time(self):
+        return datetime.fromtimestamp(int(self.ts.split('.')[0]))
 
 
 class SlackMessageSchema(Schema):

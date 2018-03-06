@@ -9,6 +9,7 @@ from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.models.portal.SlackAgent import SlackAgentSchema
 from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
 from src.domain.models.portal.Topic import TopicSchema
+from src.domain.models.portal.Discussion import DiscussionSchema
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
@@ -71,7 +72,8 @@ class PortalClientWrapper:
         return result
 
     def create_topic_from_slack(self, title, description, original_poster_slack_user_id, tag_names):
-        # TODO [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
+        # TODO: [CCP-89] add composite PK on slack_team bc slack_user_id should not be unique
+        # TODO: Drop description field
         title = json.dumps(title)
         description = json.dumps(description)
         tag_names = [json.dumps(name) for name in tag_names]
@@ -89,6 +91,9 @@ class PortalClientWrapper:
                 description
                 tags {{
                   name
+                }}
+                originalPoster {{
+                  id
                 }}
               }}
             }}
@@ -132,6 +137,9 @@ class PortalClientWrapper:
                   tags {{
                     name
                   }}
+                  originalPoster {{
+                    id
+                  }}
                 }}
               }}
             }}
@@ -142,6 +150,22 @@ class PortalClientWrapper:
             path_to_object=['data', 'createUserAndTopicFromSlack', 'topic']
         )
 
+    def create_discussion(self, topic_id):
+        operation_definition = f'''
+        {{
+            createDiscussion(input: {{topicId: {topic_id}}}) {{
+              discussion {{
+                id
+              }}
+            }}
+        }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=DiscussionSchema,
+            path_to_object=['data', 'createDiscussion', 'discussion']
+        )
+
     def create_discussion_from_slack(self, topic_id, slack_channel, slack_team_id):
         operation_definition = f'''
         {{
@@ -150,6 +174,24 @@ class PortalClientWrapper:
                                                name: "{slack_channel.name}",
                                                slackTeamId: "{slack_team_id}"}}) {{
               discussion {{
+                id
+              }}
+            }}
+          }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
+
+    def create_message(self, text, discussion_id, author_id, time):
+        text = json.dumps(text)
+
+        operation_definition = f'''
+          {{
+            createMessage(input: {{text: {text},
+                                   discussionId: {discussion_id},
+                                   authorId: {author_id},
+                                   time: "{time}"}}) {{
+              message {{
                 id
               }}
             }}
@@ -176,7 +218,7 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def create_message_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_user):
+    def create_message_and_user_as_author_from_slack(self, text, slack_channel_id, slack_event_ts, slack_user):
         text = json.dumps(text)
 
         operation_definition = f'''
@@ -207,6 +249,7 @@ class PortalClientWrapper:
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_reply_from_slack(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
+        # TODO: Drop originSlackEventTs
         text = json.dumps(text)
 
         operation_definition = f'''
@@ -225,7 +268,9 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def create_reply_and_user_as_author(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, slack_user):
+    def create_reply_and_user_as_author_from_slack(self, text, slack_channel_id, slack_event_ts, slack_thread_ts,
+                                                   slack_user):
+        # TODO: Drop originSlackEventTs
         text = json.dumps(text)
 
         operation_definition = f'''
@@ -256,7 +301,24 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def close_discussion(self, slack_channel_id, slack_user_id):
+    def close_discussion(self, discussion_id):
+        # TODO: During shift to 0.2, API needs to be updated to validate discussion closer
+        operation_definition = f'''
+        {{
+            closeDiscussion(input: {{id: {discussion_id}}}) {{
+              discussion {{
+                id
+              }}
+            }}
+        }}
+        '''
+        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=DiscussionSchema,
+            path_to_object=['data', 'closeDiscussion', 'discussion']
+        )
+
+    def close_discussion_from_slack(self, slack_channel_id, slack_user_id):
         # TODO shouldn't rely on slackChannelId being unique (need slack_team_id as well)
         operation_definition = f'''
           {{
@@ -271,7 +333,7 @@ class PortalClientWrapper:
         response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
-    def mark_discussion_as_pending_closed(self, slack_channel_id):
+    def mark_discussion_as_pending_closed_from_slack(self, slack_channel_id):
         # TODO shouldn't rely on slackChannelId being unique (need slack_team_id as well)
         operation_definition = f'''
           {{

@@ -55,7 +55,10 @@ class EventResource(SlackResource):
                 self.logger.info('Processing floppy disk reaction added')
                 service = SaveMessageAsTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
                                                     portal_client_wrapper=current_app.portal_client_wrapper,
-                                                    event_request=event_request)
+                                                    slack_channel_id=event_request.event.item.channel,
+                                                    slack_team_id=event_request.team_id,
+                                                    original_poster_slack_user_id=event_request.event.user,
+                                                    slack_message_ts=event_request.event.item.ts)
                 Thread(target=service.execute, daemon=True).start()
         finally:
             # Slack will keep re-sending if we don't respond 200 OK, even in exception case on our end

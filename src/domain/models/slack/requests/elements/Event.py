@@ -39,6 +39,7 @@ class Event(Model):
 
     @property
     def is_floppy_disk_reaction_added_event(self):
+        # TODO: Reactions to file are currently being ignored
         return self.type == 'reaction_added' and self.item.type == 'message' and self.reaction == 'floppy_disk'
 
     @property

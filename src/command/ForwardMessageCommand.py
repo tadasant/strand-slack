@@ -37,7 +37,7 @@ class ForwardMessageCommand(Command):
                                                                               slack_team_id=self.slack_team_id)
                     slack_user = SlackUserSchema().load(slack_user_info).data
                     if self.slack_event.is_reply:
-                        self.portal_client_wrapper.create_reply_and_user_as_author(
+                        self.portal_client_wrapper.create_reply_and_user_as_author_from_slack(
                             text=self.slack_event.text,
                             slack_channel_id=self.slack_event.channel,
                             slack_event_ts=self.slack_event.ts,
@@ -46,7 +46,7 @@ class ForwardMessageCommand(Command):
                         )
                     else:
                         # regular message
-                        self.portal_client_wrapper.create_message_and_user_as_author(
+                        self.portal_client_wrapper.create_message_and_user_as_author_from_slack(
                             text=self.slack_event.text,
                             slack_channel_id=self.slack_event.channel,
                             slack_event_ts=self.slack_event.ts,
