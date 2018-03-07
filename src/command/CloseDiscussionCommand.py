@@ -10,5 +10,5 @@ class CloseDiscussionCommand(Command):
     def execute(self):
         log_msg = f'Executing CloseDiscussionCommand for {self.slack_team_id} for chan {self.slack_channel_id}'
         self.logger.info(log_msg)
-        self.portal_client_wrapper.close_discussion(slack_channel_id=self.slack_channel_id,
-                                                    slack_user_id=self.slack_user_id)
+        self.portal_client_wrapper.close_discussion_from_slack(slack_channel_id=self.slack_channel_id,
+                                                               slack_user_id=self.slack_user_id)

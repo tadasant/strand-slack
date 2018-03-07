@@ -130,3 +130,17 @@ class HelpMessage(Message):
 
             Head over to <#{topic_channel_id}> to see all the ongoing discussions on your team!
         ''')
+
+
+class SavedMessageAsTopicMessage(Message):
+    def __init__(self, topic_channel_id):
+        super().__init__(
+            text=self._format_text(topic_channel_id=topic_channel_id),
+        )
+
+    def _format_text(self, topic_channel_id):
+        return dedent(f'''
+            The message you reacted to has been successfully saved. :boom:
+
+            To save more topics, simply react to a post with :floppy_disk:!
+        ''')

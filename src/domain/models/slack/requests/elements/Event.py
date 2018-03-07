@@ -2,11 +2,12 @@ from marshmallow import Schema, fields, post_load
 
 from src.domain.models.Model import Model
 from src.domain.models.slack.requests.elements.File import FileSchema
+from src.domain.models.slack.requests.elements.Item import ItemSchema
 
 
 class Event(Model):
     def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None, file=None,
-                 subtype=None):
+                 subtype=None, item=None, item_user=None, reaction=None):
         self.type = type
         self.user = user
         self.hidden = hidden
@@ -16,6 +17,9 @@ class Event(Model):
         self.thread_ts = thread_ts
         self.file = file
         self.subtype = subtype
+        self.item = item
+        self.item_user = item_user
+        self.reaction = reaction
 
     @property
     def is_message_channels_event(self):
@@ -32,6 +36,11 @@ class Event(Model):
     @property
     def is_message(self):
         return self.type == 'message'
+
+    @property
+    def is_floppy_disk_reaction_added_event(self):
+        # TODO: Reactions to file are currently being ignored
+        return self.type == 'reaction_added' and self.item.type == 'message' and self.reaction == 'floppy_disk'
 
     @property
     def is_system_message(self):
@@ -53,6 +62,9 @@ class EventSchema(Schema):
     thread_ts = fields.String()
     file = fields.Nested(FileSchema)
     subtype = fields.String()
+    item = fields.Nested(ItemSchema)
+    item_user = fields.String()
+    reaction = fields.String()
 
     @post_load
     def make_event(self, data):
