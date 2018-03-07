@@ -269,6 +269,9 @@ class TestStartDiscussion(TestSlackFunction):
                             {'name': self.fake_tags[0].lower()},
                             {'name': self.fake_tags[1].lower()}
                         ],
+                        'originalPoster': {
+                            'id': int(str(PrimitiveFaker('random_int')))
+                        },
                     },
                 }
             }
@@ -298,6 +301,9 @@ class TestStartDiscussion(TestSlackFunction):
                             {'name': self.fake_tags[0].lower()},
                             {'name': self.fake_tags[1].lower()}
                         ],
+                        'originalPoster': {
+                            'id': int(str(PrimitiveFaker('random_int')))
+                        },
                     },
                 }
             }

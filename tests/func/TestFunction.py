@@ -140,7 +140,7 @@ class TestFunction:
             {'ts': str(PrimitiveFaker('random_int')), 'text': 'sometext', 'attachments': []}
         )
 
-    def __queue_portal_topic_creation(self, portal_client, topic_id=1, topic_title='sometitle',
+    def __queue_portal_topic_creation(self, portal_client, user_id=1, topic_id=1, topic_title='sometitle',
                                       topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
         portal_client.set_next_response({
             'data': {
@@ -153,6 +153,9 @@ class TestFunction:
                             {'name': tag_name1.lower()},
                             {'name': tag_name2.lower()}
                         ],
+                        'originalPoster': {
+                            'id': user_id
+                        }
                     },
                 }
             }
@@ -164,7 +167,6 @@ class TestFunction:
                 'createDiscussionFromSlack': {
                     'discussion': {
                         'id': int(str(PrimitiveFaker('random_int'))),
-                        'name': str(PrimitiveFaker('word'))
                     },
                 }
             }
