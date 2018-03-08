@@ -1,4 +1,3 @@
-import time
 from textwrap import dedent
 
 from src.command.model.message.Message import Message
@@ -13,6 +12,6 @@ class HelpMessage(Message):
     def _format_text(self):
         return dedent(f'''
             Strand helps you have share bookmarks with your team.
-            
+
             Read more about Strand at www.trystrand.com/teams
         ''')
