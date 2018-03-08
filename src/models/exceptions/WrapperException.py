@@ -1,4 +1,4 @@
-from src.models.exceptions import SlackIntegrationException
+from src.models.exceptions.SlackIntegrationException import SlackIntegrationException
 
 
 class WrapperException(SlackIntegrationException):

@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from src.blueprints import slack, coreapi
 from src.utilities.logging import get_logger
 from src.models.exceptions.UnauthorizedException import UnauthorizedException
-from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
+# from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.models.exceptions.WrapperException import WrapperException
 from src.utilities.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
 from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
