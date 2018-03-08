@@ -4,7 +4,7 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src.common.logging import get_logger
+from src.utilities.logging import get_logger
 from src.config import config
 from tests.factories.coreapifactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory

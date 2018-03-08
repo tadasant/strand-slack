@@ -4,12 +4,12 @@ from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from src.blueprints import slack, coreapi
-from src.common.logging import get_logger
-from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
-from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.domain.models.exceptions.WrapperException import WrapperException
-from src.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
-from src.wrappers.SlackClientWrapper import SlackClientWrapper
+from src.utilities.logging import get_logger
+from src.models.exceptions.UnauthorizedException import UnauthorizedException
+from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
+from src.models.exceptions.WrapperException import WrapperException
+from src.utilities.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
+from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
 
 
 def handle_slack_integration_exception(error):

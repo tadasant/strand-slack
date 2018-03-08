@@ -1,17 +1,17 @@
 import factory.fuzzy
 
-from src.domain.models.slack.Channel import Channel
-from src.domain.models.slack.Team import Team
-from src.domain.models.slack.User import User
-from src.domain.models.slack.requests.EventRequest import EventRequest
-from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
-from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
-from src.domain.models.slack.requests.elements.Action import Action
-from src.domain.models.slack.requests.elements.Event import Event
-from src.domain.models.slack.requests.elements.File import File
-from src.domain.models.slack.requests.elements.Message import Message
-from src.domain.models.slack.requests.elements.Option import Option
-from src.domain.models.slack.requests.elements.Submission import Submission
+from src.models.slack.Channel import Channel
+from src.models.slack.Team import Team
+from src.models.slack.User import User
+from src.models.slack.requests.EventRequest import EventRequest
+from src.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
+from src.models.slack.requests.SlashCommandRequest import SlashCommandRequest
+from src.models.slack.requests.elements.Action import Action
+from src.models.slack.requests.elements.Event import Event
+from src.models.slack.requests.elements.File import File
+from src.models.slack.requests.elements.Message import Message
+from src.models.slack.requests.elements.Option import Option
+from src.models.slack.requests.elements.Submission import Submission
 
 
 class MessageFactory(factory.Factory):

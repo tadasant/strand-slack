@@ -38,3 +38,28 @@ Steps to use ngrok:
 Now Slack will be able to call your local server as you interact with the app!
 
 Note that on the free ngrok plan, you'll need to do this every time you restart ngrok.
+
+
+## Architecture Overview
+
+### Data Flow
+
+Typical flow is this:
+1) Requests come into a `blueprint`
+2) `blueprint` validates the payload, responds to the requestor, and passes the payload onto a `translator`
+3) `translator` converts it to the SLA domain model and passes it to a `service`
+4) `service`, with a scoped DB session, ingests state from the `DB` if needed, and delegates work to `commands`
+5) `command`, with a scoped DB session, is a unit of work that makes API calls using `wrappers` and/or pushes state to the `DB`
+
+Notable invariants:
+1) `service` should not mutate the DB (only SELECT)
+2) `command` should not read the DB (only UPDATE/INSERT)
+3) `blueprints` (input point) and `wrappers` (output point) are not privy to the SLA domain model
+
+### Domain Model
+
+All modeled elements of the Strand API's domain are prefixed with `Api`, e.g. `ApiUser`.
+
+All modeled elements of the Slack domain are prefixed with `Slack`, e.g. `SlackUser`.
+
+All other modeled elements are part of the local, SLA domain.

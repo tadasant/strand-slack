@@ -6,13 +6,13 @@ from urllib.parse import urlencode
 import pytest
 from flask import url_for
 
-from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
+from src.commands.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.config import config
-from src.domain.models.coreapi.SlackAgent import SlackAgent
-from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallation
-from src.domain.models.coreapi.SlackTeam import SlackTeam
-from src.domain.models.coreapi.SlackUser import SlackUser
+from src.models.coreapi.SlackAgent import SlackAgent
+from src.models.coreapi.SlackAgentStatus import SlackAgentStatus
+from src.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallation
+from src.models.coreapi.SlackTeam import SlackTeam
+from src.models.coreapi.SlackUser import SlackUser
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory, ChannelFactory
 from tests.testresources.TestSlackClient import SlackRepository

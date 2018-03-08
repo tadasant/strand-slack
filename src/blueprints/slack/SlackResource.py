@@ -1,8 +1,8 @@
 from flask import current_app
 from flask_restful import Resource
 
-from src.common.logging import get_logger
-from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
+from src.utilities.logging import get_logger
+from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 
 
 class SlackResource(Resource):

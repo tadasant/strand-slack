@@ -4,7 +4,7 @@ from threading import Thread
 from flask import request, current_app
 
 from src.blueprints.slack.SlackResource import SlackResource
-from src.domain.models.slack.requests.EventRequest import EventRequestSchema
+from src.models.slack.requests.EventRequest import EventRequestSchema
 from src.service.parent.ProvideHelpService import ProvideHelpService
 
 

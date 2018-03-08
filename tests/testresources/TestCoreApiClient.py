@@ -1,7 +1,7 @@
 import threading
 
-from src.common.logging import get_logger
-from src.domain.models.exceptions.WrapperException import WrapperException
+from src.utilities.logging import get_logger
+from src.models.exceptions.WrapperException import WrapperException
 
 
 class TestCoreApiClient:

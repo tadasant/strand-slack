@@ -3,7 +3,7 @@ import os
 from slackclient import SlackClient
 
 from src import create_app
-from src.clients.CoreApiClient import CoreApiClient
+from src.utilities.clients.CoreApiClient import CoreApiClient
 from src.config import config
 
 

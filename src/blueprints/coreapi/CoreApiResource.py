@@ -3,8 +3,8 @@ import re
 from flask import current_app, request
 from flask_restful import Resource
 
-from src.common.logging import get_logger
-from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
+from src.utilities.logging import get_logger
+from src.models.exceptions.UnauthorizedException import UnauthorizedException
 
 
 class CoreApiResource(Resource):
