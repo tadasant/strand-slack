@@ -6,7 +6,6 @@ from pytest_factoryboy import register
 from src import create_app
 from src.common.logging import get_logger
 from src.config import config
-from src.domain.repositories.SlackAgentRepository import slack_agent_repository as slack_agent_repository_global
 from tests.factories.coreapifactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
 from tests.testresources.TestCoreApiClient import TestCoreApiClient
@@ -53,12 +52,6 @@ def app(core_api_client_factory, slack_client_class):
                      core_api_verification_token=config['CORE_API_VERIFICATION_TOKEN'])
     app.testing = True
     return app
-
-
-@pytest.fixture
-def slack_agent_repository():
-    yield slack_agent_repository_global
-    slack_agent_repository_global.clear()
 
 
 # Wrappers & Clients

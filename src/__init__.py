@@ -5,11 +5,9 @@ from marshmallow import ValidationError
 
 from src.blueprints import slack, coreapi
 from src.common.logging import get_logger
-from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.exceptions.WrapperException import WrapperException
-from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
 
@@ -48,7 +46,6 @@ def create_app(core_api_client, SlackClientClass, slack_verification_tokens, cor
 
     app.register_error_handler(UnauthorizedException, handle_authorization_exception)
     app.register_error_handler(ValidationError, handle_validation_exception)
-    app.register_error_handler(RepositoryException, handle_slack_integration_exception)
     app.register_error_handler(UnexpectedSlackException, handle_slack_integration_exception)
     app.register_error_handler(WrapperException, handle_slack_integration_exception)
 
@@ -61,8 +58,6 @@ def create_app(core_api_client, SlackClientClass, slack_verification_tokens, cor
 
 def init_wrappers(app, core_api_client, SlackClientClass):
     app.core_api_client_wrapper = CoreApiClientWrapper(core_api_client=core_api_client)
-    slack_agents = app.core_api_client_wrapper.get_slack_agents()
-    slack_agent_repository.set_slack_agents(slack_agents=slack_agents)
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
 
 

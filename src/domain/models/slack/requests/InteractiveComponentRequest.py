@@ -1,7 +1,5 @@
 from marshmallow import Schema, fields, post_load
 
-from src.command.model.action.actions import POST_NEW_TOPIC_BUTTON, CLOSE_DISCUSSION_BUTTON
-from src.command.model.message.initial_onboarding_dm import INITIAL_ONBOARDING_DM
 from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.domain.models.Model import Model
 from src.domain.models.slack.Channel import ChannelSchema
@@ -27,36 +25,8 @@ class InteractiveComponentRequest(Model):
         self.trigger_id = trigger_id
 
     @property
-    def is_topic_channel_selection(self):
-        if self.type == 'interactive_message' and self.callback_id == INITIAL_ONBOARDING_DM.callback_id:
-            topic_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
-            if len(topic_channel_actions) != 1:
-                return False
-
-            topic_channel_selections = topic_channel_actions[0].selected_options
-            if len(topic_channel_selections) != 1:
-                return False
-        else:
-            return False
-        return True
-
-    @property
     def is_post_topic_dialog_submission(self):
         return self.type == 'dialog_submission' and self.callback_id == POST_TOPIC_DIALOG.callback_id
-
-    @property
-    def is_post_new_topic_button_click(self):
-        return self.actions and self.actions[0].name == POST_NEW_TOPIC_BUTTON.name
-
-    @property
-    def is_close_discussion_click(self):
-        return self.actions and self.actions[0].name == CLOSE_DISCUSSION_BUTTON.name
-
-    @property
-    def selected_topic_channel_id(self):
-        topic_channel_actions = [x for x in self.actions if x.name == INITIAL_ONBOARDING_DM.action_id]
-        topic_channel_selections = topic_channel_actions[0].selected_options
-        return topic_channel_selections[0].value
 
 
 class InteractiveComponentRequestSchema(Schema):

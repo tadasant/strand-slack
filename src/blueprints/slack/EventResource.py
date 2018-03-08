@@ -5,7 +5,7 @@ from flask import request, current_app
 
 from src.blueprints.slack.SlackResource import SlackResource
 from src.domain.models.slack.requests.EventRequest import EventRequestSchema
-from src.service.type.ProvideHelpService import ProvideHelpService
+from src.service.parent.ProvideHelpService import ProvideHelpService
 
 
 class EventResource(SlackResource):
