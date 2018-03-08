@@ -88,7 +88,7 @@ class TestFunction:
                 "name": "tadas"
             },
             "action_ts": "1517014983.191305",
-            "token": config['SLACK_VERIFICATION_TOKEN'],
+            "token": config['SLACK_VERIFICATION_TOKENS'][0],
         }
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',

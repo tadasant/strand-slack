@@ -15,7 +15,7 @@ class TestSlashCommand(TestSlackFunction):
     # For setup
     target_endpoint = 'slack.slashcommandresource'
     default_payload = {
-        'token': config["SLACK_VERIFICATION_TOKEN"],
+        'token': config["SLACK_VERIFICATION_TOKENS"][0],
         'team_id': fake_slash_command_request.team_id,
         'team_domain': 'doesnt matter',
         'channel_id': fake_slash_command_request.channel_id,

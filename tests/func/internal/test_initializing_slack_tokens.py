@@ -16,7 +16,7 @@ class TestInitializingSlackApplicationInstallations:
 
         self._queue_response_from_portal(portal_client=portal_client)
 
-        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient, slack_verification_token='anything',
+        create_app(portal_client=portal_client, SlackClientClass=TestSlackClient, slack_verification_tokens='anything',
                    portal_verification_token=config['PORTAL_VERIFICATION_TOKEN'])
 
         assert portal_client.query.call_count == 1

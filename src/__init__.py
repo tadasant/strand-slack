@@ -38,7 +38,7 @@ def handle_authorization_exception(error):
     return response
 
 
-def create_app(portal_client, SlackClientClass, slack_verification_token, portal_verification_token):
+def create_app(portal_client, SlackClientClass, slack_verification_tokens, portal_verification_token):
     app = Flask(__name__)
 
     app.register_blueprint(portal.blueprint, url_prefix='/portal')
@@ -53,7 +53,7 @@ def create_app(portal_client, SlackClientClass, slack_verification_token, portal
     app.register_error_handler(WrapperException, handle_slack_integration_exception)
 
     init_wrappers(app=app, portal_client=portal_client, SlackClientClass=SlackClientClass)
-    init_authentication(app=app, slack_verification_token=slack_verification_token,
+    init_authentication(app=app, slack_verification_tokens=slack_verification_tokens,
                         portal_verification_token=portal_verification_token)
 
     return app
@@ -66,6 +66,6 @@ def init_wrappers(app, portal_client, SlackClientClass):
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
 
 
-def init_authentication(app, slack_verification_token, portal_verification_token):
-    app.slack_verification_token = slack_verification_token
+def init_authentication(app, slack_verification_tokens, portal_verification_token):
+    app.slack_verification_tokens = slack_verification_tokens
     app.portal_verification_token = portal_verification_token

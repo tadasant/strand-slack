@@ -18,7 +18,7 @@ class TestPassSlackEventChallenge(TestSlackFunction):
     target_endpoint = 'slack.eventresource'
     default_payload = {
         "type": fake_event_request.type,
-        "token": config['SLACK_VERIFICATION_TOKEN'],
+        "token": config['SLACK_VERIFICATION_TOKENS'][0],
         "challenge": fake_challenge_token
     }
     default_headers = {

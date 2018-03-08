@@ -49,7 +49,7 @@ def log_test_start():
 @pytest.fixture(scope='session')
 def app(portal_client_factory, slack_client_class):
     app = create_app(portal_client=portal_client_factory, SlackClientClass=slack_client_class,
-                     slack_verification_token=config['SLACK_VERIFICATION_TOKEN'],
+                     slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
                      portal_verification_token=config['PORTAL_VERIFICATION_TOKEN'])
     app.testing = True
     return app

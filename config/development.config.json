@@ -8,6 +8,6 @@
   "PORTAL_USER_PASSWORD": "randomPassword",
   "HOST": "0.0.0.0",
   "PORT": 4000,
-  "SLACK_VERIFICATION_TOKEN": "NkbCRv4Xt0SWJt5MDbktJmwQ",
+  "SLACK_VERIFICATION_TOKENS": ["NkbCRv4Xt0SWJt5MDbktJmwQ", "randomCombo"],
   "PORTAL_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo"
 }

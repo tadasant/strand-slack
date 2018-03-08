@@ -16,7 +16,7 @@ class TestEvent(TestSlackFunction):
     # For setup
     target_endpoint = 'slack.eventresource'
     default_payload = {
-        'token': config['SLACK_VERIFICATION_TOKEN'],
+        'token': config['SLACK_VERIFICATION_TOKENS'][0],
         'team_id': fake_event_request.team_id,
         'api_app_id': 'A8YTKNNMQ',
         'event': {
