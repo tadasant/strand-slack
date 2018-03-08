@@ -16,7 +16,7 @@ if __name__ == '__main__':
     create_logs_dir_if_not_exists()
     app = create_app(
         core_api_client=CoreApiClient(host=config['CORE_API_HOST'], endpoint=config['CORE_API_GRAPHQL_ENDPOINT'],
-                                     email=config['CORE_API_USER_EMAIL'], password=config['CORE_API_USER_PASSWORD']),
+                                      email=config['CORE_API_USER_EMAIL'], password=config['CORE_API_USER_PASSWORD']),
         SlackClientClass=SlackClient,
         slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
         core_api_verification_token=config['CORE_API_VERIFICATION_TOKEN']

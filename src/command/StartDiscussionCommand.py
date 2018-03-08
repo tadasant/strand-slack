@@ -82,10 +82,12 @@ class StartDiscussionCommand(Command):
         # TODO [SLA-60] move tag parsing to useful validation (maybe derived attr on Submission)
         tag_names = [x.strip() for x in self.submission.tags.split(',')]
         try:
-            topic = self.core_api_client_wrapper.create_topic_from_slack(title=self.submission.title,
-                                                                         description=self.submission.description,
-                                                                         original_poster_slack_user_id=self.slack_user_id,
-                                                                         tag_names=tag_names)
+            topic = self.core_api_client_wrapper.create_topic_from_slack(
+                title=self.submission.title,
+                description=self.submission.description,
+                original_poster_slack_user_id=self.slack_user_id,
+                tag_names=tag_names
+            )
         except WrapperException as e:
             # TODO [SLA-15] caching user info to avoid relying on error
             if e.errors and e.errors[0]['message'] == 'SlackUser matching query does not exist.':
