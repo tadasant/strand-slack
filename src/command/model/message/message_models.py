@@ -101,19 +101,6 @@ class DiscussionInitiationMessage(Message):
         return [DISCUSSION_INTRO_ACTIONS_ATTACHMENT]
 
 
-class StaleDiscussionMessage(Message):
-    def __init__(self):
-        super().__init__(
-            text=dedent(f'''
-                There hasn't been much activity here for a while!
-
-                We'll close this up in about an hour if nobody has anything else to add.
-
-                If you want to keep this discussion open, send a message in this channel.
-            ''')
-        )
-
-
 class HelpMessage(Message):
     def __init__(self, topic_channel_id):
         super().__init__(

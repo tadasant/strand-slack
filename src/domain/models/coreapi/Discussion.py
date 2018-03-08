@@ -7,8 +7,6 @@ from src.domain.models.Model import Model
 
 class DiscussionStatus(Enum):
     OPEN = 'OPEN'
-    STALE = 'STALE'
-    PENDING_CLOSED = 'PENDING CLOSED'
     CLOSED = 'CLOSED'
 
 
