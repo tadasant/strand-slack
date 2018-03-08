@@ -21,15 +21,7 @@ class InteractiveComponentResource(SlackResource):
         self._authenticate(payload)
         interactive_component_request = InteractiveComponentRequestSchema().load(payload).data
         r = interactive_component_request
-        if r.is_topic_channel_selection:
-            command = UpdateTopicChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                                core_api_client_wrapper=current_app.core_api_client_wrapper,
-                                                slack_team_id=r.team.id,
-                                                topic_channel_id=r.selected_topic_channel_id,
-                                                response_url=r.response_url)
-            Thread(target=command.execute, daemon=True).start()
-            return '', HTTPStatus.NO_CONTENT
-        elif r.is_post_topic_dialog_submission:
+        if r.is_post_topic_dialog_submission:
             command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
                                              core_api_client_wrapper=current_app.core_api_client_wrapper,
                                              slack_team_id=r.team.id,
@@ -38,22 +30,6 @@ class InteractiveComponentResource(SlackResource):
                                              slack_channel_id=r.channel.id)
             Thread(target=command.execute, daemon=True).start()
             return {}, HTTPStatus.OK
-        elif r.is_post_new_topic_button_click:
-            service = PostNewTopicService(slack_client_wrapper=current_app.slack_client_wrapper,
-                                          trigger_id=r.trigger_id,
-                                          slack_team_id=r.team.id,
-                                          slack_user_id=r.user.id,
-                                          slack_channel_id=r.channel.id)
-            Thread(target=service.execute, daemon=True).start()
-            return '', HTTPStatus.NO_CONTENT
-        elif r.is_close_discussion_click:
-            service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,
-                                             core_api_client_wrapper=current_app.core_api_client_wrapper,
-                                             slack_team_id=r.team.id,
-                                             slack_user_id=r.user.id,
-                                             slack_channel_id=r.channel.id)
-            Thread(target=service.execute, daemon=True).start()
-            return '', HTTPStatus.NO_CONTENT
         else:
             message = f'Could not interpret slack request: {r}'
             self.logger.error(message)
