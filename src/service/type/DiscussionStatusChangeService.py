@@ -1,25 +1,26 @@
 from threading import Thread
 
-from src.command.MarkDiscussionPendingClosed import MarkDiscussionPendingClosed
-from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.command.CloseChannelCommand import CloseChannelCommand
+from src.command.MarkDiscussionPendingClosed import MarkDiscussionPendingClosed
 from src.command.UpdateQueueCommand import UpdateQueueCommand
-from src.domain.models.portal.Discussion import DiscussionStatus
+from src.domain.models.coreapi.Discussion import DiscussionStatus
+from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 from src.service.Service import Service
 
 
 class DiscussionStatusChangeService(Service):
     """
         Actions:
-        * If STALE, sends a message to the channel informing participants & inform portal we did it
+        * If STALE, sends a message to the channel informing participants & inform core_api we did it
         * If CLOSED, sends close message, archives channel, and updates topic list
 
         Outputs:
-        * If STALE, pending_closed call to portal
+        * If STALE, pending_closed call to core_api
     """
 
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, slack_channel_id, discussion_status):
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
+    def __init__(self, slack_client_wrapper, core_api_client_wrapper, slack_team_id, slack_channel_id,
+                 discussion_status):
+        super().__init__(slack_client_wrapper=slack_client_wrapper, core_api_client_wrapper=core_api_client_wrapper)
         self.slack_team_id = slack_team_id
         self.slack_channel_id = slack_channel_id
         self.discussion_status = discussion_status
@@ -42,7 +43,7 @@ class DiscussionStatusChangeService(Service):
             Thread(target=update_queue_command.execute, daemon=True).start()
         else:
             command = MarkDiscussionPendingClosed(slack_client_wrapper=self.slack_client_wrapper,
-                                                  portal_client_wrapper=self.portal_client_wrapper,
+                                                  core_api_client_wrapper=self.core_api_client_wrapper,
                                                   slack_team_id=self.slack_team_id,
                                                   slack_channel_id=self.slack_channel_id)
             Thread(target=command.execute, daemon=True).start()

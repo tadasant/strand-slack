@@ -7,8 +7,8 @@ from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
 class UpdateTopicChannelCommand(Command):
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, topic_channel_id, response_url):
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper,
+    def __init__(self, slack_client_wrapper, core_api_client_wrapper, slack_team_id, topic_channel_id, response_url):
+        super().__init__(slack_client_wrapper=slack_client_wrapper, core_api_client_wrapper=core_api_client_wrapper,
                          slack_team_id=slack_team_id)
         self.topic_channel_id = topic_channel_id
         self.response_url = response_url
@@ -26,7 +26,7 @@ class UpdateTopicChannelCommand(Command):
             if prior_topic_channel_id == self.topic_channel_id:
                 response_payload['text'] = f'Your topic channel is already set to <#{self.topic_channel_id}>!'
             elif self._empty_out_channel():
-                self.portal_client_wrapper.update_topic_channel_and_activate_agent(
+                self.core_api_client_wrapper.update_topic_channel_and_activate_agent(
                     slack_team_id=self.slack_team_id,
                     topic_channel_id=self.topic_channel_id)
                 slack_bot_user_id = slack_agent_repository.get_slack_bot_user_id(slack_team_id=self.slack_team_id)

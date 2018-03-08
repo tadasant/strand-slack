@@ -1,8 +1,8 @@
 from marshmallow import Schema, fields, post_load
 
 from src.domain.models.Model import Model
-from src.domain.models.portal.Tag import TagSchema
-from src.domain.models.portal.User import UserSchema
+from src.domain.models.coreapi.Tag import TagSchema
+from src.domain.models.coreapi.User import UserSchema
 
 
 class Topic(Model):

@@ -7,7 +7,7 @@ from src.common.logging import get_logger
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 
 
-class PortalResource(Resource):
+class CoreApiResource(Resource):
 
     @classmethod
     def authenticate(cls, func):
@@ -20,8 +20,8 @@ class PortalResource(Resource):
                 matches = re.findall(token_regex, authorization_header)
                 if len(matches) == 1:
                     token = matches[0]
-                    if token == current_app.portal_verification_token:
+                    if token == current_app.core_api_verification_token:
                         return func(*args, **kwargs)
-            raise UnauthorizedException(message='Portal authorization failed.')
+            raise UnauthorizedException(message='CoreApi authorization failed.')
 
         return wrapper

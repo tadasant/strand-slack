@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, post_load
 
 from src.domain.models.Model import Model
-from src.domain.models.portal.SlackUser import SlackUserSchema
+from src.domain.models.coreapi.SlackUser import SlackUserSchema
 
 
 class SlackApplicationInstallation(Model):

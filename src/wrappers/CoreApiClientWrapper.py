@@ -2,29 +2,29 @@ import json
 
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
-from src.clients.PortalClient import PortalClientException
+from src.clients.CoreApiClient import CoreApiClientException
 from src.common.logging import get_logger
+from src.domain.models.coreapi.Discussion import DiscussionSchema
+from src.domain.models.coreapi.SlackAgent import SlackAgentSchema
+from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.coreapi.Topic import TopicSchema
 # TODO [SLA-26] Add authentication
 from src.domain.models.exceptions.WrapperException import WrapperException
-from src.domain.models.portal.SlackAgent import SlackAgentSchema
-from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.portal.Topic import TopicSchema
-from src.domain.models.portal.Discussion import DiscussionSchema
 from src.domain.models.utils import dict_keys_camel_case_to_underscores
 
 
-class PortalClientWrapper:
-    """Manage all outgoing interaction with the Portal"""
+class CoreApiClientWrapper:
+    """Manage all outgoing interaction with the CoreApi"""
 
-    def __init__(self, portal_client):
-        self.portal_client = portal_client
-        self.logger = get_logger('PortalClientWrapper')
+    def __init__(self, core_api_client):
+        self.core_api_client = core_api_client
+        self.logger = get_logger('CoreApiClientWrapper')
         self.standard_retrier = Retrying(
             reraise=True,
             wait=wait_fixed(2),
             stop=stop_after_attempt(5),
             after=after_log(logger=self.logger, log_level=self.logger.getEffectiveLevel()),
-            retry=retry_if_exception_type(PortalClientException)
+            retry=retry_if_exception_type(CoreApiClientException)
         )
 
     def get_slack_agents(self):
@@ -47,7 +47,8 @@ class PortalClientWrapper:
                 }
             }
         '''
-        response_body = self.standard_retrier.call(self.portal_client.query, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.query,
+                                                   operation_definition=operation_definition)
         return self._deserialize_response_body(response_body=response_body, ObjectSchema=SlackAgentSchema,
                                                path_to_object=['data', 'slackAgents'], many=True)
 
@@ -63,7 +64,8 @@ class PortalClientWrapper:
                 }}
             }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         result = self._deserialize_response_body(
             response_body=response_body, ObjectSchema=SlackAgentSchema,
             path_to_object=['data', 'updateSlackAgentTopicChannelAndActivate', 'slackAgent']
@@ -99,7 +101,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=TopicSchema,
             path_to_object=['data', 'createTopicFromSlack', 'topic']
@@ -144,7 +147,8 @@ class PortalClientWrapper:
               }}
             }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=TopicSchema,
             path_to_object=['data', 'createUserAndTopicFromSlack', 'topic']
@@ -160,7 +164,8 @@ class PortalClientWrapper:
             }}
         }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=DiscussionSchema,
             path_to_object=['data', 'createDiscussion', 'discussion']
@@ -179,7 +184,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_message(self, text, discussion_id, author_id, time):
@@ -197,7 +203,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_message_from_slack(self, text, slack_channel_id, slack_event_ts, author_slack_user_id):
@@ -215,7 +222,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_message_and_user_as_author_from_slack(self, text, slack_channel_id, slack_event_ts, slack_user):
@@ -245,7 +253,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_reply_from_slack(self, text, slack_channel_id, slack_event_ts, slack_thread_ts, author_slack_user_id):
@@ -265,7 +274,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def create_reply_and_user_as_author_from_slack(self, text, slack_channel_id, slack_event_ts, slack_thread_ts,
@@ -298,7 +308,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def close_discussion(self, discussion_id):
@@ -312,7 +323,8 @@ class PortalClientWrapper:
             }}
         }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=DiscussionSchema,
             path_to_object=['data', 'closeDiscussion', 'discussion']
@@ -330,7 +342,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def mark_discussion_as_pending_closed_from_slack(self, slack_channel_id):
@@ -344,7 +357,8 @@ class PortalClientWrapper:
             }}
           }}
         '''
-        response_body = self.standard_retrier.call(self.portal_client.mutate, operation_definition=operation_definition)
+        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+                                                   operation_definition=operation_definition)
         self._validate_no_response_body_errors(response_body=response_body)
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
@@ -360,5 +374,5 @@ class PortalClientWrapper:
     def _validate_no_response_body_errors(self, response_body):
         """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
-            message = f'Errors when calling PortalClient. Body: {response_body}'
-            raise WrapperException(wrapper_name='PortalClient', message=message, errors=response_body['errors'])
+            message = f'Errors when calling CoreApiClient. Body: {response_body}'
+            raise WrapperException(wrapper_name='CoreApiClient', message=message, errors=response_body['errors'])

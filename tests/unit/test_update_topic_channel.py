@@ -3,13 +3,13 @@ import json
 from flask import url_for
 
 from src.config import config
-from src.domain.models.portal.SlackAgent import SlackAgent
-from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallation
-from src.domain.models.portal.SlackTeam import SlackTeam
-from src.domain.models.portal.SlackUser import SlackUser
+from src.domain.models.coreapi.SlackAgent import SlackAgent
+from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallation
+from src.domain.models.coreapi.SlackTeam import SlackTeam
+from src.domain.models.coreapi.SlackUser import SlackUser
 from tests.common.PrimitiveFaker import PrimitiveFaker
-from tests.factories.portalfactories import SlackAgentFactory
+from tests.factories.coreapifactories import SlackAgentFactory
 
 
 def test_doesnt_send_onboarding_message_on_topic_channel_update(slack_client_class, slack_agent_repository, client,
@@ -33,11 +33,11 @@ def test_doesnt_send_onboarding_message_on_topic_channel_update(slack_client_cla
     ))
 
     # WHEN: A request comes from API with an updated topic channel ID
-    target_url = url_for(endpoint='portal.slackagentresource')
+    target_url = url_for(endpoint='coreapi.slackagentresource')
     fake_new_topic_channel_id = str(PrimitiveFaker('bban'))
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Token {config["PORTAL_VERIFICATION_TOKEN"]}'
+        'Authorization': f'Token {config["CORE_API_VERIFICATION_TOKEN"]}'
     }
     payload = {
         'status': fake_slack_agent.status,

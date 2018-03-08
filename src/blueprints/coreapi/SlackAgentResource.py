@@ -1,14 +1,14 @@
 from flask import current_app, request
 
-from src.blueprints.portal.PortalResource import PortalResource
+from src.blueprints.coreapi.CoreApiResource import CoreApiResource
 from src.command.InitiateAgentOnboardingCommand import InitiateAgentOnboardingCommand
-from src.domain.models.portal.SlackAgent import SlackAgentSchema
+from src.domain.models.coreapi.SlackAgent import SlackAgentSchema
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
 
 
-class SlackAgentResource(PortalResource):
+class SlackAgentResource(CoreApiResource):
 
-    @PortalResource.authenticate
+    @CoreApiResource.authenticate
     def put(self):
         """Used for UPDATING a SlackAgent"""
         args = request.get_json()
@@ -28,7 +28,7 @@ class SlackAgentResource(PortalResource):
 
         return SlackAgentSchema().dump(slack_agent)
 
-    @PortalResource.authenticate
+    @CoreApiResource.authenticate
     def post(self):
         """Used for CREATING a SlackAgent"""
         args = request.get_json()

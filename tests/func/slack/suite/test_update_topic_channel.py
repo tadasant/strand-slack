@@ -12,10 +12,10 @@ from tests.utils import wait_until
 
 
 class TestUpdateDiscussionChannel(TestInteractiveComponent):
-    def test_post_valid_authenticated_slack(self, slack_client_class, slack_client, portal_client,
+    def test_post_valid_authenticated_slack(self, slack_client_class, slack_client, core_api_client,
                                             slack_agent_repository, mocker):
         mocker.spy(slack_client_class, 'api_call')
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
         payload = deepcopy(self.default_payload)
         payload['type'] = 'interactive_message'
@@ -31,13 +31,13 @@ class TestUpdateDiscussionChannel(TestInteractiveComponent):
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 4
+            return core_api_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 4
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have a calls and slack_client to have at least 4'
+        assert outcome, 'Expected core_api_client to have a calls and slack_client to have at least 4'
 
         assert HTTPStatus.NO_CONTENT == response.status_code
-        assert 'topicChannelId:' in portal_client.mutate.call_args[1]['operation_definition']
+        assert 'topicChannelId:' in core_api_client.mutate.call_args[1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'channels.history'},  # checking channel messages for emptiness validation

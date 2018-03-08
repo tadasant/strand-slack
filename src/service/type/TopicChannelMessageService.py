@@ -14,9 +14,9 @@ class TopicChannelMessageService(Service):
         * DM the user that they can't post there
     """
 
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request, bot_user_id):
+    def __init__(self, slack_client_wrapper, core_api_client_wrapper, event_request, bot_user_id):
         # TODO [SLA-81] assert event_request.is_topic_channel_message
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
+        super().__init__(slack_client_wrapper=slack_client_wrapper, core_api_client_wrapper=core_api_client_wrapper)
         self.event_request = event_request
         self.bot_user_id = bot_user_id
 

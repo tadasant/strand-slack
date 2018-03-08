@@ -10,10 +10,10 @@ from tests.utils import wait_until
 
 
 class TestSaveMessageAsTopic(TestEvent):
-    def test_post_invalid_reaction(self, slack_client_class, portal_client,
+    def test_post_invalid_reaction(self, slack_client_class, core_api_client,
                                    slack_agent_repository, mocker):
         mocker.spy(slack_client_class, 'api_call')
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_event_request.team_id)
@@ -33,12 +33,12 @@ class TestSaveMessageAsTopic(TestEvent):
         assert outcome, 'Expected slack_client_class.api_call not to be called'
 
         assert HTTPStatus.OK == response.status_code
-        assert not portal_client.mutate.call_args_list, portal_client.mutate.call_args_list
+        assert not core_api_client.mutate.call_args_list, core_api_client.mutate.call_args_list
 
-    def test_post_valid_reaction(self, slack_client_class, portal_client,
+    def test_post_valid_reaction(self, slack_client_class, core_api_client,
                                  slack_agent_repository, mocker):
         mocker.spy(slack_client_class, 'api_call')
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_event_request.team_id)
@@ -58,8 +58,8 @@ class TestSaveMessageAsTopic(TestEvent):
         assert outcome, 'Expected slack_client_class.api_call to be called at least once'
 
         assert HTTPStatus.OK == response.status_code
-        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert 'U9D4VV8HG' in portal_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'createTopicFromSlack' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'U9D4VV8HG' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
 
     def _add_channel_message(self, channel_id):
         channel_join_message = {

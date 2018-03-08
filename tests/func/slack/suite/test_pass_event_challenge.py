@@ -33,9 +33,9 @@ class TestPassSlackEventChallenge(TestSlackFunction):
         response = self.client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
         assert response.json == {}
 
-    def test_post_valid_authenticated_slack(self, slack_client_class, portal_client, mocker):
+    def test_post_valid_authenticated_slack(self, slack_client_class, core_api_client, mocker):
         mocker.spy(slack_client_class, 'api_call')
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         target_url = url_for(endpoint=self.target_endpoint)
 
         response = self.client.post(path=target_url, headers=self.default_headers,

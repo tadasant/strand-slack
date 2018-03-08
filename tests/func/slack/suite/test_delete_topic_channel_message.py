@@ -9,7 +9,7 @@ from tests.utils import wait_until
 
 
 class TestDeleteTopicChannelMessage(TestEvent):
-    def test_post_deletable_message(self, slack_client_class, portal_client, slack_client,
+    def test_post_deletable_message(self, slack_client_class, core_api_client, slack_client,
                                     slack_agent_repository, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,

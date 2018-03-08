@@ -16,14 +16,14 @@ class DiscussionMessageService(Service):
         * Normalize Slack markup to readable markup
 
         Outputs:
-        * Request to Portal (Message/Reply, User)
+        * Request to CoreApi (Message/Reply, User)
 
-        Normalize Message's text & attachments, forward them to the Portal
+        Normalize Message's text & attachments, forward them to the CoreApi
     """
 
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, event_request):
+    def __init__(self, slack_client_wrapper, core_api_client_wrapper, event_request):
         # TODO [SLA-81] assert event_request.is_discussion_message
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
+        super().__init__(slack_client_wrapper=slack_client_wrapper, core_api_client_wrapper=core_api_client_wrapper)
         self.event_request = event_request
 
     def execute(self):
@@ -38,7 +38,7 @@ class DiscussionMessageService(Service):
         text_formatter = MessageTextFormatter(discussion_message=discussion_message)
         discussion_message.text = text_formatter.format_text()
         command = ForwardMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
-                                        portal_client_wrapper=self.portal_client_wrapper,
+                                        core_api_client_wrapper=self.core_api_client_wrapper,
                                         team_id=self.event_request.team_id,
                                         event=self.event_request.event)
         Thread(target=command.execute, daemon=True).start()

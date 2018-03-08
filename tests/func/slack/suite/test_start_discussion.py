@@ -63,16 +63,16 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
         assert HTTPStatus.OK == response.status_code
 
-    def validate_post(self, portal_client, slack_agent_repository, slack_client_class, mocker, payload,
+    def validate_post(self, core_api_client, slack_agent_repository, slack_client_class, mocker, payload,
                       params_to_expect, param_to_expect, expect_to_succeed):
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         fake_topic_id = int(str(PrimitiveFaker('random_int')))
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)
-        self._queue_portal_topic_creation(portal_client=portal_client, topic_id=fake_topic_id)
-        self._queue_portal_discussion_creation(portal_client=portal_client)
+        self._queue_core_api_topic_creation(core_api_client=core_api_client, topic_id=fake_topic_id)
+        self._queue_core_api_discussion_creation(core_api_client=core_api_client)
         self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
                                                slack_team_id=self.fake_interactive_component_request.team.id)
 
@@ -80,15 +80,15 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 8
+            return core_api_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 8
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 8+'
+        assert outcome, 'Expected core_api_client to have 2 calls, and slack_client to have 8+'
 
         assert HTTPStatus.OK == response.status_code
-        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
-        assert str(fake_topic_id) in portal_client.mutate.call_args_list[1][1]['operation_definition']
+        assert 'createTopicFromSlack' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'createDiscussionFromSlack' in core_api_client.mutate.call_args_list[1][1]['operation_definition']
+        assert str(fake_topic_id) in core_api_client.mutate.call_args_list[1][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=params_to_expect,
             call_args_list=slack_client_class.api_call.call_args_list
@@ -97,7 +97,7 @@ class TestStartDiscussion(TestSlackFunction):
                                             call_args_list=slack_client_class.api_call.call_args_list,
                                             expect_to_succeed=expect_to_succeed)
 
-    def test_post_with_existing_user_and_share_to_channel(self, portal_client, slack_agent_repository,
+    def test_post_with_existing_user_and_share_to_channel(self, core_api_client, slack_agent_repository,
                                                           slack_client_class, mocker):
         payload = deepcopy(self.default_payload)
         payload['channel']['id'] = 'C0G9QPY56'
@@ -115,10 +115,10 @@ class TestStartDiscussion(TestSlackFunction):
             {'method': 'chat.postMessage'},  # Share to channel
         ]
         param_to_expect = {'method': 'chat.postMessage', 'channel': payload['channel']['id']}
-        self.validate_post(portal_client, slack_agent_repository, slack_client_class, mocker, payload,
+        self.validate_post(core_api_client, slack_agent_repository, slack_client_class, mocker, payload,
                            params_to_expect=params_to_expect, param_to_expect=param_to_expect, expect_to_succeed=True)
 
-    def test_post_with_existing_user_and_do_not_share_to_channel(self, portal_client, slack_agent_repository,
+    def test_post_with_existing_user_and_do_not_share_to_channel(self, core_api_client, slack_agent_repository,
                                                                  slack_client_class, mocker):
         payload = deepcopy(self.default_payload)
         payload['channel']['id'] = 'C0G9QPY56'
@@ -135,18 +135,18 @@ class TestStartDiscussion(TestSlackFunction):
             {'method': 'chat.postMessage'},  # Re-posting last post
         ]
         param_to_expect = {'method': 'chat.postMessage', 'channel': payload['channel']['id']}
-        self.validate_post(portal_client, slack_agent_repository, slack_client_class, mocker, payload,
+        self.validate_post(core_api_client, slack_agent_repository, slack_client_class, mocker, payload,
                            params_to_expect=params_to_expect, param_to_expect=param_to_expect, expect_to_succeed=False)
 
-    def test_post_with_existing_user(self, portal_client, slack_agent_repository, slack_client_class, mocker):
-        mocker.spy(portal_client, 'mutate')
+    def test_post_with_existing_user(self, core_api_client, slack_agent_repository, slack_client_class, mocker):
+        mocker.spy(core_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         fake_topic_id = int(str(PrimitiveFaker('random_int')))
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)
-        self._queue_portal_topic_creation(portal_client=portal_client, topic_id=fake_topic_id)
-        self._queue_portal_discussion_creation(portal_client=portal_client)
+        self._queue_core_api_topic_creation(core_api_client=core_api_client, topic_id=fake_topic_id)
+        self._queue_core_api_discussion_creation(core_api_client=core_api_client)
         self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
                                                slack_team_id=self.fake_interactive_component_request.team.id)
 
@@ -154,15 +154,15 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 8
+            return core_api_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 8
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 8+'
+        assert outcome, 'Expected core_api_client to have 2 calls, and slack_client to have 8+'
 
         assert HTTPStatus.OK == response.status_code
-        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
-        assert str(fake_topic_id) in portal_client.mutate.call_args_list[1][1]['operation_definition']
+        assert 'createTopicFromSlack' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'createDiscussionFromSlack' in core_api_client.mutate.call_args_list[1][1]['operation_definition']
+        assert str(fake_topic_id) in core_api_client.mutate.call_args_list[1][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'channels.create'},
@@ -178,8 +178,8 @@ class TestStartDiscussion(TestSlackFunction):
             call_args_list=slack_client_class.api_call.call_args_list
         )
 
-    def test_post_with_installer_user(self, portal_client, slack_agent_repository, slack_client_class, mocker):
-        mocker.spy(portal_client, 'mutate')
+    def test_post_with_installer_user(self, core_api_client, slack_agent_repository, slack_client_class, mocker):
+        mocker.spy(core_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         fake_installer_user_id = str(PrimitiveFaker('bban'))
@@ -188,8 +188,8 @@ class TestStartDiscussion(TestSlackFunction):
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id,
                                            installer_user_id=fake_installer_user_id)
-        self._queue_portal_topic_creation(portal_client=portal_client, topic_id=str(PrimitiveFaker('random_int')))
-        self._queue_portal_discussion_creation(portal_client=portal_client)
+        self._queue_core_api_topic_creation(core_api_client=core_api_client, topic_id=str(PrimitiveFaker('random_int')))
+        self._queue_core_api_discussion_creation(core_api_client=core_api_client)
         self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
                                                slack_team_id=self.fake_interactive_component_request.team.id)
 
@@ -197,10 +197,10 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 7
+            return core_api_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= 7
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 2 calls, and slack_client to have 7+'
+        assert outcome, 'Expected core_api_client to have 2 calls, and slack_client to have 7+'
 
         assert HTTPStatus.OK == response.status_code
         self.assert_values_in_call_args_list(
@@ -212,16 +212,16 @@ class TestStartDiscussion(TestSlackFunction):
             expect_succeed=False
         )
 
-    def test_post_with_nonexisting_user(self, portal_client, slack_client_class, slack_agent_repository, mocker):
-        mocker.spy(portal_client, 'mutate')
+    def test_post_with_nonexisting_user(self, core_api_client, slack_client_class, slack_agent_repository, mocker):
+        mocker.spy(core_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)
 
-        portal_client.set_next_response(None)  # To raise error on attempt w/out user
-        self._queue_portal_user_and_topic_creation(portal_client=portal_client)
-        self._queue_portal_discussion_creation(portal_client=portal_client)
+        core_api_client.set_next_response(None)  # To raise error on attempt w/out user
+        self._queue_core_api_user_and_topic_creation(core_api_client=core_api_client)
+        self._queue_core_api_discussion_creation(core_api_client=core_api_client)
         self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
                                                slack_team_id=self.fake_interactive_component_request.team.id)
 
@@ -229,15 +229,15 @@ class TestStartDiscussion(TestSlackFunction):
                                     data=urlencode({'payload': json.dumps(self.default_payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 3 and slack_client_class.api_call.call_count >= 9
+            return core_api_client.mutate.call_count == 3 and slack_client_class.api_call.call_count >= 9
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 3 calls, and slack_client to have 9+'
+        assert outcome, 'Expected core_api_client to have 3 calls, and slack_client to have 9+'
 
         assert HTTPStatus.OK == response.status_code
-        assert 'createTopicFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert 'createUserAndTopicFromSlack' in portal_client.mutate.call_args_list[1][1]['operation_definition']
-        assert 'createDiscussionFromSlack' in portal_client.mutate.call_args_list[2][1]['operation_definition']
+        assert 'createTopicFromSlack' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'createUserAndTopicFromSlack' in core_api_client.mutate.call_args_list[1][1]['operation_definition']
+        assert 'createDiscussionFromSlack' in core_api_client.mutate.call_args_list[2][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {
@@ -257,8 +257,8 @@ class TestStartDiscussion(TestSlackFunction):
             call_args_list=slack_client_class.api_call.call_args_list
         )
 
-    def _queue_portal_topic_creation(self, portal_client, topic_id):
-        portal_client.set_next_response({
+    def _queue_core_api_topic_creation(self, core_api_client, topic_id):
+        core_api_client.set_next_response({
             'data': {
                 'createTopicFromSlack': {
                     'topic': {
@@ -277,8 +277,8 @@ class TestStartDiscussion(TestSlackFunction):
             }
         })
 
-    def _queue_portal_discussion_creation(self, portal_client):
-        portal_client.set_next_response({
+    def _queue_core_api_discussion_creation(self, core_api_client):
+        core_api_client.set_next_response({
             'data': {
                 'createDiscussionFromSlack': {
                     'discussion': {
@@ -289,8 +289,8 @@ class TestStartDiscussion(TestSlackFunction):
             }
         })
 
-    def _queue_portal_user_and_topic_creation(self, portal_client):
-        portal_client.set_next_response({
+    def _queue_core_api_user_and_topic_creation(self, core_api_client):
+        core_api_client.set_next_response({
             'data': {
                 'createUserAndTopicFromSlack': {
                     'topic': {

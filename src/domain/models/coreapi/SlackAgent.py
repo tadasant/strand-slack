@@ -2,9 +2,9 @@ from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
 
 from src.domain.models.Model import Model
-from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallationSchema
-from src.domain.models.portal.SlackTeam import SlackTeamSchema
+from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallationSchema
+from src.domain.models.coreapi.SlackTeam import SlackTeamSchema
 
 
 class SlackAgent(Model):

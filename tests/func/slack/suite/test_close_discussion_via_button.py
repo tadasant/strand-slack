@@ -15,35 +15,36 @@ class TestCloseDiscussionViaButton(TestButton):
     default_payload = deepcopy(TestInteractiveComponent.default_payload)
     default_payload['actions'][0]['name'] = CLOSE_DISCUSSION_BUTTON.name
 
-    def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, portal_client, slack_client):
+    def test_close_valid(self, slack_client_class, mocker, slack_agent_repository, core_api_client, slack_client):
         target_url = url_for(endpoint=self.target_endpoint)
         self.add_slack_agent_to_repository(slack_agent_repository=slack_agent_repository,
                                            slack_team_id=self.fake_interactive_component_request.team.id)
         discussion_channel_id = self.start_discussion_on_channel(
             slack_team_id=self.fake_interactive_component_request.team.id,
-            portal_client=portal_client,
+            core_api_client=core_api_client,
             slack_agent_repository=slack_agent_repository,
             slack_client_class=slack_client_class,
             mocker=mocker
         )
-        self._queue_portal_close_discussion(portal_client=portal_client, discussion_id=str(PrimitiveFaker('bban')))
+        self._queue_core_api_close_discussion(core_api_client=core_api_client,
+                                              discussion_id=str(PrimitiveFaker('bban')))
         payload = deepcopy(self.default_payload)
         payload['channel']['id'] = discussion_channel_id
-        mocker.spy(portal_client, 'mutate')
+        mocker.spy(core_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
 
         response = self.client.post(path=target_url, headers=self.default_headers,
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return portal_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 6
+            return core_api_client.mutate.call_count == 1 and slack_client_class.api_call.call_count >= 6
 
         outcome = wait_until(condition=wait_condition)
-        assert outcome, 'Expected portal_client to have 1 calls, and slack_client to have 6+'
+        assert outcome, 'Expected core_api_client to have 1 calls, and slack_client to have 6+'
 
         assert 200 <= response.status_code <= 300
-        assert 'closeDiscussionFromSlack' in portal_client.mutate.call_args_list[0][1]['operation_definition']
-        assert discussion_channel_id in portal_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'closeDiscussionFromSlack' in core_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert discussion_channel_id in core_api_client.mutate.call_args_list[0][1]['operation_definition']
         self.assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'chat.postMessage'},  # inform channel of closed discussion
@@ -53,8 +54,8 @@ class TestCloseDiscussionViaButton(TestButton):
             call_args_list=slack_client_class.api_call.call_args_list
         )
 
-    def _queue_portal_close_discussion(self, portal_client, discussion_id):
-        portal_client.set_next_response({
+    def _queue_core_api_close_discussion(self, core_api_client, discussion_id):
+        core_api_client.set_next_response({
             'data': {
                 'closeDiscussionFromSlack': {
                     'discussion': {

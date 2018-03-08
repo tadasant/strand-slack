@@ -1,10 +1,10 @@
 import factory
 
-from src.domain.models.portal.SlackApplicationInstallation import SlackApplicationInstallation
-from src.domain.models.portal.SlackTeam import SlackTeam
-from src.domain.models.portal.SlackUser import SlackUser
-from src.domain.models.portal.SlackAgent import SlackAgent
-from src.domain.models.portal.SlackAgentStatus import SlackAgentStatus
+from src.domain.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallation
+from src.domain.models.coreapi.SlackTeam import SlackTeam
+from src.domain.models.coreapi.SlackUser import SlackUser
+from src.domain.models.coreapi.SlackAgent import SlackAgent
+from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
 
 
 class SlackTeamFactory(factory.Factory):

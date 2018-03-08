@@ -1,6 +1,6 @@
 from src.command.Command import Command
 from src.command.model.message.formatted_text import block_topic_channel_message
-from src.domain.models.portal.SlackUser import SlackUserSchema
+from src.domain.models.coreapi.SlackUser import SlackUserSchema
 
 
 class InformTopicChannelMessageDeletedCommand(Command):

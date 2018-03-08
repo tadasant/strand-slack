@@ -29,7 +29,7 @@ class SlashCommandResource(SlackResource):
             elif r.is_close_discussion:
                 # TODO [SLA-81] Authenticating user is OP/admin should happen here via DB
                 service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,
-                                                 portal_client_wrapper=current_app.portal_client_wrapper,
+                                                 core_api_client_wrapper=current_app.core_api_client_wrapper,
                                                  slack_team_id=r.team_id,
                                                  slack_user_id=r.user_id,
                                                  slack_channel_id=r.channel_id)

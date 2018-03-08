@@ -2,11 +2,11 @@
 import requests
 
 
-class PortalClient:
+class CoreApiClient:
     """
     This client library returns the results of a GraphQL query on {host}{endpoint}.
 
-    If the GraphQL operation fails due to an HTTP error, will throw a PortalClientException.
+    If the GraphQL operation fails due to an HTTP error, will throw a CoreApiClientException.
 
     If there are GraphQL errors for the operation, will return the standard {'errors': [...]} GraphQL response format.
     """
@@ -22,24 +22,24 @@ class PortalClient:
         full_definition = f'query {operation_definition}'
         response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
-            raise PortalClientException('Query failed.', response)
+            raise CoreApiClientException('Query failed.', response)
         return response.json()
 
     def mutate(self, operation_definition):
         full_definition = f'mutation {operation_definition}'
         response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
-            raise PortalClientException('Mutation failed.', response)
+            raise CoreApiClientException('Mutation failed.', response)
         return response.json()
 
     def _get_token(self, email, password):
         response = requests.post(url=f'{self.host}auth-token', data={'email': email, 'password': password})
         if response.status_code != 200:
-            raise PortalClientException('Authentication failed.', response)
+            raise CoreApiClientException('Authentication failed.', response)
         return response.json()['token']
 
 
-class PortalClientException(Exception):
+class CoreApiClientException(Exception):
     def __init__(self, message, response):
         super().__init__()
         self.message = message

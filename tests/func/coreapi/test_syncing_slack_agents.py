@@ -8,7 +8,7 @@ from flask import url_for
 from src.config import config
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from tests.common.PrimitiveFaker import PrimitiveFaker
-from tests.factories.portalfactories import SlackAgentFactory
+from tests.factories.coreapifactories import SlackAgentFactory
 from tests.func.TestFunction import TestFunction
 
 
@@ -21,7 +21,7 @@ class TestSyncingSlackAgents(TestFunction):
     fake_installer_id = fake_slack_agent.slack_application_installation.installer.id
 
     # For setup
-    target_endpoint = 'portal.slackagentresource'
+    target_endpoint = 'coreapi.slackagentresource'
     default_payload = {
         'status': fake_slack_agent.status,
         'topic_channel_id': fake_slack_agent.topic_channel_id,
@@ -39,7 +39,7 @@ class TestSyncingSlackAgents(TestFunction):
     }
     default_headers = {
         'Content-Type': 'application/json',
-        'Authorization': f'Token {config["PORTAL_VERIFICATION_TOKEN"]}'
+        'Authorization': f'Token {config["CORE_API_VERIFICATION_TOKEN"]}'
     }
 
 

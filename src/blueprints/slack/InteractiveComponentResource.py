@@ -23,7 +23,7 @@ class InteractiveComponentResource(SlackResource):
         r = interactive_component_request
         if r.is_topic_channel_selection:
             command = UpdateTopicChannelCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                                portal_client_wrapper=current_app.portal_client_wrapper,
+                                                core_api_client_wrapper=current_app.core_api_client_wrapper,
                                                 slack_team_id=r.team.id,
                                                 topic_channel_id=r.selected_topic_channel_id,
                                                 response_url=r.response_url)
@@ -31,7 +31,7 @@ class InteractiveComponentResource(SlackResource):
             return '', HTTPStatus.NO_CONTENT
         elif r.is_post_topic_dialog_submission:
             command = StartDiscussionCommand(slack_client_wrapper=current_app.slack_client_wrapper,
-                                             portal_client_wrapper=current_app.portal_client_wrapper,
+                                             core_api_client_wrapper=current_app.core_api_client_wrapper,
                                              slack_team_id=r.team.id,
                                              submission=r.submission,
                                              slack_user_id=r.user.id,
@@ -48,7 +48,7 @@ class InteractiveComponentResource(SlackResource):
             return '', HTTPStatus.NO_CONTENT
         elif r.is_close_discussion_click:
             service = CloseDiscussionService(slack_client_wrapper=current_app.slack_client_wrapper,
-                                             portal_client_wrapper=current_app.portal_client_wrapper,
+                                             core_api_client_wrapper=current_app.core_api_client_wrapper,
                                              slack_team_id=r.team.id,
                                              slack_user_id=r.user.id,
                                              slack_channel_id=r.channel.id)

@@ -3,14 +3,14 @@ from http.__init__ import HTTPStatus
 from flask import Flask, jsonify
 from marshmallow import ValidationError
 
-from src.blueprints import slack, portal
+from src.blueprints import slack, coreapi
 from src.common.logging import get_logger
 from src.domain.models.exceptions.RepositoryException import RepositoryException
 from src.domain.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.domain.models.exceptions.WrapperException import WrapperException
 from src.domain.repositories.SlackAgentRepository import slack_agent_repository
-from src.wrappers.PortalClientWrapper import PortalClientWrapper
+from src.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
 from src.wrappers.SlackClientWrapper import SlackClientWrapper
 
 
@@ -38,10 +38,10 @@ def handle_authorization_exception(error):
     return response
 
 
-def create_app(portal_client, SlackClientClass, slack_verification_tokens, portal_verification_token):
+def create_app(core_api_client, SlackClientClass, slack_verification_tokens, core_api_verification_token):
     app = Flask(__name__)
 
-    app.register_blueprint(portal.blueprint, url_prefix='/portal')
+    app.register_blueprint(coreapi.blueprint, url_prefix='/core_api')
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
 
     app.add_url_rule('/health', None, lambda: 'Ok')
@@ -52,20 +52,20 @@ def create_app(portal_client, SlackClientClass, slack_verification_tokens, porta
     app.register_error_handler(UnexpectedSlackException, handle_slack_integration_exception)
     app.register_error_handler(WrapperException, handle_slack_integration_exception)
 
-    init_wrappers(app=app, portal_client=portal_client, SlackClientClass=SlackClientClass)
+    init_wrappers(app=app, core_api_client=core_api_client, SlackClientClass=SlackClientClass)
     init_authentication(app=app, slack_verification_tokens=slack_verification_tokens,
-                        portal_verification_token=portal_verification_token)
+                        core_api_verification_token=core_api_verification_token)
 
     return app
 
 
-def init_wrappers(app, portal_client, SlackClientClass):
-    app.portal_client_wrapper = PortalClientWrapper(portal_client=portal_client)
-    slack_agents = app.portal_client_wrapper.get_slack_agents()
+def init_wrappers(app, core_api_client, SlackClientClass):
+    app.core_api_client_wrapper = CoreApiClientWrapper(core_api_client=core_api_client)
+    slack_agents = app.core_api_client_wrapper.get_slack_agents()
     slack_agent_repository.set_slack_agents(slack_agents=slack_agents)
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
 
 
-def init_authentication(app, slack_verification_tokens, portal_verification_token):
+def init_authentication(app, slack_verification_tokens, core_api_verification_token):
     app.slack_verification_tokens = slack_verification_tokens
-    app.portal_verification_token = portal_verification_token
+    app.core_api_verification_token = core_api_verification_token

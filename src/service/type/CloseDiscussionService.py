@@ -17,11 +17,11 @@ class CloseDiscussionService(Service):
         * Checks if slack user is OP or admin (will refactor out to validator in SLA-81 TODO)
 
         Outputs:
-        * Request to Portal (close discussion)
+        * Request to CoreApi (close discussion)
     """
 
-    def __init__(self, slack_client_wrapper, portal_client_wrapper, slack_team_id, slack_user_id, slack_channel_id):
-        super().__init__(slack_client_wrapper=slack_client_wrapper, portal_client_wrapper=portal_client_wrapper)
+    def __init__(self, slack_client_wrapper, core_api_client_wrapper, slack_team_id, slack_user_id, slack_channel_id):
+        super().__init__(slack_client_wrapper=slack_client_wrapper, core_api_client_wrapper=core_api_client_wrapper)
         self.slack_team_id = slack_team_id
         self.slack_user_id = slack_user_id
         self.slack_channel_id = slack_channel_id
@@ -29,11 +29,11 @@ class CloseDiscussionService(Service):
     def execute(self):
         if self._is_discussion_channel():
             if self._user_is_authorized():
-                portal_command = CloseDiscussionCommand(portal_client_wrapper=self.portal_client_wrapper,
-                                                        slack_channel_id=self.slack_channel_id,
-                                                        slack_team_id=self.slack_team_id,
-                                                        slack_user_id=self.slack_user_id)
-                Thread(target=portal_command.execute, daemon=True).start()
+                core_api_command = CloseDiscussionCommand(core_api_client_wrapper=self.core_api_client_wrapper,
+                                                          slack_channel_id=self.slack_channel_id,
+                                                          slack_team_id=self.slack_team_id,
+                                                          slack_user_id=self.slack_user_id)
+                Thread(target=core_api_command.execute, daemon=True).start()
                 close_channel_command = CloseChannelCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                             slack_channel_id=self.slack_channel_id,
                                                             slack_team_id=self.slack_team_id,
