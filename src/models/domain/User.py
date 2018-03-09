@@ -15,4 +15,4 @@ class User(Base):
     agent = relationship('Agent', back_populates='users')
 
     # 1 <--> 0..1
-    installation = relationship('Installation', back_populates='installer')
+    installation = relationship('Installation', back_populates='installer', cascade='all, delete-orphan')
