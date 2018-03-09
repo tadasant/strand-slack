@@ -1,8 +1,17 @@
-from sqlalchemy import Column, BigInteger, String, Enum
+from enum import Enum
+
+from sqlalchemy import Column, BigInteger, String
 from sqlalchemy.orm import relationship
 
-from src.models.domain.AgentStatus import AgentStatus
 from src.utilities.database import Base
+
+
+class AgentStatus(Enum):
+    INITIATED = 'INITIATED'
+    AUTHENTICATED = 'AUTHENTICATED'
+    ACTIVE = 'ACTIVE'
+    PAUSED = 'PAUSED'
+    INACTIVE = 'INACTIVE'
 
 
 class Agent(Base):
@@ -16,5 +25,3 @@ class Agent(Base):
     bot = relationship('Bot', uselist=False, back_populates='agent')
     # 1 <--> 0..*
     users = relationship('User', back_populates='agent')
-
-# TODO relationships to bot, user, installation
