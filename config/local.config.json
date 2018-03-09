@@ -11,11 +11,7 @@
   "SLACK_VERIFICATION_TOKENS": ["NkbCRv4Xt0SWJt5MDbktJmwQ", "randomCombo"],
   "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo",
   "DB": {
-    "DIALECT": "postgresql",
-    "USERNAME": "",
-    "PASSWORD": "",
-    "HOST": "",
-    "PORT": "",
-    "DATABASE": "STRAND"
+    "DIALECT": "sqlite",
+    "DATABASE": "local.db"
   }
 }
