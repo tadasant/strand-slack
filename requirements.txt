@@ -54,6 +54,7 @@ requests==2.18.4
 s3transfer==0.1.12
 six==1.11.0
 slackclient==1.1.0
+SQLAlchemy==1.2.5
 tenacity==4.8.0
 text-unidecode==1.1
 urllib3==1.22

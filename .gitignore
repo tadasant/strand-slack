@@ -7,3 +7,4 @@ logs/*
 misc.xml
 .coverage*
 pytest-tmp/*
+local.db

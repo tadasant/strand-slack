@@ -1,7 +1,7 @@
 from threading import Thread
 
 from src.commands.SendUserPostTopicDialogCommand import SendUserPostTopicDialogCommand
-from src.service.Service import Service
+from src.services.Service import Service
 
 
 class PostNewTopicService(Service):
