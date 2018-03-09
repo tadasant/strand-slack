@@ -11,13 +11,14 @@ if bucket and key:
     resp = boto3.client('s3').get_object(Bucket=bucket, Key=key)
     config = json.load(resp['Body'])
 else:
-    mode = os.environ['MODE'] if 'MODE' in os.environ else 'development'
-    config_file_location = defaultdict(lambda: 'config/development.config.json')
+    mode = os.environ['MODE'] if 'MODE' in os.environ else 'local'
+    config_file_location = defaultdict(lambda: 'config/local.config.json')
     config_file_location = {
         'test': 'config/test.config.json',
         'development': 'config/development.config.json',
         'staging': 'config/staging.config.json',
-        'production': 'config/production.config.json'
+        'production': 'config/production.config.json',
+        'local': 'config/local.config.json',
     }[mode]
     with open(os.path.join(os.getcwd(), config_file_location)) as f:
         config = json.load(f)

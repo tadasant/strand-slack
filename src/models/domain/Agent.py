@@ -8,7 +8,7 @@ from src.utilities.database import Base
 class Agent(Base):
     __tablename__ = 'agent'
 
-    slack_team_id = Column(String, primary_key=True, length=16)
+    slack_team_id = Column(String(16), primary_key=True)
     strand_team_id = Column(BigInteger)
     status = Column(Enum(AgentStatus), nullable=False)
 
