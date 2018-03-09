@@ -1,7 +1,7 @@
 from threading import Thread
 
 from src.commands.SendHelpMessageCommand import SendHelpMessageCommand
-from src.service.Service import Service
+from src.services.Service import Service
 
 
 class ProvideHelpService(Service):

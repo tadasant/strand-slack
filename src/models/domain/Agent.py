@@ -1,8 +1,27 @@
-from src.models.Model import Model
+from enum import Enum
+
+from sqlalchemy import Column, BigInteger, String
+from sqlalchemy.orm import relationship
+
+from src.utilities.database import Base
 
 
-class Agent(Model):
-    def __init__(self, status, slack_team_id, slack_application_installation=None):
-        self.status = status
-        self.slack_team_id = slack_team_id
-        self.slack_application_installation = slack_application_installation
+class AgentStatus(Enum):
+    INITIATED = 'INITIATED'
+    AUTHENTICATED = 'AUTHENTICATED'
+    ACTIVE = 'ACTIVE'
+    PAUSED = 'PAUSED'
+    INACTIVE = 'INACTIVE'
+
+
+class Agent(Base):
+    __tablename__ = 'agent'
+
+    slack_team_id = Column(String(16), primary_key=True)
+    strand_team_id = Column(BigInteger)
+    status = Column(Enum(AgentStatus), nullable=False)
+
+    # 1 <--> 0..1
+    bot = relationship('Bot', uselist=False, back_populates='agent', cascade='all, delete-orphan')
+    # 1 <--> 0..*
+    users = relationship('User', back_populates='agent', cascade='all, delete-orphan')

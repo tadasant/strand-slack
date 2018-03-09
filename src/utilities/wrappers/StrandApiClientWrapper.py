@@ -3,7 +3,7 @@ from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exceptio
 from src.utilities.clients.StrandApiClient import StrandApiClientException
 from src.utilities.logging import get_logger
 from src.models.exceptions.WrapperException import WrapperException
-from src.models.domain.utils import dict_keys_camel_case_to_underscores
+from src.models.strand.utils import dict_keys_camel_case_to_underscores
 
 
 class StrandApiClientWrapper:
