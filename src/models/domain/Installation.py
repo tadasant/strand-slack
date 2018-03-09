@@ -8,8 +8,8 @@ from src.utilities.database import Base
 class Installation(Base):
     __tablename__ = 'installation'
 
-    access_token = Column(String)
-    scope = Column(String)
+    access_token = Column(String, nullable=False)
+    scope = Column(String, nullable=False)
 
     # 0..1 <--> 1
     installer_slack_user_id = Column(String, primary_key=True)

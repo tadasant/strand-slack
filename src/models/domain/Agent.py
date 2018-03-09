@@ -9,7 +9,7 @@ class Agent(Base):
 
     slack_team_id = Column(String, primary_key=True)
     strand_team_id = Column(BigInteger)
-    status = Column(String)
+    status = Column(String, nullable=False)
 
     # 1 <--> 0..1
     bot = relationship('Bot', uselist=False, back_populates='agent')
