@@ -1,23 +1,23 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
-from src.utilities.clients.CoreApiClient import CoreApiClientException
+from src.utilities.clients.StrandApiClient import StrandApiClientException
 from src.utilities.logging import get_logger
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.domain.utils import dict_keys_camel_case_to_underscores
 
 
-class CoreApiClientWrapper:
+class StrandApiClientWrapper:
     """Manage all outgoing interaction with the CoreApi"""
 
-    def __init__(self, core_api_client):
-        self.core_api_client = core_api_client
+    def __init__(self, strand_api_client):
+        self.strand_api_client = strand_api_client
         self.logger = get_logger('CoreApiClientWrapper')
         self.standard_retrier = Retrying(
             reraise=True,
             wait=wait_fixed(2),
             stop=stop_after_attempt(5),
             after=after_log(logger=self.logger, log_level=self.logger.getEffectiveLevel()),
-            retry=retry_if_exception_type(CoreApiClientException)
+            retry=retry_if_exception_type(StrandApiClientException)
         )
 
     def create_discussion(self, topic_id):
@@ -31,7 +31,7 @@ class CoreApiClientWrapper:
             }}
         }}
         '''
-        response_body = self.standard_retrier.call(self.core_api_client.mutate,
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=None,

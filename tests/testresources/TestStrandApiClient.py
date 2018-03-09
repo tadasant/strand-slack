@@ -4,7 +4,7 @@ from src.utilities.logging import get_logger
 from src.models.exceptions.WrapperException import WrapperException
 
 
-class TestCoreApiClient:
+class TestStrandApiClient:
     def __init__(self, **kwargs):
         self.next_responses = []
         self.lock = threading.RLock()
@@ -65,11 +65,11 @@ class TestCoreApiClient:
                     }
                 }}}
             elif 'createTopicFromSlack'in operation_definition:
-                # Assuming that core_api does not have the user in the request
+                # Assuming that strand_api does not have the user in the request
                 raise WrapperException(wrapper_name='CoreApiClient', message='',
                                        errors=[{'message': 'SlackUser matching query does not exist.'}])
             elif 'createMessageFromSlack' in operation_definition or 'createReplyFromSlack' in operation_definition:
-                # Assuming that core_api does not have the user in the request
+                # Assuming that strand_api does not have the user in the request
                 raise WrapperException(wrapper_name='CoreApiClient', message='',
                                        errors=[{'message': 'User matching query does not exist.'}])
             return {'errors': [{'message': 'Some other error'}]}

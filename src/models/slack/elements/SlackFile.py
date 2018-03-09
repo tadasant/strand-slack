@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 
 
-class SlackFile(SlackModel):
+class SlackFile(Model):
     def __init__(self, id, public_url_shared=None, permalink_public=None):
         self.id = id
         self.public_url_shared = public_url_shared

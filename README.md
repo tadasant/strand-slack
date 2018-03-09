@@ -13,7 +13,7 @@ Without PyCharm, `cd` into the root directory and run `pytest --flake8 --pep8 --
 You can also run `ptw` to run pytest-watch
 
 ## Running the application
-Note that you'll need strand-api running on `CORE_API_HOST`
+Note that you'll need strand-api running on `STRAND_API_HOST`
 
 Make sure you've created a superuser with username `ccs`, email `ccs@solutionloft.com` and password `randomPassword`.
 

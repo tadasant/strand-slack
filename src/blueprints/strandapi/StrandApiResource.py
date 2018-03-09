@@ -20,7 +20,7 @@ class CoreApiResource(Resource):
                 matches = re.findall(token_regex, authorization_header)
                 if len(matches) == 1:
                     token = matches[0]
-                    if token == current_app.core_api_verification_token:
+                    if token == current_app.strand_api_verification_token:
                         return func(*args, **kwargs)
             raise UnauthorizedException(message='CoreApi authorization failed.')
 

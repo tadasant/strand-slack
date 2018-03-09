@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 
 
-class SlackSlashCommandRequest(SlackModel):
+class SlackSlashCommandRequest(Model):
     def __init__(self, team_id, user_id, command, response_url, trigger_id, channel_id, text=None):
         self.team_id = team_id
         self.user_id = user_id

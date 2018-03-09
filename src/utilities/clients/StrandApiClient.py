@@ -2,7 +2,7 @@
 import requests
 
 
-class CoreApiClient:
+class StrandApiClient:
     """
     This client library returns the results of a GraphQL query on {host}{endpoint}.
 
@@ -22,24 +22,24 @@ class CoreApiClient:
         full_definition = f'query {operation_definition}'
         response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
-            raise CoreApiClientException('Query failed.', response)
+            raise StrandApiClientException('Query failed.', response)
         return response.json()
 
     def mutate(self, operation_definition):
         full_definition = f'mutation {operation_definition}'
         response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
-            raise CoreApiClientException('Mutation failed.', response)
+            raise StrandApiClientException('Mutation failed.', response)
         return response.json()
 
     def _get_token(self, email, password):
         response = requests.post(url=f'{self.host}auth-token', data={'email': email, 'password': password})
         if response.status_code != 200:
-            raise CoreApiClientException('Authentication failed.', response)
+            raise StrandApiClientException('Authentication failed.', response)
         return response.json()['token']
 
 
-class CoreApiClientException(Exception):
+class StrandApiClientException(Exception):
     def __init__(self, message, response):
         super().__init__()
         self.message = message

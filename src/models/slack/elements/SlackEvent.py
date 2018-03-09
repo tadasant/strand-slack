@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 from src.models.slack.elements.SlackFile import SlackFileSchema
 from src.models.slack.elements.SlackItem import SlackItemSchema
 
 
-class SlackEvent(SlackModel):
+class SlackEvent(Model):
     def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None, file=None,
                  subtype=None, item=None, item_user=None, reaction=None):
         self.type = type

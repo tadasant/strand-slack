@@ -1,10 +1,10 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 from src.models.slack.elements.SlackEvent import SlackEventSchema
 
 
-class SlackEventRequest(SlackModel):
+class SlackEventRequest(Model):
     def __init__(self, type, challenge=None, team_id=None, event=None):
         self.type = type
         self.challenge = challenge

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class SlackAgentStatus(Enum):
+class AgentStatus(Enum):
     INITIATED = 'INITIATED'
     AUTHENTICATED = 'AUTHENTICATED'
     ACTIVE = 'ACTIVE'

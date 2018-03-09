@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 
 
-class SlackItem(SlackModel):
+class SlackItem(Model):
     def __init__(self, type, channel=None, ts=None, file=None):
         self.type = type
         self.channel = channel

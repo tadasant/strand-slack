@@ -3,12 +3,12 @@ from http.__init__ import HTTPStatus
 from flask import Flask, jsonify
 from marshmallow import ValidationError
 
-from src.blueprints import slack, coreapi
+from src.blueprints import slack, strandapi
 from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
 from src.utilities.logging import get_logger
 from src.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.models.exceptions.WrapperException import WrapperException
-from src.utilities.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
+from src.utilities.wrappers.StrandApiClientWrapper import StrandApiClientWrapper
 from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
 
 
@@ -36,10 +36,10 @@ def handle_authorization_exception(error):
     return response
 
 
-def create_app(core_api_client, SlackClientClass, slack_verification_tokens, core_api_verification_token):
+def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token):
     app = Flask(__name__)
 
-    app.register_blueprint(coreapi.blueprint, url_prefix='/core_api')
+    app.register_blueprint(strandapi.blueprint, url_prefix='/strand_api')
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
 
     app.add_url_rule('/health', None, lambda: 'Ok')
@@ -49,18 +49,18 @@ def create_app(core_api_client, SlackClientClass, slack_verification_tokens, cor
     app.register_error_handler(SlackCommunicationException, handle_slack_integration_exception)
     app.register_error_handler(WrapperException, handle_slack_integration_exception)
 
-    init_wrappers(app=app, core_api_client=core_api_client, SlackClientClass=SlackClientClass)
+    init_wrappers(app=app, strand_api_client=strand_api_client, SlackClientClass=SlackClientClass)
     init_authentication(app=app, slack_verification_tokens=slack_verification_tokens,
-                        core_api_verification_token=core_api_verification_token)
+                        strand_api_verification_token=strand_api_verification_token)
 
     return app
 
 
-def init_wrappers(app, core_api_client, SlackClientClass):
-    app.core_api_client_wrapper = CoreApiClientWrapper(core_api_client=core_api_client)
+def init_wrappers(app, strand_api_client, SlackClientClass):
+    app.strand_api_client_wrapper = StrandApiClientWrapper(strand_api_client=strand_api_client)
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
 
 
-def init_authentication(app, slack_verification_tokens, core_api_verification_token):
+def init_authentication(app, slack_verification_tokens, strand_api_verification_token):
     app.slack_verification_tokens = slack_verification_tokens
-    app.core_api_verification_token = core_api_verification_token
+    app.strand_api_verification_token = strand_api_verification_token

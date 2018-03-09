@@ -1,7 +1,7 @@
 from flask import request
 
-from src.blueprints.coreapi.CoreApiResource import CoreApiResource
-from src.models.coreapi.SlackAgent import SlackAgentSchema
+from src.blueprints.strandapi.StrandApiResource import CoreApiResource
+from src.models.strand.SlackAgent import SlackAgentSchema
 
 
 class SlackAgentResource(CoreApiResource):

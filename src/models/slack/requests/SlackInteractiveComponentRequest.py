@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, post_load
 
 from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
-from src.models.SlackModel import SlackModel
+from src.models.Model import Model
 from src.models.slack.elements.SlackChannel import SlackChannelSchema
 from src.models.slack.elements.SlackTeam import SlackTeamSchema
 from src.models.slack.elements.SlackUser import SlackUserSchema
@@ -10,7 +10,7 @@ from src.models.slack.elements.SlackMessage import SlackMessageSchema
 from src.models.slack.elements.SlackSubmission import SlackSubmissionSchema
 
 
-class SlackInteractiveComponentRequest(SlackModel):
+class SlackInteractiveComponentRequest(Model):
     def __init__(self, callback_id, team, user, channel, trigger_id=None, response_url=None, actions=None,
                  submission=None, original_message=None, type=None):
         self.type = type
