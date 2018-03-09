@@ -1,8 +1,14 @@
-from src.models.Model import Model
+from sqlalchemy import Column, BigInteger, String
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class Agent(Model):
-    def __init__(self, status, slack_team_id, slack_application_installation=None):
-        self.status = status
-        self.slack_team_id = slack_team_id
-        self.slack_application_installation = slack_application_installation
+class Agent(Base):
+    __tablename__ = 'user'
+
+    slack_team_id = Column(String, primary_key=True)
+    strand_team_id = Column(BigInteger)
+    status = Column(String)
+
+# TODO relationships to bot, user, installation
