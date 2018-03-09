@@ -5,14 +5,14 @@ from urllib.parse import urlencode
 
 import pytest
 from flask import url_for
-
-from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
-from src.config import config
 from src.models.strand.SlackAgent import SlackAgent
 from src.models.strand.SlackAgentStatus import SlackAgentStatus
 from src.models.strand.SlackApplicationInstallation import SlackApplicationInstallation
 from src.models.strand.SlackTeam import SlackTeam
 from src.models.strand.SlackUser import SlackUser
+
+from src.config import config
+from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory, ChannelFactory
 from tests.testresources.TestSlackClient import SlackRepository
@@ -141,7 +141,7 @@ class TestFunction:
         )
 
     def __queue_strand_api_topic_creation(self, strand_api_client, user_id=1, topic_id=1, topic_title='sometitle',
-                                        topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
+                                          topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
         strand_api_client.set_next_response({
             'data': {
                 'createTopicFromSlack': {
