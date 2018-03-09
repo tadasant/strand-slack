@@ -4,9 +4,9 @@ from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from src.blueprints import slack, coreapi
+from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
 from src.utilities.logging import get_logger
 from src.models.exceptions.UnauthorizedException import UnauthorizedException
-# from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
 from src.models.exceptions.WrapperException import WrapperException
 from src.utilities.wrappers.CoreApiClientWrapper import CoreApiClientWrapper
 from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
@@ -46,7 +46,7 @@ def create_app(core_api_client, SlackClientClass, slack_verification_tokens, cor
 
     app.register_error_handler(UnauthorizedException, handle_authorization_exception)
     app.register_error_handler(ValidationError, handle_validation_exception)
-    app.register_error_handler(UnexpectedSlackException, handle_slack_integration_exception)
+    app.register_error_handler(SlackCommunicationException, handle_slack_integration_exception)
     app.register_error_handler(WrapperException, handle_slack_integration_exception)
 
     init_wrappers(app=app, core_api_client=core_api_client, SlackClientClass=SlackClientClass)
