@@ -69,5 +69,5 @@ def init_authentication(app, slack_verification_tokens, strand_api_verification_
 
 
 def init_database():
-    import src.models.domain  # Run to attach all the models to engine
+    import src.models.domain  # noqa: F401  | Run to attach all the models to engine
     metadata.create_all(engine)

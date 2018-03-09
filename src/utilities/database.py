@@ -29,10 +29,10 @@ def db_cfg(key: str):
     return config['DB'][key] if key in config['DB'] else None
 
 
-__engine_url: str = __construct_engine_url(dialect=db_cfg('DIALECT'), driver=db_cfg('DRIVER'),
-                                           username=db_cfg('USERNAME'), password=db_cfg('PASSWORD'),
-                                           host=db_cfg('HOST'), port=db_cfg('PORT'),
-                                           database=db_cfg('DATABASE'))
+__engine_url = __construct_engine_url(dialect=db_cfg('DIALECT'), driver=db_cfg('DRIVER'),
+                                      username=db_cfg('USERNAME'), password=db_cfg('PASSWORD'),
+                                      host=db_cfg('HOST'), port=db_cfg('PORT'),
+                                      database=db_cfg('DATABASE'))
 
 # Import metadata, engine for creating tables (app startup)
 metadata = MetaData()
