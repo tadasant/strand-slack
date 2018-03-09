@@ -13,5 +13,7 @@ class Agent(Base):
 
     # 1 <--> 0..1
     bot = relationship('Bot', uselist=False, back_populates='agent')
+    # 1 <--> 0..*
+    users = relationship('User', back_populates='agent')
 
 # TODO relationships to bot, user, installation
