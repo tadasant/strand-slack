@@ -1,6 +1,7 @@
 from typing import Optional
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from src.config import config
@@ -24,14 +25,24 @@ def __construct_engine_url(dialect: str, driver: Optional[str], username: Option
     return result
 
 
-__cfg = config['DB']
-__engine_url: str = __construct_engine_url(dialect=__cfg['DIALECT'], driver=__cfg['DRIVER'], username=__cfg['USERNAME'],
-                                           password=__cfg['PASSWORD'], host=__cfg['HOST'], port=__cfg['PORT'],
-                                           database=__cfg['DATABASE'])
-__database_engine = create_engine(__engine_url)
+def db_cfg(key: str):
+    return config['DB'][key] if key in config['DB'] else None
 
-__session_factory = sessionmaker(bind=__database_engine)
 
-# Import Session to create SQLAlchemy Sessions for database interactions. Can't be passed among threads.
+__engine_url: str = __construct_engine_url(dialect=db_cfg('DIALECT'), driver=db_cfg('DRIVER'),
+                                           username=db_cfg('USERNAME'), password=db_cfg('PASSWORD'),
+                                           host=db_cfg('HOST'), port=db_cfg('PORT'),
+                                           database=db_cfg('DATABASE'))
+
+# Import metadata, engine for creating tables (app startup)
+metadata = MetaData()
+engine = create_engine(__engine_url)
+
+__session_factory = sessionmaker(bind=engine)
+
+# Import Base for defining tables (pre-app startup)
+Base = declarative_base(metadata=metadata)
+
+# Import Session to create SQLAlchemy Sessions for database interactions. Can't be passed among threads. (runtime)
 # http://docs.sqlalchemy.org/en/latest/orm/contextual.html
 Session = scoped_session(__session_factory)

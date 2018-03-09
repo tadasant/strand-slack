@@ -1,13 +1,14 @@
-from sqlalchemy import Column, String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+from src.utilities.database import Base
 
 
 class Bot(Base):
     __tablename__ = 'bot'
 
-    bot_access_token = Column(String)
-    bot_user_id = Column(String)
+    access_token = Column(String)
+    user_id = Column(String)
 
-# TODO relationship to agent (nullable one to one, PK)
+    agent_slack_team_id = Column(String, ForeignKey('agent.slack_team_id'), primary_key=True)
+    agent = relationship('Agent', back_populates='bot')

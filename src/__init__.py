@@ -5,11 +5,12 @@ from marshmallow import ValidationError
 
 from src.blueprints import slack, strandapi
 from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
-from src.utilities.logging import get_logger
 from src.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.models.exceptions.WrapperException import WrapperException
-from src.utilities.wrappers.StrandApiClientWrapper import StrandApiClientWrapper
+from src.utilities.database import metadata, engine
+from src.utilities.logging import get_logger
 from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
+from src.utilities.wrappers.StrandApiClientWrapper import StrandApiClientWrapper
 
 
 def handle_slack_integration_exception(error):
@@ -52,6 +53,7 @@ def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, s
     init_wrappers(app=app, strand_api_client=strand_api_client, SlackClientClass=SlackClientClass)
     init_authentication(app=app, slack_verification_tokens=slack_verification_tokens,
                         strand_api_verification_token=strand_api_verification_token)
+    init_database()
 
     return app
 
@@ -64,3 +66,8 @@ def init_wrappers(app, strand_api_client, SlackClientClass):
 def init_authentication(app, slack_verification_tokens, strand_api_verification_token):
     app.slack_verification_tokens = slack_verification_tokens
     app.strand_api_verification_token = strand_api_verification_token
+
+
+def init_database():
+    import src.models.domain.sqlalchemy_models  # Run to attach all the models to engine
+    metadata.create_all(engine)
