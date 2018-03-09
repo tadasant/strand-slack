@@ -5,5 +5,5 @@ venv
 .cache
 logs/*
 misc.xml
-.coverage
+.coverage*
 pytest-tmp/*

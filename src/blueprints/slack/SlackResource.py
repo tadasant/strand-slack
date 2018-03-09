@@ -13,7 +13,7 @@ class SlackResource(Resource):
     def _authenticate(self, payload):
         """Check if the Slack payload has the verification token"""
         self.logger.debug(f'Request payload: {payload}')
-        if payload['token'] != current_app.slack_verification_token:
+        if payload['token'] not in current_app.slack_verification_tokens:
             message = 'Invalid slack verification token'
             self.logger.error(message)
             raise UnexpectedSlackException(message=message)

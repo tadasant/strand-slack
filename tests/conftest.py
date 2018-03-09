@@ -6,10 +6,9 @@ from pytest_factoryboy import register
 from src import create_app
 from src.common.logging import get_logger
 from src.config import config
-from src.domain.repositories.SlackAgentRepository import slack_agent_repository as slack_agent_repository_global
-from tests.factories.portalfactories import SlackAgentFactory
+from tests.factories.coreapifactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
-from tests.testresources.TestPortalClient import TestPortalClient
+from tests.testresources.TestCoreApiClient import TestCoreApiClient
 from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
 from tests.utils import wait_until
 
@@ -47,32 +46,26 @@ def log_test_start():
 # Core
 
 @pytest.fixture(scope='session')
-def app(portal_client_factory, slack_client_class):
-    app = create_app(portal_client=portal_client_factory, SlackClientClass=slack_client_class,
-                     slack_verification_token=config['SLACK_VERIFICATION_TOKEN'],
-                     portal_verification_token=config['PORTAL_VERIFICATION_TOKEN'])
+def app(core_api_client_factory, slack_client_class):
+    app = create_app(core_api_client=core_api_client_factory, SlackClientClass=slack_client_class,
+                     slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
+                     core_api_verification_token=config['CORE_API_VERIFICATION_TOKEN'])
     app.testing = True
     return app
-
-
-@pytest.fixture
-def slack_agent_repository():
-    yield slack_agent_repository_global
-    slack_agent_repository_global.clear()
 
 
 # Wrappers & Clients
 
 @pytest.fixture(scope='session')
-def portal_client_factory():
-    return TestPortalClient()
+def core_api_client_factory():
+    return TestCoreApiClient()
 
 
 @pytest.fixture
-def portal_client(portal_client_factory):
-    portal_client_factory.clear_responses()
-    yield portal_client_factory
-    portal_client_factory.clear_responses()
+def core_api_client(core_api_client_factory):
+    core_api_client_factory.clear_responses()
+    yield core_api_client_factory
+    core_api_client_factory.clear_responses()
 
 
 @pytest.fixture

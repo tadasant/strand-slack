@@ -48,7 +48,7 @@ class TestInteractiveComponent(TestSlackFunction):
         "action_ts": "1517014983.191305",
         "message_ts": "1517014969.000145",
         "attachment_id": "1",
-        "token": config['SLACK_VERIFICATION_TOKEN'],
+        "token": config['SLACK_VERIFICATION_TOKENS'][0],
         "is_app_unfurl": False,
         "original_message": {
             "text": fake_interactive_component_request.original_message.text,
