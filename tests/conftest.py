@@ -4,15 +4,13 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src.common.logging import get_logger
+from src.utilities.logging import get_logger
 from src.config import config
-from tests.factories.coreapifactories import SlackAgentFactory
 from tests.factories.slackfactories import InteractiveComponentRequestFactory
-from tests.testresources.TestCoreApiClient import TestCoreApiClient
+from tests.testresources.TestStrandApiClient import TestStrandApiClient
 from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
 from tests.utils import wait_until
 
-register(SlackAgentFactory)
 register(InteractiveComponentRequestFactory)
 
 
@@ -46,10 +44,10 @@ def log_test_start():
 # Core
 
 @pytest.fixture(scope='session')
-def app(core_api_client_factory, slack_client_class):
-    app = create_app(core_api_client=core_api_client_factory, SlackClientClass=slack_client_class,
+def app(strand_api_client_factory, slack_client_class):
+    app = create_app(strand_api_client=strand_api_client_factory, SlackClientClass=slack_client_class,
                      slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
-                     core_api_verification_token=config['CORE_API_VERIFICATION_TOKEN'])
+                     strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN'])
     app.testing = True
     return app
 
@@ -57,15 +55,15 @@ def app(core_api_client_factory, slack_client_class):
 # Wrappers & Clients
 
 @pytest.fixture(scope='session')
-def core_api_client_factory():
-    return TestCoreApiClient()
+def strand_api_client_factory():
+    return TestStrandApiClient()
 
 
 @pytest.fixture
-def core_api_client(core_api_client_factory):
-    core_api_client_factory.clear_responses()
-    yield core_api_client_factory
-    core_api_client_factory.clear_responses()
+def strand_api_client(strand_api_client_factory):
+    strand_api_client_factory.clear_responses()
+    yield strand_api_client_factory
+    strand_api_client_factory.clear_responses()
 
 
 @pytest.fixture

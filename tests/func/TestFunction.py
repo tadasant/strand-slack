@@ -5,14 +5,14 @@ from urllib.parse import urlencode
 
 import pytest
 from flask import url_for
+from src.models.strand.SlackAgent import SlackAgent
+from src.models.strand.SlackAgentStatus import SlackAgentStatus
+from src.models.strand.SlackApplicationInstallation import SlackApplicationInstallation
+from src.models.strand.SlackTeam import SlackTeam
+from src.models.strand.SlackUser import SlackUser
 
-from src.command.model.message.post_topic_dialog import POST_TOPIC_DIALOG
 from src.config import config
-from src.domain.models.coreapi.SlackAgent import SlackAgent
-from src.domain.models.coreapi.SlackAgentStatus import SlackAgentStatus
-from src.domain.models.coreapi.SlackApplicationInstallation import SlackApplicationInstallation
-from src.domain.models.coreapi.SlackTeam import SlackTeam
-from src.domain.models.coreapi.SlackUser import SlackUser
+from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import SubmissionFactory, InteractiveComponentRequestFactory, ChannelFactory
 from tests.testresources.TestSlackClient import SlackRepository
@@ -21,12 +21,12 @@ from tests.utils import wait_until
 
 @pytest.mark.usefixtures('client_class')  # pytest-flask's client_class adds self.client
 class TestFunction:
-    def start_discussion_on_channel(self, slack_team_id, core_api_client, slack_agent_repository, slack_client_class,
+    def start_discussion_on_channel(self, slack_team_id, strand_api_client, slack_agent_repository, slack_client_class,
                                     mocker):
         self.start_discussion(slack_agent_repository=slack_agent_repository,
                               slack_team_id=slack_team_id,
                               slack_client_class=slack_client_class,
-                              core_api_client=core_api_client,
+                              strand_api_client=strand_api_client,
                               mocker=mocker)
         assert 1 == len(SlackRepository['created_channels_by_id'].items())
         # return created channel id
@@ -43,7 +43,7 @@ class TestFunction:
                                                                         bot_user_id='doesnt matter'))
         )
 
-    def start_discussion(self, slack_agent_repository, slack_team_id, slack_client_class, core_api_client, mocker,
+    def start_discussion(self, slack_agent_repository, slack_team_id, slack_client_class, strand_api_client, mocker,
                          topic_id=int(str(PrimitiveFaker('random_int')))):
         """
             Starts a discussion on slack_team_id.
@@ -51,15 +51,15 @@ class TestFunction:
             TODO This needs to be cleaned up. Create some sort of constructor for Slack payloads.
         """
         # TODO update discussion tests to use this as well
-        mocker.spy(core_api_client, 'mutate')
+        mocker.spy(strand_api_client, 'mutate')
         mocker.spy(slack_client_class, 'api_call')
         discussion_dialog_post_endpoint = 'slack.interactivecomponentresource'
         target_url = url_for(endpoint=discussion_dialog_post_endpoint)
         self.simulate_topic_channel_initiation(slack_agent_repository=slack_agent_repository,
                                                slack_team_id=slack_team_id)
 
-        self.__queue_core_api_topic_creation(core_api_client=core_api_client, topic_id=topic_id)
-        self.__queue_core_api_discussion_creation(core_api_client=core_api_client)
+        self.__queue_strand_api_topic_creation(strand_api_client=strand_api_client, topic_id=topic_id)
+        self.__queue_strand_api_discussion_creation(strand_api_client=strand_api_client)
 
         fake_tags = [str(PrimitiveFaker('word')), str(PrimitiveFaker('word'))]
         fake_interactive_component_request = InteractiveComponentRequestFactory.create(
@@ -97,7 +97,7 @@ class TestFunction:
                                     data=urlencode({'payload': json.dumps(payload)}))
 
         def wait_condition():
-            return core_api_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= + 8
+            return strand_api_client.mutate.call_count == 2 and slack_client_class.api_call.call_count >= + 8
 
         assert HTTPStatus.OK == response.status_code
         wait_until(condition=wait_condition)
@@ -140,9 +140,9 @@ class TestFunction:
             {'ts': str(PrimitiveFaker('random_int')), 'text': 'sometext', 'attachments': []}
         )
 
-    def __queue_core_api_topic_creation(self, core_api_client, user_id=1, topic_id=1, topic_title='sometitle',
-                                        topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
-        core_api_client.set_next_response({
+    def __queue_strand_api_topic_creation(self, strand_api_client, user_id=1, topic_id=1, topic_title='sometitle',
+                                          topic_description='somedesc', tag_name1='some1tag', tag_name2='some2tag'):
+        strand_api_client.set_next_response({
             'data': {
                 'createTopicFromSlack': {
                     'topic': {
@@ -161,8 +161,8 @@ class TestFunction:
             }
         })
 
-    def __queue_core_api_discussion_creation(self, core_api_client):
-        core_api_client.set_next_response({
+    def __queue_strand_api_discussion_creation(self, strand_api_client):
+        strand_api_client.set_next_response({
             'data': {
                 'createDiscussionFromSlack': {
                     'discussion': {

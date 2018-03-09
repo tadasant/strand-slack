@@ -1,8 +1,8 @@
 from flask import current_app
 from flask_restful import Resource
 
-from src.common.logging import get_logger
-from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
+from src.utilities.logging import get_logger
+from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
 
 
 class SlackResource(Resource):
@@ -16,4 +16,4 @@ class SlackResource(Resource):
         if payload['token'] not in current_app.slack_verification_tokens:
             message = 'Invalid slack verification token'
             self.logger.error(message)
-            raise UnexpectedSlackException(message=message)
+            raise SlackCommunicationException(message=message)

@@ -1,6 +1,6 @@
 from threading import Thread
 
-from src.command.SendUserPostTopicDialogCommand import SendUserPostTopicDialogCommand
+from src.commands.SendUserPostTopicDialogCommand import SendUserPostTopicDialogCommand
 from src.service.Service import Service
 
 

@@ -1,22 +1,22 @@
 import factory.fuzzy
 
-from src.domain.models.slack.Channel import Channel
-from src.domain.models.slack.Team import Team
-from src.domain.models.slack.User import User
-from src.domain.models.slack.requests.EventRequest import EventRequest
-from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
-from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
-from src.domain.models.slack.requests.elements.Action import Action
-from src.domain.models.slack.requests.elements.Event import Event
-from src.domain.models.slack.requests.elements.File import File
-from src.domain.models.slack.requests.elements.Message import Message
-from src.domain.models.slack.requests.elements.Option import Option
-from src.domain.models.slack.requests.elements.Submission import Submission
+from src.models.slack.elements.SlackChannel import SlackChannel
+from src.models.slack.elements.SlackTeam import SlackTeam
+from src.models.slack.elements.SlackUser import SlackUser
+from src.models.slack.requests.SlackEventRequest import SlackEventRequest
+from src.models.slack.requests.SlackInteractiveComponentRequest import SlackInteractiveComponentRequest
+from src.models.slack.requests.SlackSlashCommandRequest import SlackSlashCommandRequest
+from src.models.slack.elements.SlackAction import SlackAction
+from src.models.slack.elements.SlackEvent import SlackEvent
+from src.models.slack.elements.SlackFile import SlackFile
+from src.models.slack.elements.SlackMessage import SlackMessage
+from src.models.slack.elements.SlackOption import SlackOption
+from src.models.slack.elements.SlackSubmission import SlackSubmission
 
 
 class MessageFactory(factory.Factory):
     class Meta:
-        model = Message
+        model = SlackMessage
 
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
@@ -24,14 +24,14 @@ class MessageFactory(factory.Factory):
 
 class OptionFactory(factory.Factory):
     class Meta:
-        model = Option
+        model = SlackOption
 
     value = factory.Faker('word')
 
 
 class ActionFactory(factory.Factory):
     class Meta:
-        model = Action
+        model = SlackAction
 
     name = factory.Faker('word')
     selected_options = factory.List([OptionFactory.build()])
@@ -39,21 +39,21 @@ class ActionFactory(factory.Factory):
 
 class TeamFactory(factory.Factory):
     class Meta:
-        model = Team
+        model = SlackTeam
 
     id = factory.Faker('bban')
 
 
 class UserFactory(factory.Factory):
     class Meta:
-        model = User
+        model = SlackUser
 
     id = factory.Faker('bban')
 
 
 class ChannelFactory(factory.Factory):
     class Meta:
-        model = Channel
+        model = SlackChannel
 
     id = factory.fuzzy.FuzzyText(length=9, prefix='C')
     name = factory.Faker('word')
@@ -61,7 +61,7 @@ class ChannelFactory(factory.Factory):
 
 class SubmissionFactory(factory.Factory):
     class Meta:
-        model = Submission
+        model = SlackSubmission
 
     title = factory.Faker('paragraph')
     description = factory.Faker('paragraph')
@@ -71,7 +71,7 @@ class SubmissionFactory(factory.Factory):
 
 class FileFactory(factory.Factory):
     class Meta:
-        model = File
+        model = SlackFile
 
     id = factory.Faker('bban')
     public_url_shared = factory.Faker('url')
@@ -80,7 +80,7 @@ class FileFactory(factory.Factory):
 
 class EventFactory(factory.Factory):
     class Meta:
-        model = Event
+        model = SlackEvent
 
     type = factory.Faker('word')
     user = factory.Faker('bban')
@@ -95,7 +95,7 @@ class EventFactory(factory.Factory):
 
 class InteractiveComponentRequestFactory(factory.Factory):
     class Meta:
-        model = InteractiveComponentRequest
+        model = SlackInteractiveComponentRequest
 
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
@@ -108,7 +108,7 @@ class InteractiveComponentRequestFactory(factory.Factory):
 
 class SlashCommandRequestFactory(factory.Factory):
     class Meta:
-        model = SlashCommandRequest
+        model = SlackSlashCommandRequest
 
     team_id = factory.Faker('bban')
     user_id = factory.Faker('bban')
@@ -120,7 +120,7 @@ class SlashCommandRequestFactory(factory.Factory):
 
 class EventRequestFactory(factory.Factory):
     class Meta:
-        model = EventRequest
+        model = SlackEventRequest
 
     type = factory.Faker('word')
     challenge = factory.Faker('md5')

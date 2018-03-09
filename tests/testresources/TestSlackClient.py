@@ -1,4 +1,4 @@
-from src.common.logging import get_logger
+from src.utilities.logging import get_logger
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import ChannelFactory
 

@@ -2,10 +2,10 @@
   "FLASK_DEBUG": false,
   "LOG_LEVEL": "DEBUG",
   "LOG_FILE": "pytest-tmp/log.txt",
-  "CORE_API_HOST": "http://localhost:8000/",
-  "CORE_API_GRAPHQL_ENDPOINT": "graphql",
+  "STRAND_API_HOST": "http://localhost:8000/",
+  "STRAND_API_GRAPHQL_ENDPOINT": "graphql",
   "HOST": "0.0.0.0",
   "PORT": 5004,
   "SLACK_VERIFICATION_TOKENS": ["sOmERAndOMComBoOfLettERSAND7UMB3rs", "raNdomCombo"],
-  "CORE_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo"
+  "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo"
 }
