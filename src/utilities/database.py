@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from src.config import config
 
@@ -30,5 +30,8 @@ __engine_url: str = __construct_engine_url(dialect=__cfg['DIALECT'], driver=__cf
                                            database=__cfg['DATABASE'])
 __database_engine = create_engine(__engine_url)
 
-# Import Session to create SQLAlchemy Sessions for database interactions
-Session = sessionmaker(bind=__database_engine)
+__session_factory = sessionmaker(bind=__database_engine)
+
+# Import Session to create SQLAlchemy Sessions for database interactions. Can't be passed among threads.
+# http://docs.sqlalchemy.org/en/latest/orm/contextual.html
+Session = scoped_session(__session_factory)
