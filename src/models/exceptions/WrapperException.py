@@ -1,7 +1,7 @@
-from src.models.exceptions.SlackIntegrationException import SlackIntegrationException
+from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
 
 
-class WrapperException(SlackIntegrationException):
+class WrapperException(SlackCommunicationException):
     """Raised when a Wrapper fails to perform an operation due to errors (either unexpected states or HTTP issues)"""
 
     def __init__(self, wrapper_name, message, errors=None):

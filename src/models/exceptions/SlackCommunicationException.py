@@ -1,4 +1,4 @@
-class SlackIntegrationException(Exception):
+class SlackCommunicationException(Exception):
     def __init__(self, message=None):
         super().__init__()
 
