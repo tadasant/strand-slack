@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 
 
-class Tag(Model):
+class Tag(SlackModel):
     def __init__(self, name):
         self.name = name
 

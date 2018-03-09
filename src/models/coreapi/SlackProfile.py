@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 
 
-class SlackProfile(Model):
+class SlackProfile(SlackModel):
     def __init__(self, image_72, first_name=None, last_name=None, display_name=None, email=None):
         self.image_72 = image_72
         self.first_name = first_name

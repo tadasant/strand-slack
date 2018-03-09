@@ -1,5 +1,5 @@
 from src.commands.Command import Command
-from src.commands.model.message.message_models import HelpMessage
+from src.models.slack.responses.formats.messages import SlackMessageHelp
 
 
 class SendHelpMessageCommand(Command):
@@ -13,4 +13,4 @@ class SendHelpMessageCommand(Command):
         self.slack_client_wrapper.send_ephemeral_message(slack_team_id=self.slack_team_id,
                                                          slack_channel_id=self.slack_channel_id,
                                                          slack_user_id=self.slack_user_id,
-                                                         text=HelpMessage().text)
+                                                         text=SlackMessageHelp().text)

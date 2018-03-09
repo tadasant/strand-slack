@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 from src.models.coreapi.Tag import TagSchema
 from src.models.coreapi.User import UserSchema
 
 
-class Topic(Model):
+class Topic(SlackModel):
     def __init__(self, id, title, description, tags, original_poster):
         self.id = id
         self.title = title

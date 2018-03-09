@@ -5,7 +5,7 @@ from flask import request
 
 from src.blueprints.slack.SlackResource import SlackResource
 from src.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
-from src.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequestSchema
+from src.models.slack.requests.SlackInteractiveComponentRequest import InteractiveComponentRequestSchema
 
 
 class InteractiveComponentResource(SlackResource):

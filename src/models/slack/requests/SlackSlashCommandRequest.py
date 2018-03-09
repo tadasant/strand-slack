@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 
 
-class SlashCommandRequest(Model):
+class SlackSlashCommandRequest(SlackModel):
     def __init__(self, team_id, user_id, command, response_url, trigger_id, channel_id, text=None):
         self.team_id = team_id
         self.user_id = user_id
@@ -37,7 +37,7 @@ class SlashCommandRequestSchema(Schema):
 
     @post_load
     def make_slash_command_request(self, data):
-        return SlashCommandRequest(**data)
+        return SlackSlashCommandRequest(**data)
 
     class Meta:
         strict = True

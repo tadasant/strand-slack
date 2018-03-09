@@ -1,21 +1,20 @@
-from datetime import datetime
-
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.slack.responses.SlackMessageModel import SlackMessageModel
 
 
-class SlackMessage(Model):
+class SlackMessage(SlackMessageModel):
     """Subset of Event from requests"""
 
-    def __init__(self, file_url=None, **kwargs):
-        """Construct kwargs by unpacking an Event dict"""
-        expected_args = ['ts', 'text']
-        assert all(x in kwargs for x in expected_args), f'Expected {expected_args} in SlackMessage constructor'
+    def __init__(self, file_url=None, attachments=None, **kwargs):
+        """Can construct kwargs by unpacking an Event dict"""
+        non_nullable_fields = ['ts', 'text']
+        assert all(x in kwargs for x in non_nullable_fields), f'Expected {expected_args} in SlackMessage constructor'
 
+        self.attachments = [] if attachments is None else attachments
         self.thread_ts = kwargs.get('thread_ts')
-        self.channel_id = kwargs.get('channel')
-        self.user_id = kwargs.get('user')
+        self.channel = kwargs.get('channel')
+        self.user = kwargs.get('user')
         self.ts = kwargs.get('ts')
         self.subtype = kwargs.get('subtype')
         self.text = kwargs.get('text')
@@ -25,9 +24,10 @@ class SlackMessage(Model):
     def is_join_message(self):
         return self.subtype == 'channel_join'
 
-    @property
-    def time(self):
-        return datetime.fromtimestamp(int(self.ts.split('.')[0]))
+    def as_dict(self):
+        result = super().as_dict()
+        result['attachments'] = [attachment.as_dict() for attachment in self.attachments]
+        return result
 
 
 class SlackMessageSchema(Schema):

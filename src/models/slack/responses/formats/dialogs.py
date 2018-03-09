@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-# TODO [SLA-104] Move this to message_models.py & messages.py
+# TODO refactor this out of namedtuple, use a class SlackDialogSubmitStrand(SlackDialogModel)
 
 PostTopicDialogType = namedtuple('PostTopicDialogType', 'callback_id value')
 

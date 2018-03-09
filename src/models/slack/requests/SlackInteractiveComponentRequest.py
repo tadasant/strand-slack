@@ -1,16 +1,16 @@
 from marshmallow import Schema, fields, post_load
 
-from src.commands.model.message.post_topic_dialog import POST_TOPIC_DIALOG
-from src.models.Model import Model
-from src.models.slack.Channel import ChannelSchema
-from src.models.slack.Team import TeamSchema
-from src.models.slack.User import UserSchema
-from src.models.slack.requests.elements.Action import ActionSchema
-from src.models.slack.requests.elements.Message import MessageSchema
-from src.models.slack.requests.elements.Submission import SubmissionSchema
+from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
+from src.models.SlackModel import SlackModel
+from src.models.slack.elements.SlackChannel import SlackChannelSchema
+from src.models.slack.elements.SlackTeam import SlackTeamSchema
+from src.models.slack.elements.SlackUser import SlackUserSchema
+from src.models.slack.elements.SlackAction import SlackActionSchema
+from src.models.slack.elements.SlackMessage import SlackMessageSchema
+from src.models.slack.elements.SlackSubmission import SlackSubmissionSchema
 
 
-class InteractiveComponentRequest(Model):
+class SlackInteractiveComponentRequest(SlackModel):
     def __init__(self, callback_id, team, user, channel, trigger_id=None, response_url=None, actions=None,
                  submission=None, original_message=None, type=None):
         self.type = type
@@ -31,19 +31,19 @@ class InteractiveComponentRequest(Model):
 
 class InteractiveComponentRequestSchema(Schema):
     type = fields.String()
-    actions = fields.Nested(ActionSchema, many=True)
+    actions = fields.Nested(SlackActionSchema, many=True)
     callback_id = fields.String(required=True)
-    team = fields.Nested(TeamSchema, required=True)
-    original_message = fields.Nested(MessageSchema)
+    team = fields.Nested(SlackTeamSchema, required=True)
+    original_message = fields.Nested(SlackMessageSchema)
     response_url = fields.String()
-    submission = fields.Nested(SubmissionSchema)
-    user = fields.Nested(UserSchema, required=True)
+    submission = fields.Nested(SlackSubmissionSchema)
+    user = fields.Nested(SlackUserSchema, required=True)
     trigger_id = fields.String()
-    channel = fields.Nested(ChannelSchema, required=True)
+    channel = fields.Nested(SlackChannelSchema, required=True)
 
     @post_load
     def make_interactive_component_request(self, data):
-        return InteractiveComponentRequest(**data)
+        return SlackInteractiveComponentRequest(**data)
 
     class Meta:
         strict = True

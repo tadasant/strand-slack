@@ -1,10 +1,10 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 from src.models.coreapi.SlackProfile import SlackProfileSchema
 
 
-class SlackUser(Model):
+class SlackUser(SlackModel):
     def __init__(self, id, name=None, real_name=None, is_bot=None, is_admin=None, team_id=None, profile=None):
         self.id = id
         self.name = name

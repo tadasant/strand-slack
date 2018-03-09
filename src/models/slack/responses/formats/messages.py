@@ -1,9 +1,9 @@
 from textwrap import dedent
 
-from src.commands.model.message.Message import Message
+from src.models.slack.elements.SlackMessage import SlackMessage
 
 
-class HelpMessage(Message):
+class SlackMessageHelp(SlackMessage):
     def __init__(self):
         super().__init__(
             text=self._format_text(),

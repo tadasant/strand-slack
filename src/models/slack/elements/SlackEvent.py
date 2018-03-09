@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
-from src.models.slack.requests.elements.File import FileSchema
-from src.models.slack.requests.elements.Item import ItemSchema
+from src.models.SlackModel import SlackModel
+from src.models.slack.elements.SlackFile import SlackFileSchema
+from src.models.slack.elements.SlackItem import SlackItemSchema
 
 
-class Event(Model):
+class SlackEvent(SlackModel):
     def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None, file=None,
                  subtype=None, item=None, item_user=None, reaction=None):
         self.type = type
@@ -52,7 +52,7 @@ class Event(Model):
         return self.is_message and self.thread_ts
 
 
-class EventSchema(Schema):
+class SlackEventSchema(Schema):
     type = fields.String(required=True)
     user = fields.String(required=True)
     hidden = fields.Boolean()
@@ -60,15 +60,15 @@ class EventSchema(Schema):
     text = fields.String()
     ts = fields.String()
     thread_ts = fields.String()
-    file = fields.Nested(FileSchema)
+    file = fields.Nested(SlackFileSchema)
     subtype = fields.String()
-    item = fields.Nested(ItemSchema)
+    item = fields.Nested(SlackItemSchema)
     item_user = fields.String()
     reaction = fields.String()
 
     @post_load
     def make_event(self, data):
-        return Event(**data)
+        return SlackEvent(**data)
 
     class Meta:
         strict = True

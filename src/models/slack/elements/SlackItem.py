@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.Model import Model
+from src.models.SlackModel import SlackModel
 
 
-class Item(Model):
+class SlackItem(SlackModel):
     def __init__(self, type, channel=None, ts=None, file=None):
         self.type = type
         self.channel = channel
@@ -11,7 +11,7 @@ class Item(Model):
         self.file = file
 
 
-class ItemSchema(Schema):
+class SlackItemSchema(Schema):
     type = fields.String(required=True)
     channel = fields.String()
     ts = fields.String()
@@ -19,7 +19,7 @@ class ItemSchema(Schema):
 
     @post_load
     def make_item(self, data):
-        return Item(**data)
+        return SlackItem(**data)
 
     class Meta:
         strict = True

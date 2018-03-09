@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 import pytest
 from flask import url_for
 
-from src.commands.model.message.post_topic_dialog import POST_TOPIC_DIALOG
+from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG
 from src.config import config
 from src.models.coreapi.SlackAgent import SlackAgent
 from src.models.coreapi.SlackAgentStatus import SlackAgentStatus

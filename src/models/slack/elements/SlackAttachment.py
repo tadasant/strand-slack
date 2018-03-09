@@ -1,4 +1,4 @@
-class Attachment:
+class SlackAttachment:
     def __init__(self, fallback=None, color=None, author_name=None, fields=None, footer=None, footer_icon=None,
                  ts=None):
         self.fallback = fallback
