@@ -3,6 +3,9 @@ from typing import NamedTuple
 
 import pytest
 
+from tests.common.PrimitiveFaker import PrimitiveFaker
+from tests.testresources.TestSlackClient import SlackRepository, clear_slack_state
+
 
 @pytest.mark.usefixtures('app')
 class TestInstallFixtures:
@@ -14,10 +17,13 @@ class TestInstallFixtures:
         """
         response = namedtuple('response', 'code slack_oauth_access_response')
         fake_slack_oauth_access_response = slack_oauth_access_response_factory()
-        # store faker values in the test Slack client repo w/ random code
-        yield response(code='12345', slack_oauth_access_response=fake_slack_oauth_access_response)
-        # clear the values
-        pass
+        fake_code = str(PrimitiveFaker('number'))
+
+        # Plant fake response in Slack state
+        SlackRepository['oauth_access_responses_by_code'] = fake_slack_oauth_access_response
+
+        yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response)
+        clear_slack_state(keys=['oauth_access_responses_by_code'])
 
     @pytest.fixture(scope='function')
     def slack_oauth_response_and_agent_in_db(self, slack_oauth_response_factory) -> NamedTuple:
