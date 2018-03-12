@@ -5,7 +5,7 @@ import pytest
 from flask import url_for
 
 from tests.func.TestInstallFixtures import TestInstallFixtures
-from tests.utils import wait_until, wait_for_extra_threads_to_die
+from tests.utils import wait_until, wait_for_extra_threads_to_die, assert_values_in_call_args_list
 
 
 class TestInstall(TestInstallFixtures):
@@ -23,7 +23,14 @@ class TestInstall(TestInstallFixtures):
         client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
         assert wait_for_extra_threads_to_die(timeout=100), 'Extra threads timed out'
-        assert slack_client_class.api_call.call_args[1]['code'] == s.code
+        assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {'method': 'oauth.access', 'code': s.code},  # Call Slack OAuth
+                {'method': 'chat.postMessage'},  # DM user with welcome message
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )
+        # assert slack_client_class.api_call.call_args_list[0][1]['code'] == s.code
         # assert that API is hit with a new team (using the seeded slack team id)
         # assert that a new agent is added to DB w/ new team ID
         # assert that new installer is added to DB

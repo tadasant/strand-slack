@@ -20,6 +20,14 @@ class TestSlackClient:
     def api_call(self, method, *args, **kwargs):
         if method == 'oauth.access':
             return {
-                'ok': True, **json.loads(SlackRepository['oauth_access_responses_by_code'][kwargs.get('code')].to_json())
+                'ok': True,
+                **json.loads(SlackRepository['oauth_access_responses_by_code'][kwargs.get('code')].to_json())
             }
-        return {'ok': False}
+        elif method == 'im.open':
+            return {
+                'ok': True,
+                'channel': {
+                    'id': 'SOMEID'
+                }
+            }
+        return {'ok': True}
