@@ -3,7 +3,7 @@ from http.__init__ import HTTPStatus
 from flask import Flask, jsonify
 from marshmallow import ValidationError
 
-from src.blueprints import slack, strandapi
+from src.blueprints import slack
 from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
 from src.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.models.exceptions.WrapperException import WrapperException
@@ -40,7 +40,6 @@ def handle_authorization_exception(error):
 def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token):
     app = Flask(__name__)
 
-    app.register_blueprint(strandapi.blueprint, url_prefix='/strand_api')
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
 
     app.add_url_rule('/health', None, lambda: 'Ok')
