@@ -66,14 +66,6 @@ def strand_api_client(strand_api_client_factory):
     strand_api_client_factory.clear_responses()
 
 
-@pytest.fixture
-def slack_client():
-    """Simulates Slack's actual state. Include fixture if using Slack's returned values."""
-    clear_slack_state()
-    yield
-    clear_slack_state()
-
-
 @pytest.fixture(scope='session')
 def slack_client_class():
     """Type of client to make on a per-call basis throughout tests"""

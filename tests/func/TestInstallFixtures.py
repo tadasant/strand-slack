@@ -17,7 +17,7 @@ class TestInstallFixtures:
         """
         response = namedtuple('response', 'code slack_oauth_access_response')
         fake_slack_oauth_access_response = slack_oauth_access_response_factory()
-        fake_code = str(PrimitiveFaker('number'))
+        fake_code = str(PrimitiveFaker('md5'))
 
         # Plant fake response in Slack state
         SlackRepository['oauth_access_responses_by_code'] = fake_slack_oauth_access_response

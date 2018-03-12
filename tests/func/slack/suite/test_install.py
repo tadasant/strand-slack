@@ -9,7 +9,7 @@ from tests.func.TestInstallFixtures import TestInstallFixtures
 class TestInstall(TestInstallFixtures):
     """Test the flow for a user installing the Slack application (/install)"""
 
-    target_endpoint = 'install'
+    target_endpoint = 'configure.installresource'
     default_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
     def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access, client, slack_client_class, mocker):
