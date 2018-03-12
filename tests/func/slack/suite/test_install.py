@@ -10,7 +10,7 @@ class TestInstall(TestInstallFixtures):
     """Test the flow for a user installing the Slack application (/install)"""
 
     target_endpoint = 'configure.installresource'
-    default_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    default_headers = {'Content-Type': 'application/json'}
 
     def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access, client, slack_client_class, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
