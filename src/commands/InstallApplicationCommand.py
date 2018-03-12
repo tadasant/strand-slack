@@ -16,6 +16,7 @@ class InstallApplicationCommand(Command):
         4) If Agent exists and installer does not exist, we INSERT User entry
         5) If team does not exist, we INSERT Agent and INSERT User
         6) Regardless of situation, User is sent a welcome message
+        7) If this is the first time SLA is seeing the agent or the user, forwards to Strand API
     """
 
     def __init__(self, code, slack_client_wrapper):
@@ -25,13 +26,18 @@ class InstallApplicationCommand(Command):
     @db_session
     def execute(self, session):
         self.logger.debug(f'Installing application with oauth code {self.code}')
+        send_agent_to_strand = False
+        send_user_to_strand = False
         slack_oauth_access_response = self.slack_client_wrapper.submit_oauth_code(code=self.code)
 
         if not self._does_agent_exist(slack_oauth_access_response=slack_oauth_access_response, session=session):
+            send_agent_to_strand = True
+            send_user_to_strand = True
             self._create_agent(slack_oauth_access_response=slack_oauth_access_response, session=session)
             self._create_installer(slack_oauth_access_response=slack_oauth_access_response, session=session)
             self._create_installation(slack_oauth_access_response=slack_oauth_access_response, session=session)
         elif not self._does_installer_exist(slack_oauth_access_response=slack_oauth_access_response, session=session):
+            send_user_to_strand = True
             self._create_installer(slack_oauth_access_response=slack_oauth_access_response, session=session)
             self._create_installation(slack_oauth_access_response=slack_oauth_access_response, session=session)
         elif not self._does_installation_exist(slack_oauth_access_response=slack_oauth_access_response,
@@ -40,6 +46,14 @@ class InstallApplicationCommand(Command):
         else:
             self._update_installation(slack_oauth_access_response=slack_oauth_access_response, session=session)
 
+        session.commit()
+
+        if send_agent_to_strand:
+            # TODO command to create group
+            pass
+        if send_user_to_strand:
+            # TODO command to send user
+            pass
         self._send_installer_welcome_message(slack_oauth_access_response=slack_oauth_access_response)
 
     @staticmethod
@@ -67,8 +81,9 @@ class InstallApplicationCommand(Command):
 
     @staticmethod
     def _create_installer(slack_oauth_access_response, session):
-        # TODO
-        pass
+        installer = User(slack_user_id=slack_oauth_access_response.user_id,
+                         agent_slack_team_id=slack_oauth_access_response.team_id)
+        session.add(installer)
 
     @staticmethod
     def _does_installation_exist(slack_oauth_access_response, session):
@@ -81,12 +96,19 @@ class InstallApplicationCommand(Command):
 
     @staticmethod
     def _create_installation(slack_oauth_access_response, session):
-        # TODO
-        pass
+        installation = Installation(access_token=slack_oauth_access_response.access_token,
+                                    scope=slack_oauth_access_response.scope,
+                                    installer_slack_user_id=slack_oauth_access_response.user_id,
+                                    installer_agent_slack_team_id=slack_oauth_access_response.team_id)
+        session.add(installation)
 
     @staticmethod
     def _update_installation(slack_oauth_access_response, session):
-        pass
+        installation = session.query(Installation).filter(
+            Installation.installer_slack_user_id == slack_oauth_access_response.user_id,
+            Installation.installer_agent_slack_team_id == slack_oauth_access_response.team_id).one()
+        installation.access_token = slack_oauth_access_response.acess_token
+        installation.scope = slack_oauth_access_response.scope
 
     def _send_installer_welcome_message(self, slack_oauth_access_response):
         slack_team_id = slack_oauth_access_response.team_id
