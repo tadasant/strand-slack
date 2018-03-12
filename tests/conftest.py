@@ -6,12 +6,13 @@ from pytest_factoryboy import register
 from src import create_app
 from src.config import config
 from src.utilities.logging import get_logger
+from tests.factories.slackfactories import SlackOauthAccessResponseFactory
 from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
 from tests.testresources.TestStrandApiClient import TestStrandApiClient
 from tests.utils import wait_until
-from tests.factories.slackfactories import SlackOauthAccessResponseFactory
 
 register(SlackOauthAccessResponseFactory)
+
 
 # Maintenance
 

@@ -4,14 +4,14 @@ from flask import url_for
 from tests.func.TestInstallFixtures import TestInstallFixtures
 
 
-class TestDifferentName(TestInstallFixtures):
+class TestInstall(TestInstallFixtures):
     """Test the flow for a user installing the Slack application (/install)"""
 
     target_endpoint = 'install'
 
-    def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access_response):
+    def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access):
         target_url = url_for(endpoint=self.target_endpoint)
-        s = slack_oauth_access_response
+        s = slack_oauth_access
         print(s.code)
         # fixtures: seed Slack w/ code response
 
