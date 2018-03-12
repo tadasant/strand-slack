@@ -10,6 +10,7 @@ from tests.factories.slackfactories import SlackOauthAccessResponseFactory
 from tests.testresources.TestSlackClient import TestSlackClient
 from tests.testresources.TestStrandApiClient import TestStrandApiClient
 from tests.utils import wait_until
+from src.utilities.database import metadata, engine
 
 register(SlackOauthAccessResponseFactory)
 
@@ -51,9 +52,12 @@ def app(strand_api_client_factory, slack_client_class):
     app.testing = True
     return app
 
-# @pytest.fixture(scope='session', autouse=True)
-# def db():
 
+@pytest.fixture(scope='function', autouse=True)
+def clear_database():
+    metadata.drop_all(engine)
+    yield
+    metadata.create_all(engine)
 
 # Wrappers & Clients
 

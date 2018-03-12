@@ -1,6 +1,6 @@
 from http.__init__ import HTTPStatus
 
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify
 from marshmallow import ValidationError
 
 from src.blueprints import slack, configure
