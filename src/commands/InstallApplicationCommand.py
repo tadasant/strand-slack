@@ -1,6 +1,8 @@
 from src.commands.Command import Command
-from src.models.domain.Agent import Agent
+from src.models.domain.Agent import Agent, AgentStatus
+from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
+from src.models.domain.User import User
 from src.utilities.database import db_session
 
 
@@ -48,15 +50,20 @@ class InstallApplicationCommand(Command):
 
     @staticmethod
     def _create_agent(slack_oauth_access_response, session):
-        # TODO
-        pass
+        bot = Bot(access_token=slack_oauth_access_response.bot.bot_access_token,
+                  user_id=slack_oauth_access_response.bot.bot_user_id,
+                  agent_slack_team_id=slack_oauth_access_response.team_id)
+        agent = Agent(slack_team_id=slack_oauth_access_response.team_id, status=AgentStatus.ACTIVE, bot=bot)
+        session.add_all([bot, agent])
 
     @staticmethod
     def _does_installer_exist(slack_oauth_access_response, session):
-        # slack_team_id = slack_oauth_access_response.team_id
-        # agent = session.query(Agent).filter(Agent.slack_team_id == slack_team_id).one_or_none()
-        # return agent is not None
-        pass
+        slack_team_id = slack_oauth_access_response.team_id
+        slack_user_id = slack_oauth_access_response.user_id
+        installer = session.query(User).filter(
+            User.agent_slack_team_id == slack_team_id,
+            User.slack_user_id == slack_user_id).one_or_none()
+        return installer is not None
 
     @staticmethod
     def _create_installer(slack_oauth_access_response, session):

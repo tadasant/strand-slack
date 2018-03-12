@@ -8,10 +8,7 @@ from src.utilities.database import Base
 
 
 class AgentStatus(PythonEnum):
-    INITIATED = 'INITIATED'
-    AUTHENTICATED = 'AUTHENTICATED'
     ACTIVE = 'ACTIVE'
-    PAUSED = 'PAUSED'
     INACTIVE = 'INACTIVE'
 
 
