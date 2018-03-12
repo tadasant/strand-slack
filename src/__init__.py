@@ -1,6 +1,6 @@
 from http.__init__ import HTTPStatus
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, current_app
 from marshmallow import ValidationError
 
 from src.blueprints import slack, configure
@@ -61,6 +61,16 @@ def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, s
 def init_wrappers(app, strand_api_client, SlackClientClass):
     app.strand_api_client_wrapper = StrandApiClientWrapper(strand_api_client=strand_api_client)
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
+
+
+def get_slack_client_wrapper() -> SlackClientWrapper:
+    """Returns the wrapper from init_wrappers"""
+    return current_app.slack_client_wrapper
+
+
+def get_strand_api_client_wrapper() -> StrandApiClientWrapper:
+    """Returns the wrapper from init_wrappers"""
+    return current_app.strand_api_client_wrapper
 
 
 def init_authentication(app, slack_verification_tokens, strand_api_verification_token):
