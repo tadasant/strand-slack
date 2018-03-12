@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from flask import url_for
 
@@ -8,20 +10,23 @@ class TestInstall(TestInstallFixtures):
     """Test the flow for a user installing the Slack application (/install)"""
 
     target_endpoint = 'install'
+    default_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-    def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access):
+    def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access, client, slack_client_class, mocker):
         target_url = url_for(endpoint=self.target_endpoint)
         s = slack_oauth_access
-        print(s.code)
-        # fixtures: seed Slack w/ code response
+        payload = {'code': s.code}
+        mocker.spy(slack_client_class, 'api_call')
 
-        # hit /install endpoint with a code
-        # assert that the slack handshake happens (the right oa
+        client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+
+        # outcome = wait_until(condition=lambda: db.get_user_count == 1)
+        # assert outcome, 'Expected installer to have been added to db'
+
+        assert slack_client_class.api_call.call_args[1]['code'] == s.code
         # assert that API is hit with a new team (using the seeded slack team id)
         # assert that a new agent is added to DB w/ new team ID
         # assert that new installer is added to DB
-        assert True
-        pass
 
     def test_install_existing_agent_new_user_with_valid_code(self):
         # fixtures: seed DB with existing agent, Slack w/ code response
