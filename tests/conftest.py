@@ -4,15 +4,14 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src.utilities.logging import get_logger
 from src.config import config
-from tests.factories.slackfactories import InteractiveComponentRequestFactory
-from tests.testresources.TestStrandApiClient import TestStrandApiClient
+from src.utilities.logging import get_logger
 from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
+from tests.testresources.TestStrandApiClient import TestStrandApiClient
 from tests.utils import wait_until
+from tests.factories.slackfactories import SlackOauthAccessResponseFactory
 
-register(InteractiveComponentRequestFactory)
-
+register(SlackOauthAccessResponseFactory)
 
 # Maintenance
 

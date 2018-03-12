@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.slack.responses.SlackMessageModel import SlackMessageModel
+from src.models.slack.outgoing.SlackMessageModel import SlackMessageModel
 
 
 class SlackMessage(SlackMessageModel):

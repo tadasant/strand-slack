@@ -1,17 +1,20 @@
 import factory.fuzzy
+from pytest_factoryboy import register
 
-from src.models.slack.elements.SlackChannel import SlackChannel
-from src.models.slack.elements.SlackTeam import SlackTeam
-from src.models.slack.elements.SlackUser import SlackUser
-from src.models.slack.requests.SlackEventRequest import SlackEventRequest
-from src.models.slack.requests.SlackInteractiveComponentRequest import SlackInteractiveComponentRequest
-from src.models.slack.requests.SlackSlashCommandRequest import SlackSlashCommandRequest
 from src.models.slack.elements.SlackAction import SlackAction
+from src.models.slack.elements.SlackBot import SlackBot
+from src.models.slack.elements.SlackChannel import SlackChannel
 from src.models.slack.elements.SlackEvent import SlackEvent
 from src.models.slack.elements.SlackFile import SlackFile
 from src.models.slack.elements.SlackMessage import SlackMessage
 from src.models.slack.elements.SlackOption import SlackOption
 from src.models.slack.elements.SlackSubmission import SlackSubmission
+from src.models.slack.elements.SlackTeam import SlackTeam
+from src.models.slack.elements.SlackUser import SlackUser
+from src.models.slack.requests.SlackEventRequest import SlackEventRequest
+from src.models.slack.requests.SlackInteractiveComponentRequest import SlackInteractiveComponentRequest
+from src.models.slack.requests.SlackSlashCommandRequest import SlackSlashCommandRequest
+from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponse
 
 
 class MessageFactory(factory.Factory):
@@ -91,6 +94,14 @@ class EventFactory(factory.Factory):
     file = factory.SubFactory(FileFactory)
 
 
+class SlackBotFactory(factory.Factory):
+    class Meta:
+        model = SlackBot
+
+    bot_user_id = factory.Faker('bban')
+    bot_access_token = factory.Faker('md5')
+
+
 #  TOP LEVEL
 
 class InteractiveComponentRequestFactory(factory.Factory):
@@ -126,3 +137,15 @@ class EventRequestFactory(factory.Factory):
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
     event = factory.SubFactory(EventFactory)
+
+
+@register
+class SlackOauthAccessResponseFactory(factory.Factory):
+    class Meta:
+        model = SlackOauthAccessResponse
+
+    access_token = factory.Faker('md5')
+    scope = factory.Faker('sentence')
+    team_name = factory.Faker('last_name')
+    team_id = factory.Faker('bban')
+    bot = factory.SubFactory(SlackBotFactory)
