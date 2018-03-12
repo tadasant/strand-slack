@@ -1,3 +1,5 @@
+import json
+
 from src.utilities.logging import get_logger
 
 SlackRepository = {
@@ -17,5 +19,7 @@ class TestSlackClient:
 
     def api_call(self, method, *args, **kwargs):
         if method == 'oauth.access':
-            return {'ok': True, **SlackRepository['oauth_access_responses_by_code'][kwargs.get('code')]}
+            return {
+                'ok': True, **json.loads(SlackRepository['oauth_access_responses_by_code'][kwargs.get('code')].to_json())
+            }
         return {'ok': False}

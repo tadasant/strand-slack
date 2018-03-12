@@ -1,5 +1,6 @@
-from src import get_slack_client_wrapper
 from src.commands.Command import Command
+from src.models.domain.Agent import Agent
+from src.utilities.database import db_session
 
 
 class InstallApplicationCommand(Command):
@@ -14,45 +15,49 @@ class InstallApplicationCommand(Command):
         6) Regardless of situation, User is sent a welcome message
     """
 
-    def __init__(self, code):
-        super().__init__()
+    def __init__(self, code, slack_client_wrapper):
+        super().__init__(slack_client_wrapper=slack_client_wrapper)
         self.code = code
 
-    def execute(self):
+    @db_session
+    def execute(self, session):
         self.logger.debug(f'Installing application with oauth code {self.code}')
-        slack_oauth_access_response = get_slack_client_wrapper().submit_oauth_code(code=self.code)
-        # TODO with db session
-        if self._does_agent_exist(slack_team_id=slack_oauth_access_response.team_id):
-            if self._does_installer_exist(slack_user_id=slack_oauth_access_response.user_id):
-                self._update_installer(slack_oauth_access_response=slack_oauth_access_response)
+        slack_oauth_access_response = self.slack_client_wrapper.submit_oauth_code(code=self.code)
+
+        if self._does_agent_exist(slack_team_id=slack_oauth_access_response.team_id, session=session):
+            if self._does_installer_exist(slack_user_id=slack_oauth_access_response.user_id, session=session):
+                self._update_installer(slack_oauth_access_response=slack_oauth_access_response, session=session)
             else:
-                self._create_installer(slack_oauth_access_response=slack_oauth_access_response)
+                self._create_installer(slack_oauth_access_response=slack_oauth_access_response, session=session)
         else:
-            self._create_agent(slack_oauth_access_response=slack_oauth_access_response)
-            self._create_installer(slack_oauth_access_response=slack_oauth_access_response)
+            self._create_agent(slack_oauth_access_response=slack_oauth_access_response, session=session)
+            self._create_installer(slack_oauth_access_response=slack_oauth_access_response, session=session)
+
         self._send_installer_welcome_message(slack_team_id=slack_oauth_access_response.team_id,
                                              slack_user_id=slack_oauth_access_response.user_id)
 
-    def _does_agent_exist(self, slack_team_id):
+    @staticmethod
+    def _does_agent_exist(slack_team_id, session):
+        agents = session.query(Agent).filter(Agent.slack_team_id == slack_team_id).all()
+        assert len(agents) <= 1, 'Cannot be more than one agent for a slack team'
+        return len(agents) == 1
+
+    def _does_installer_exist(self, slack_user_id, session):
         # TODO
         pass
 
-    def _does_installer_exist(self, slack_user_id):
+    def _update_installer(self, slack_oauth_access_response, session):
         # TODO
         pass
 
-    def _update_installer(self, slack_oauth_access_response):
+    def _create_installer(self, slack_oauth_access_response, session):
         # TODO
         pass
 
-    def _create_installer(self, slack_oauth_access_response):
-        # TODO
-        pass
-
-    def _create_agent(self, slack_oauth_access_response):
+    def _create_agent(self, slack_oauth_access_response, session):
         # TODO
         pass
 
     def _send_installer_welcome_message(self, slack_team_id, slack_user_id):
-        get_slack_client_wrapper().send_dm_to_user(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
-                                                   text='Successfully installed Strand!')
+        self.slack_client_wrapper.send_dm_to_user(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
+                                                  text='Successfully installed Strand!')

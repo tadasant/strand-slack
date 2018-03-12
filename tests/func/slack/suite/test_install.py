@@ -1,9 +1,11 @@
 import json
+import threading
 
 import pytest
 from flask import url_for
 
 from tests.func.TestInstallFixtures import TestInstallFixtures
+from tests.utils import wait_until, wait_for_extra_threads_to_die
 
 
 class TestInstall(TestInstallFixtures):
@@ -20,9 +22,7 @@ class TestInstall(TestInstallFixtures):
 
         client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
-        # outcome = wait_until(condition=lambda: db.get_user_count == 1)
-        # assert outcome, 'Expected installer to have been added to db'
-
+        assert wait_for_extra_threads_to_die(timeout=100), 'Extra threads timed out'
         assert slack_client_class.api_call.call_args[1]['code'] == s.code
         # assert that API is hit with a new team (using the seeded slack team id)
         # assert that a new agent is added to DB w/ new team ID

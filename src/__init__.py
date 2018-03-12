@@ -63,16 +63,6 @@ def init_wrappers(app, strand_api_client, SlackClientClass):
     app.slack_client_wrapper = SlackClientWrapper(SlackClientClass=SlackClientClass)
 
 
-def get_slack_client_wrapper() -> SlackClientWrapper:
-    """Returns the wrapper from init_wrappers"""
-    return current_app.slack_client_wrapper
-
-
-def get_strand_api_client_wrapper() -> StrandApiClientWrapper:
-    """Returns the wrapper from init_wrappers"""
-    return current_app.strand_api_client_wrapper
-
-
 def init_authentication(app, slack_verification_tokens, strand_api_verification_token):
     app.slack_verification_tokens = slack_verification_tokens
     app.strand_api_verification_token = strand_api_verification_token

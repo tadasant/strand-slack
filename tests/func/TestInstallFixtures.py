@@ -1,8 +1,10 @@
+import json
 from collections import namedtuple
 from typing import NamedTuple
 
 import pytest
 
+from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponse
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.testresources.TestSlackClient import SlackRepository, clear_slack_state
 
@@ -20,7 +22,7 @@ class TestInstallFixtures:
         fake_code = str(PrimitiveFaker('md5'))
 
         # Plant fake response in Slack state
-        SlackRepository['oauth_access_responses_by_code'] = fake_slack_oauth_access_response
+        SlackRepository['oauth_access_responses_by_code'][fake_code] = fake_slack_oauth_access_response
 
         yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response)
         clear_slack_state(keys=['oauth_access_responses_by_code'])
