@@ -11,6 +11,7 @@
   "CLIENT_ID": "some_random_id",
   "CLIENT_SECRET": "some_random_secret",
   "DB": {
-    "DIALECT": "sqlite"
+    "DIALECT": "sqlite",
+    "DATABASE": "pytest-tmp/local.db"
   }
 }

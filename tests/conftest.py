@@ -51,6 +51,9 @@ def app(strand_api_client_factory, slack_client_class):
     app.testing = True
     return app
 
+# @pytest.fixture(scope='session', autouse=True)
+# def db():
+
 
 # Wrappers & Clients
 
