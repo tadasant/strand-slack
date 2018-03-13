@@ -6,6 +6,11 @@ StrandRepository = {
 }
 
 
+def clear_strand_state(keys):
+    for key in keys:
+        StrandRepository[key] = {}
+
+
 class TestStrandApiClient:
     def __init__(self, **kwargs):
         self.logger = get_logger('TestCoreApiClient')
@@ -25,8 +30,12 @@ class TestStrandApiClient:
             return {'data': {'createTeam': {'team': {
                 'id': '3249838',
             }}}}
-        elif 'createUser' in operation_definition:
-            return {'data': {'createUser': {'user': {
+        elif 'addUserToTeam' in operation_definition:
+            return {'data': {'addUserToTeam': {'user': {
+                'id': '482782',
+            }}}}
+        elif 'createUserWithTeam' in operation_definition:
+            return {'data': {'createUserWithTeam': {'user': {
                 'id': '84338',
             }}}}
         return {'errors': [{'message': 'Some other error'}]}

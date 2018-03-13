@@ -58,7 +58,25 @@ class StrandApiClientWrapper:
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandUserSchema,
-            path_to_object=['data', 'createUser', 'user']
+            path_to_object=['data', 'createUserWithTeam', 'user']
+        )
+
+    def add_user_to_team(self, id, team_id):
+        operation_definition = f'''
+                {{
+                    addUserToTeam(input: {{id: "{id}",
+                                           team_id: "{team_id}"}}) {{
+                      user {{
+                        id
+                      }}
+                    }}
+                }}
+                '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=StrandUserSchema,
+            path_to_object=['data', 'addUserToTeam', 'user']
         )
 
     def create_team(self, name):

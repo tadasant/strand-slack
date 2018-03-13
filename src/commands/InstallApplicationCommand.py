@@ -1,8 +1,8 @@
 from threading import Thread
 
 from src.commands.Command import Command
-from src.commands.CreateStrandTeamAndUserIfNotExistsCommand import CreateStrandTeamAndUserIfNotExistsCommand
-from src.commands.CreateStrandUserIfNotExistsCommand import CreateStrandUserIfNotExistsCommand
+from src.commands.CreateStrandTeamWithUserCommand import CreateStrandTeamWithUserCommand
+from src.commands.AddStrandUserToTeamCommand import AddStrandUserToTeamCommand
 from src.models.domain.Agent import Agent, AgentStatus
 from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
@@ -52,7 +52,7 @@ class InstallApplicationCommand(Command):
         session.commit()
 
         if not does_agent_exist:
-            command = CreateStrandTeamAndUserIfNotExistsCommand(
+            command = CreateStrandTeamWithUserCommand(
                 slack_team_id=slack_oauth_access_response.team_id,
                 slack_team_name=slack_oauth_access_response.team_name,
                 slack_user_id=slack_oauth_access_response.user_id,
@@ -61,7 +61,7 @@ class InstallApplicationCommand(Command):
             )
             Thread(target=command.execute, daemon=True).start()
         elif not does_installer_exist:
-            command = CreateStrandUserIfNotExistsCommand(
+            command = AddStrandUserToTeamCommand(
                 slack_team_id=slack_oauth_access_response.team_id,
                 slack_user_id=slack_oauth_access_response.user_id,
                 strand_team_id=self._get_strand_team_id(slack_oauth_access_response=slack_oauth_access_response,

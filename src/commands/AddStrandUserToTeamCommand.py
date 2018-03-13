@@ -3,7 +3,7 @@ from src.models.domain.User import User
 from src.utilities.database import db_session
 
 
-class CreateStrandUserIfNotExistsCommand(Command):
+class AddStrandUserToTeamCommand(Command):
     """
         1) Grab additional user info from Slack
         2) Delegate to wrapper to create user with retrieved info
@@ -26,8 +26,11 @@ class CreateStrandUserIfNotExistsCommand(Command):
         first_name = real_name_tokens[0]
         last_name = real_name_tokens[-1] if len(real_name_tokens) > 1 else ''
         strand_user = self.strand_api_client_wrapper.get_user_by_email(email=slack_user.profile.email)
-        if not strand_user:
-            # Strand API has not seen this user email before
+        if strand_user:
+            # Strand API has seen this user email before
+            strand_user = self.strand_api_client_wrapper.add_user_to_team(id=strand_user.id,
+                                                                          team_id=self.strand_team_id)
+        else:
             strand_user = self.strand_api_client_wrapper.create_user_with_team(email=slack_user.profile.email,
                                                                                username=slack_user.profile.display_name,
                                                                                first_name=first_name,

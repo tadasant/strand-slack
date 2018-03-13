@@ -83,7 +83,7 @@ class TestInstall(TestInstallFixtures):
                                                              baseline_thread_count):
         """
             GIVEN: new agent, new user, existing strand user
-            OUTPUT: new Agent, new User, new Installation, new StrandTeam
+            OUTPUT: new Agent, new User, new Installation, new StrandTeam, new StrandUser - StrandTeam relationship
         """
         # `slack_oauth_response_and_user_in_strand` sets up state with an existing strand user
         target_url = url_for(endpoint=self.target_endpoint)
@@ -103,13 +103,13 @@ class TestInstall(TestInstallFixtures):
             call_args_list=slack_client_class.api_call.call_args_list
         )
         assert 'createTeam' in strand_api_client.mutate.call_args_list[0][1]['operation_definition']
-        assert len(strand_api_client.mutate.call_args_list) == 1
+        assert 'addUserToTeam' in strand_api_client.mutate.call_args_list[1][1]['operation_definition']
+        assert len(strand_api_client.mutate.call_args_list) == 2
         assert db_session.query(Agent).filter(Agent.slack_team_id == f.slack_oauth_access_response.team_id).one()
         assert db_session.query(User).filter(User.agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
         assert db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
 
-    @pytest.mark.skip
     def test_install_existing_agent_new_user_existing_strand_user(
             self, slack_oauth_response_and_user_in_strand_and_agent_in_db, client, slack_client_class,
             strand_api_client, db_session, mocker, baseline_thread_count

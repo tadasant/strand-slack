@@ -8,7 +8,7 @@ from src.models.domain.Installation import Installation
 from src.models.domain.User import User
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.testresources.TestSlackClient import SlackRepository, clear_slack_state
-from tests.testresources.TestStrandApiClient import StrandRepository
+from tests.testresources.TestStrandApiClient import StrandRepository, clear_strand_state
 
 
 @pytest.mark.usefixtures('app')
@@ -59,9 +59,9 @@ class TestInstallFixtures:
                                                 slack_user_factory) -> NamedTuple:
         """
             Set TestSlackClient to contain a random slack oauth response with the same user email in Strand's state.
-            Yield namedtuple(code, slack_oauth_response, strand_user_email)
+            Yield namedtuple(code, slack_oauth_response)
         """
-        response = namedtuple('response', 'code slack_oauth_access_response strand_user_email')
+        response = namedtuple('response', 'code slack_oauth_access_response')
         fake_slack_oauth_access_response = slack_oauth_access_response_factory()
         fake_code = str(PrimitiveFaker('md5'))
 
@@ -74,7 +74,39 @@ class TestInstallFixtures:
         # Plant fake user in Strand state (same email as the requestor)
         StrandRepository['users_by_email'][fake_slack_user.profile.email] = {'id': str(PrimitiveFaker('ean8'))}
 
-        yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response,
-                       strand_user_email=fake_slack_user.profile.email)
+        yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response)
         clear_slack_state(keys=['oauth_access_responses_by_code', 'users_by_slack_user_id'])
-        # TODO clear strand state
+        clear_strand_state(keys=['users_by_email'])
+
+    @pytest.fixture(scope='function')
+    def slack_oauth_response_and_user_in_strand_and_agent_in_db(self, slack_oauth_access_response_factory,
+                                                                slack_user_factory, db_session) -> NamedTuple:
+        """
+            Set TestSlackClient to contain a random slack oauth response with the same user email in Strand's state.
+            Also set an existing agent for the slack team in the db.
+            Yield namedtuple(code, slack_oauth_response)
+        """
+        response = namedtuple('response', 'code slack_oauth_access_response')
+        fake_slack_oauth_access_response = f = slack_oauth_access_response_factory()
+        fake_code = str(PrimitiveFaker('md5'))
+
+        # Plant fake response in Slack state
+        SlackRepository['oauth_access_responses_by_code'][fake_code] = fake_slack_oauth_access_response
+        # Plant fake user (same ID as the requestor) in Slack state
+        fake_slack_user = slack_user_factory()
+        fake_slack_user.id = f.user_id
+        SlackRepository['users_by_slack_user_id'][fake_slack_user.id] = fake_slack_user
+        # Plant fake user in Strand state (same email as the requestor)
+        StrandRepository['users_by_email'][fake_slack_user.profile.email] = {'id': str(PrimitiveFaker('ean8'))}
+        # Plant existing objects in DB
+        agent = Agent(slack_team_id=f.team_id, strand_team_id=0, status=AgentStatus.ACTIVE.name)
+        fake_user_id = str(PrimitiveFaker('bban'))
+        user = User(slack_user_id=fake_user_id, strand_user_id=0, agent_slack_team_id=f.team_id)
+        installation = Installation(access_token=f.access_token, scope=f.scope, installer_slack_user_id=fake_user_id,
+                                    installer_agent_slack_team_id=f.team_id)
+        db_session.add_all([agent, user, installation])
+        db_session.commit()
+
+        yield response(code=fake_code, slack_oauth_access_response=f)
+        clear_slack_state(keys=['oauth_access_responses_by_code', 'users_by_slack_user_id'])
+        clear_strand_state(keys=['users_by_email'])
