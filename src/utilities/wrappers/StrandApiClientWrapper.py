@@ -23,6 +23,7 @@ class StrandApiClientWrapper:
         )
 
     def get_user_by_email(self, email):
+        # TODO convert to create strand
         operation_definition = f'''
         {{
             getUserByEmail(email: "{email}") {{

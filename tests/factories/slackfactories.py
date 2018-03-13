@@ -1,5 +1,4 @@
 import factory.fuzzy
-from pytest_factoryboy import register
 
 from src.models.slack.elements.SlackAction import SlackAction
 from src.models.slack.elements.SlackBot import SlackBot
@@ -150,7 +149,6 @@ class EventRequestFactory(factory.Factory):
     event = factory.SubFactory(EventFactory)
 
 
-@register
 class SlackOauthAccessResponseFactory(factory.Factory):
     class Meta:
         model = SlackOauthAccessResponse

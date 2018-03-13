@@ -11,6 +11,8 @@ def clear_strand_state(keys):
         StrandRepository[key] = {}
 
 
+# TODO Optimization: use factories instead of hardcoded shapes in responses
+
 class TestStrandApiClient:
     def __init__(self, **kwargs):
         self.logger = get_logger('TestCoreApiClient')

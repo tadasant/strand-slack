@@ -23,12 +23,6 @@ def init_tempdir(tmpdir_factory):
     assert tmpdir_factory.getbasetemp()
 
 
-@pytest.fixture(scope='session')
-def client(app):
-    client = app.test_client()
-    return client
-
-
 @pytest.fixture(autouse=True)
 def wait_for_threads(baseline_thread_count):
     yield
@@ -48,7 +42,7 @@ def baseline_thread_count():
     return threading.active_count()
 
 
-# Core
+# Core application resources
 
 @pytest.fixture(scope='session')
 def app(strand_api_client_factory, slack_client_class):
@@ -57,6 +51,12 @@ def app(strand_api_client_factory, slack_client_class):
                      strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN'])
     app.testing = True
     return app
+
+
+@pytest.fixture(scope='session')
+def client(app):
+    client = app.test_client()
+    return client
 
 
 @pytest.fixture(scope='function', autouse=True)
