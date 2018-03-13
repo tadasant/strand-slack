@@ -47,7 +47,6 @@ class TestInstall(TestInstallFixtures):
         assert db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
 
-    @pytest.mark.skip
     def test_install_existing_agent_new_user(self, slack_oauth_response_and_agent_in_db, client, slack_client_class,
                                              strand_api_client, db_session, mocker, baseline_thread_count):
         """
