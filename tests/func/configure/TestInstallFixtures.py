@@ -9,7 +9,6 @@ from tests.testresources.TestStrandApiClient import StrandRepository, clear_stra
 from tests.utils.create_in_db import insert_agent_user_installation
 
 
-@pytest.mark.usefixtures('app')
 class TestInstallFixtures:
     @pytest.fixture(scope='function')
     def slack_oauth_access(self, slack_oauth_access_response_factory) -> NamedTuple:
