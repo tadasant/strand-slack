@@ -22,31 +22,32 @@ class StrandApiClientWrapper:
             retry=retry_if_exception_type(StrandApiClientException)
         )
 
-    def create_discussion(self, topic_id):
+    def get_user_by_email(self, email):
         # TODO convert to create strand
         operation_definition = f'''
         {{
-            createDiscussion(input: {{topicId: {topic_id}}}) {{
-              discussion {{
+            getUserByEmail(email: "{email}") {{
+              user {{
                 id
               }}
             }}
         }}
         '''
-        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+        response_body = self.standard_retrier.call(self.strand_api_client.query,
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
-            response_body=response_body, ObjectSchema=None,
-            path_to_object=['data', 'createDiscussion', 'discussion']
+            response_body=response_body, ObjectSchema=StrandUserSchema,
+            path_to_object=['data', 'user']
         )
 
-    def create_user(self, email, username, first_name, last_name):
+    def create_user_with_team(self, email, username, first_name, last_name, team_id):
         operation_definition = f'''
                 {{
-                    createUser(input: {{email: "{email}",
+                    createUserWithTeam(input: {{email: "{email}",
                                         username: "{username}",
                                         first_name: "{first_name}",
-                                        last_name: "{last_name}"}}) {{
+                                        last_name: "{last_name}",
+                                        team_id: "{team_id}"}}) {{
                       user {{
                         id
                       }}
@@ -57,7 +58,25 @@ class StrandApiClientWrapper:
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandUserSchema,
-            path_to_object=['data', 'createUser', 'user']
+            path_to_object=['data', 'createUserWithTeam', 'user']
+        )
+
+    def add_user_to_team(self, id, team_id):
+        operation_definition = f'''
+                {{
+                    addUserToTeam(input: {{id: "{id}",
+                                           team_id: "{team_id}"}}) {{
+                      user {{
+                        id
+                      }}
+                    }}
+                }}
+                '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=StrandUserSchema,
+            path_to_object=['data', 'addUserToTeam', 'user']
         )
 
     def create_team(self, name):
@@ -83,6 +102,8 @@ class StrandApiClientWrapper:
         result_json = response_body
         for key in path_to_object:
             result_json = result_json[key]
+        if result_json is None:
+            return None
         if many:
             return [ObjectSchema().load(dict_keys_camel_case_to_underscores(x)).data for x in result_json]
         return ObjectSchema().load(dict_keys_camel_case_to_underscores(result_json)).data

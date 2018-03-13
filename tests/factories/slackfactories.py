@@ -7,6 +7,7 @@ from src.models.slack.elements.SlackEvent import SlackEvent
 from src.models.slack.elements.SlackFile import SlackFile
 from src.models.slack.elements.SlackMessage import SlackMessage
 from src.models.slack.elements.SlackOption import SlackOption
+from src.models.slack.elements.SlackProfile import SlackProfile
 from src.models.slack.elements.SlackSubmission import SlackSubmission
 from src.models.slack.elements.SlackTeam import SlackTeam
 from src.models.slack.elements.SlackUser import SlackUser
@@ -46,11 +47,21 @@ class TeamFactory(factory.Factory):
     id = factory.Faker('bban')
 
 
-class UserFactory(factory.Factory):
+class SlackProfileFactory(factory.Factory):
+    class Meta:
+        model = SlackProfile
+
+    real_name = factory.Faker('name')
+    display_name = factory.Faker('name')
+    email = factory.Faker('free_email')
+
+
+class SlackUserFactory(factory.Factory):
     class Meta:
         model = SlackUser
 
     id = factory.Faker('bban')
+    profile = factory.SubFactory(SlackProfileFactory)
 
 
 class ChannelFactory(factory.Factory):
@@ -110,7 +121,7 @@ class InteractiveComponentRequestFactory(factory.Factory):
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
     team = factory.SubFactory(TeamFactory)
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(SlackUserFactory)
     channel = factory.SubFactory(ChannelFactory)
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')
