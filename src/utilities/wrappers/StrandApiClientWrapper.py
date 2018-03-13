@@ -1,6 +1,7 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.models.exceptions.WrapperException import WrapperException
+from src.models.strand.StrandTeam import StrandTeamSchema
 from src.models.strand.StrandUser import StrandUserSchema
 from src.models.strand.utils import dict_keys_camel_case_to_underscores
 from src.utilities.clients.StrandApiClient import StrandApiClientException
@@ -57,6 +58,23 @@ class StrandApiClientWrapper:
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandUserSchema,
             path_to_object=['data', 'createUser', 'user']
+        )
+
+    def create_team(self, name):
+        operation_definition = f'''
+                {{
+                    createTeam(input: {{name: "{name}"}}) {{
+                      team {{
+                        id
+                      }}
+                    }}
+                }}
+                '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=StrandTeamSchema,
+            path_to_object=['data', 'createTeam', 'team']
         )
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
