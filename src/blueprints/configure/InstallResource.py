@@ -14,7 +14,8 @@ class InstallResource(Resource):
         # Intentional: Omitting schema validation due to simplicity
         if 'code' in args:
             install_translator = InstallTranslator(code=args['code'],
-                                                   slack_client_wrapper=current_app.slack_client_wrapper)
+                                                   slack_client_wrapper=current_app.slack_client_wrapper,
+                                                   strand_api_client_wrapper=current_app.strand_api_client_wrapper)
             Thread(target=install_translator.translate, daemon=True).start()
             # TODO Wait until DB has new entry or timeout. Future optimization: replace with socket.
             return {}, HTTPStatus.OK

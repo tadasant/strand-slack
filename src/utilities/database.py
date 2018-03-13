@@ -65,7 +65,7 @@ def session_scope():
 
 
 def db_session(func):
-    """Decorator to pass a session into decorated function"""
+    """Decorator to pass a `session` into decorated function"""
 
     def decorated_function(*args, **kwargs):
         with session_scope() as session:
