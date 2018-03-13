@@ -1,4 +1,4 @@
-from models.exceptions.SLAException import SLAException
+from src.models.exceptions.SLAException import SLAException
 
 
 class SlackCommunicationException(SLAException):

@@ -3,7 +3,7 @@ from http.__init__ import HTTPStatus
 from flask import Flask, jsonify
 from marshmallow import ValidationError
 
-from models.exceptions.SLAException import SLAException
+from src.models.exceptions.SLAException import SLAException
 from src.blueprints import slack, configure
 from src.models.exceptions.WrapperException import WrapperException
 from src.utilities.database import metadata, engine
