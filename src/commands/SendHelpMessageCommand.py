@@ -1,5 +1,5 @@
 from src.commands.Command import Command
-from src.models.slack.responses.formats.messages import SlackMessageHelp
+from src.models.slack.outgoing.formats.messages import SlackMessageHelp
 
 
 class SendHelpMessageCommand(Command):

@@ -4,14 +4,16 @@ import pytest
 from pytest_factoryboy import register
 
 from src import create_app
-from src.utilities.logging import get_logger
 from src.config import config
-from tests.factories.slackfactories import InteractiveComponentRequestFactory
+from src.utilities.database import metadata, engine, Session
+from src.utilities.logging import get_logger
+from tests.factories.slackfactories import SlackOauthAccessResponseFactory, SlackUserFactory
+from tests.testresources.TestSlackClient import TestSlackClient
 from tests.testresources.TestStrandApiClient import TestStrandApiClient
-from tests.testresources.TestSlackClient import TestSlackClient, clear_slack_state
-from tests.utils import wait_until
+from tests.utils.asserting import wait_until
 
-register(InteractiveComponentRequestFactory)
+register(SlackOauthAccessResponseFactory)
+register(SlackUserFactory)
 
 
 # Maintenance
@@ -28,9 +30,9 @@ def client(app):
 
 
 @pytest.fixture(autouse=True)
-def wait_for_threads():
+def wait_for_threads(baseline_thread_count):
     yield
-    wait_until(condition=lambda: len(threading.enumerate()) <= 4, timeout=5)
+    wait_until(condition=lambda: threading.active_count() <= baseline_thread_count, timeout=5)
 
 
 @pytest.fixture(autouse=True)
@@ -39,6 +41,11 @@ def log_test_start():
     logger.info('******** TEST START ********')
     yield
     logger.info('******** TEST END ********')
+
+
+@pytest.fixture(scope='function')
+def baseline_thread_count():
+    return threading.active_count()
 
 
 # Core
@@ -52,6 +59,15 @@ def app(strand_api_client_factory, slack_client_class):
     return app
 
 
+@pytest.fixture(scope='function', autouse=True)
+def db_session():
+    metadata.create_all(engine)
+    session = Session()
+    yield session
+    session.close()
+    metadata.drop_all(engine)
+
+
 # Wrappers & Clients
 
 @pytest.fixture(scope='session')
@@ -61,17 +77,7 @@ def strand_api_client_factory():
 
 @pytest.fixture
 def strand_api_client(strand_api_client_factory):
-    strand_api_client_factory.clear_responses()
     yield strand_api_client_factory
-    strand_api_client_factory.clear_responses()
-
-
-@pytest.fixture
-def slack_client():
-    """Simulates Slack's actual state. Include fixture if using Slack's returned values."""
-    clear_slack_state()
-    yield
-    clear_slack_state()
 
 
 @pytest.fixture(scope='session')

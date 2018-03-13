@@ -8,7 +8,10 @@
   "PORT": 5004,
   "SLACK_VERIFICATION_TOKENS": ["sOmERAndOMComBoOfLettERSAND7UMB3rs", "raNdomCombo"],
   "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo",
+  "CLIENT_ID": "some_random_id",
+  "CLIENT_SECRET": "some_random_secret",
   "DB": {
-    "DIALECT": "sqlite"
+    "DIALECT": "sqlite",
+    "DATABASE": "pytest-tmp/local.db"
   }
 }

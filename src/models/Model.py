@@ -1,3 +1,6 @@
+import json
+
+
 class Model:
     def __repr__(self):
         return f'<{self.__class__}({self.__dict__})>'
@@ -7,3 +10,7 @@ class Model:
             # All values are set, sufficient to determine equality
             return self.__dict__ == other.__dict__
         return False
+
+    def to_json(self):
+        """Override this if there are non-primitive attributes"""
+        return json.dumps(vars(self))

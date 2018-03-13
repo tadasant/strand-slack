@@ -1,8 +1,12 @@
 import requests
 from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type
 
-from src.utilities.logging import get_logger
+from src.config import config
 from src.models.exceptions.WrapperException import WrapperException
+from src.models.slack.elements.SlackUser import SlackUserSchema
+from src.models.slack.responses import SlackOauthAccessResponse
+from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponseSchema
+from src.utilities.logging import get_logger
 
 
 # TODO move deserialization to this class instead of in Commands
@@ -57,7 +61,8 @@ class SlackClientWrapper:
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)
         self._validate_response_ok(response, 'get_user_info', slack_team_id, slack_user_id)
-        return response['user']
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackUserSchema,
+                                               path_to_object=['user'])
 
     def send_message(self, slack_team_id, slack_channel_id, text, attachments=None):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
@@ -65,8 +70,18 @@ class SlackClientWrapper:
                                               channel=slack_channel_id, text=text, attachments=attachments)
         self._validate_response_ok(response, 'send_message', slack_team_id, slack_channel_id, text)
 
-    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False, **kwargs):
-        """Deserializes response_body[**path_to_object] using ObjectSchema"""
+    def submit_oauth_code(self, code) -> SlackOauthAccessResponse:
+        slack_client = self.SlackClientClass(token=None)
+        # Intentional: pulling from config directly to avoid long pass-through
+        response = self.standard_retrier.call(slack_client.api_call, method='oauth.access', code=code,
+                                              client_id=config['CLIENT_ID'], client_secret=config['CLIENT_SECRET'])
+        self._validate_response_ok(response, 'submit_oauth_code', code)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackOauthAccessResponseSchema)
+
+    def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object=None, many=False, **kwargs):
+        """Deserializes response_body[**path_to_object] merged with **kwargs using ObjectSchema"""
+        if path_to_object is None:
+            path_to_object = []
         result_json = response_body
         for key in path_to_object:
             result_json = result_json[key]

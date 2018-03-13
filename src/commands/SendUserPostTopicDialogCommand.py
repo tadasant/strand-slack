@@ -1,5 +1,5 @@
 from src.commands.Command import Command
-from src.models.slack.responses.formats.dialogs import POST_TOPIC_DIALOG_WITH_CHANNEL_OPTION
+from src.models.slack.outgoing.formats.dialogs import POST_TOPIC_DIALOG_WITH_CHANNEL_OPTION
 
 
 class SendUserPostTopicDialogCommand(Command):

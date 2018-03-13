@@ -1,8 +1,7 @@
 import factory
 
 from src.models.domain.Installation import Installation
-from src.models.domain.Agent import Agent
-from src.models.domain.AgentStatus import AgentStatus
+from src.models.domain.Agent import Agent, AgentStatus
 
 
 class InstallationFactory(factory.Factory):

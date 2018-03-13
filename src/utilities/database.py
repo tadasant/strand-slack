@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Optional
 
 from sqlalchemy import create_engine, MetaData
@@ -25,14 +26,14 @@ def __construct_engine_url(dialect: str, driver: Optional[str], username: Option
     return result
 
 
-def db_cfg(key: str):
+def __db_cfg(key: str):
     return config['DB'][key] if key in config['DB'] else None
 
 
-__engine_url = __construct_engine_url(dialect=db_cfg('DIALECT'), driver=db_cfg('DRIVER'),
-                                      username=db_cfg('USERNAME'), password=db_cfg('PASSWORD'),
-                                      host=db_cfg('HOST'), port=db_cfg('PORT'),
-                                      database=db_cfg('DATABASE'))
+__engine_url = __construct_engine_url(dialect=__db_cfg('DIALECT'), driver=__db_cfg('DRIVER'),
+                                      username=__db_cfg('USERNAME'), password=__db_cfg('PASSWORD'),
+                                      host=__db_cfg('HOST'), port=__db_cfg('PORT'),
+                                      database=__db_cfg('DATABASE'))
 
 # Import metadata, engine for creating tables (app startup)
 metadata = MetaData()
@@ -46,3 +47,28 @@ Base = declarative_base(metadata=metadata)
 # Import Session to create SQLAlchemy Sessions for database interactions. Can't be passed among threads. (runtime)
 # http://docs.sqlalchemy.org/en/latest/orm/contextual.html
 Session = scoped_session(__session_factory)
+
+
+# Basic session scope. Use as `with session_scope() as session: ...`
+# http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
+@contextmanager
+def session_scope():
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+
+def db_session(func):
+    """Decorator to pass a `session` into decorated function"""
+
+    def decorated_function(*args, **kwargs):
+        with session_scope() as session:
+            func(*args, **kwargs, session=session)
+
+    return decorated_function
