@@ -43,10 +43,12 @@ class TestInstallFixtures:
         SlackRepository['oauth_access_responses_by_code'][fake_code] = fake_slack_oauth_access_response
         # Plant existing objects in DB
         agent = Agent(slack_team_id=f.team_id, strand_team_id=0, status=AgentStatus.ACTIVE.name)
-        user = User(slack_user_id=f.user_id, strand_user_id=0, agent_slack_team_id=f.team_id)
-        installation = Installation(access_token=f.access_token, scope=f.scope, installer_slack_user_id=f.user_id,
+        fake_user_id = str(PrimitiveFaker('bban'))
+        user = User(slack_user_id=fake_user_id, strand_user_id=0, agent_slack_team_id=f.team_id)
+        installation = Installation(access_token=f.access_token, scope=f.scope, installer_slack_user_id=fake_user_id,
                                     installer_agent_slack_team_id=f.team_id)
         db_session.add_all([agent, user, installation])
+        db_session.commit()
 
         yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response)
         clear_slack_state(keys=['oauth_access_responses_by_code'])

@@ -110,7 +110,7 @@ class InstallApplicationCommand(Command):
         slack_user_id = slack_oauth_access_response.user_id
         installation = session.query(Installation).filter(
             Installation.installer_slack_user_id == slack_user_id,
-            Installation.installer.agent_slack_team_id == slack_team_id).one_or_none()
+            Installation.installer_agent_slack_team_id == slack_team_id).one_or_none()
         return installation is not None
 
     @staticmethod
@@ -126,7 +126,7 @@ class InstallApplicationCommand(Command):
         installation = session.query(Installation).filter(
             Installation.installer_slack_user_id == slack_oauth_access_response.user_id,
             Installation.installer_agent_slack_team_id == slack_oauth_access_response.team_id).one()
-        installation.access_token = slack_oauth_access_response.acess_token
+        installation.access_token = slack_oauth_access_response.access_token
         installation.scope = slack_oauth_access_response.scope
 
     def _send_installer_welcome_message(self, slack_oauth_access_response):

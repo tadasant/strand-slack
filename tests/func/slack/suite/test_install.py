@@ -54,7 +54,7 @@ class TestInstall(TestInstallFixtures):
 
         client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
-        assert wait_for_extra_threads_to_die(baseline_count=baseline_thread_count), 'Extra threads timed out'
+        assert wait_for_extra_threads_to_die(baseline_count=baseline_thread_count, timeout=100), 'Extra threads timed out'
         assert_values_in_call_args_list(
             params_to_expecteds=[
                 {'method': 'oauth.access', 'code': f.code},  # Call Slack OAuth
