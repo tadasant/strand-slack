@@ -10,7 +10,7 @@ class CreateStrandTeamWithUserCommand(Command):
     """
         1) Delegate to wrapper to create team with `team_id` and `team_name`
         2) Update Agent.strand_team_id
-        3) Delegate to command for creating user
+        3) Delegate to command for adding user to the new team
     """
 
     def __init__(self, slack_team_id, slack_team_name, slack_user_id, strand_api_client_wrapper, slack_client_wrapper):

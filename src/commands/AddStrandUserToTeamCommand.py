@@ -6,7 +6,7 @@ from src.utilities.database import db_session
 class AddStrandUserToTeamCommand(Command):
     """
         1) Grab additional user info from Slack
-        2) Delegate to wrapper to create user with retrieved info
+        2) Either create user with the team, or just attach existing user to the team
         3) Update User.strand_user_id
     """
 
