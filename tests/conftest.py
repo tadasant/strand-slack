@@ -29,9 +29,9 @@ def client(app):
 
 
 @pytest.fixture(autouse=True)
-def wait_for_threads():
+def wait_for_threads(baseline_thread_count):
     yield
-    wait_until(condition=lambda: len(threading.enumerate()) <= 4, timeout=5)
+    wait_until(condition=lambda: threading.active_count() <= baseline_thread_count, timeout=5)
 
 
 @pytest.fixture(autouse=True)

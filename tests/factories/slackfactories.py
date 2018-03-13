@@ -150,4 +150,3 @@ class SlackOauthAccessResponseFactory(factory.Factory):
     team_id = factory.Faker('bban')
     bot = factory.SubFactory(SlackBotFactory)
     user_id = factory.Faker('bban')
-
