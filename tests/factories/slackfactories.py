@@ -139,7 +139,6 @@ class EventRequestFactory(factory.Factory):
     event = factory.SubFactory(EventFactory)
 
 
-@register
 class SlackOauthAccessResponseFactory(factory.Factory):
     class Meta:
         model = SlackOauthAccessResponse

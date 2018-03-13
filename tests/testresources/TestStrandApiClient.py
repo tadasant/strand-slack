@@ -1,6 +1,8 @@
 from src.utilities.logging import get_logger
 
 
+# TODO Optimization: use factories instead of hardcoded shapes in responses
+
 class TestStrandApiClient:
     def __init__(self, **kwargs):
         self.logger = get_logger('TestCoreApiClient')
