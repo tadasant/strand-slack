@@ -1,5 +1,4 @@
 import factory.fuzzy
-from pytest_factoryboy import register
 
 from src.models.slack.elements.SlackAction import SlackAction
 from src.models.slack.elements.SlackBot import SlackBot
