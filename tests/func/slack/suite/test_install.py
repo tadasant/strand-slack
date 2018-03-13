@@ -7,7 +7,7 @@ from src.models.domain.Agent import Agent
 from src.models.domain.Installation import Installation
 from src.models.domain.User import User
 from tests.func.TestInstallFixtures import TestInstallFixtures
-from tests.utils import wait_for_extra_threads_to_die, assert_values_in_call_args_list
+from tests.utils.asserting import wait_for_extra_threads_to_die, assert_values_in_call_args_list
 
 
 class TestInstall(TestInstallFixtures):

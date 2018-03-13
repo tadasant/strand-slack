@@ -10,7 +10,7 @@ from src.utilities.logging import get_logger
 from tests.factories.slackfactories import SlackOauthAccessResponseFactory, SlackUserFactory
 from tests.testresources.TestSlackClient import TestSlackClient
 from tests.testresources.TestStrandApiClient import TestStrandApiClient
-from tests.utils import wait_until
+from tests.utils.asserting import wait_until
 
 register(SlackOauthAccessResponseFactory)
 register(SlackUserFactory)
