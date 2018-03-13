@@ -3,7 +3,7 @@ from src.models.domain.User import User
 from src.utilities.database import db_session
 
 
-class CreateStrandUserCommand(Command):
+class CreateStrandUserIfNotExistsCommand(Command):
     """
         1) Grab additional user info from Slack
         2) Delegate to wrapper to create user with retrieved info
@@ -25,10 +25,13 @@ class CreateStrandUserCommand(Command):
         real_name_tokens = slack_user.profile.real_name.split(' ')
         first_name = real_name_tokens[0]
         last_name = real_name_tokens[-1] if len(real_name_tokens) > 1 else ''
-        strand_user = self.strand_api_client_wrapper.create_user(email=slack_user.profile.email,
-                                                                 username=slack_user.profile.display_name,
-                                                                 first_name=first_name,
-                                                                 last_name=last_name)
+        strand_user = self.strand_api_client_wrapper.get_user_by_email(email=slack_user.profile.email)
+        if not strand_user:
+            # Strand API has not seen this user email before
+            strand_user = self.strand_api_client_wrapper.create_user(email=slack_user.profile.email,
+                                                                     username=slack_user.profile.display_name,
+                                                                     first_name=first_name,
+                                                                     last_name=last_name)
         self._update_user(slack_user_id=self.slack_user_id, strand_user_id=strand_user.id, session=session)
 
     @staticmethod

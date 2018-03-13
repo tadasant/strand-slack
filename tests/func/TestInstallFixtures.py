@@ -8,6 +8,7 @@ from src.models.domain.Installation import Installation
 from src.models.domain.User import User
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.testresources.TestSlackClient import SlackRepository, clear_slack_state
+from tests.testresources.TestStrandApiClient import StrandRepository
 
 
 @pytest.mark.usefixtures('app')
@@ -33,7 +34,7 @@ class TestInstallFixtures:
         """
             Set TestSlackClient to contain a random slack oauth response with the corresponding agent in db.
             Also has an installer and installation in db.
-            Yield namedtuple(code, slack_oauth_response, agent_slack_team_id)
+            Yield namedtuple(code, slack_oauth_response)
         """
         response = namedtuple('response', 'code slack_oauth_access_response')
         fake_slack_oauth_access_response = f = slack_oauth_access_response_factory()
@@ -52,3 +53,28 @@ class TestInstallFixtures:
 
         yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response)
         clear_slack_state(keys=['oauth_access_responses_by_code'])
+
+    @pytest.fixture(scope='function')
+    def slack_oauth_response_and_user_in_strand(self, slack_oauth_access_response_factory,
+                                                slack_user_factory) -> NamedTuple:
+        """
+            Set TestSlackClient to contain a random slack oauth response with the same user email in Strand's state.
+            Yield namedtuple(code, slack_oauth_response, strand_user_email)
+        """
+        response = namedtuple('response', 'code slack_oauth_access_response strand_user_email')
+        fake_slack_oauth_access_response = slack_oauth_access_response_factory()
+        fake_code = str(PrimitiveFaker('md5'))
+
+        # Plant fake response in Slack state
+        SlackRepository['oauth_access_responses_by_code'][fake_code] = fake_slack_oauth_access_response
+        # Plant fake user (same ID as the requestor) in Slack state
+        fake_slack_user = slack_user_factory()
+        fake_slack_user.id = fake_slack_oauth_access_response.user_id
+        SlackRepository['users_by_slack_user_id'][fake_slack_user.id] = fake_slack_user
+        # Plant fake user in Strand state (same email as the requestor)
+        StrandRepository['users_by_email'][fake_slack_user.profile.email] = {'id': str(PrimitiveFaker('ean8'))}
+
+        yield response(code=fake_code, slack_oauth_access_response=fake_slack_oauth_access_response,
+                       strand_user_email=fake_slack_user.profile.email)
+        clear_slack_state(keys=['oauth_access_responses_by_code', 'users_by_slack_user_id'])
+        # TODO clear strand state
