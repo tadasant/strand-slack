@@ -1,5 +1,5 @@
-class SlackCommunicationException(Exception):
-    """Raise when there's a payload-related issue receiving a request/response from Slack"""
+class SLAException(Exception):
+    """Generic exception for local exception types"""
 
     def __init__(self, message=None):
         super().__init__()

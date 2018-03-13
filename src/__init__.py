@@ -3,9 +3,8 @@ from http.__init__ import HTTPStatus
 from flask import Flask, jsonify
 from marshmallow import ValidationError
 
+from models.exceptions.SLAException import SLAException
 from src.blueprints import slack, configure
-from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
-from src.models.exceptions.UnauthorizedException import UnauthorizedException
 from src.models.exceptions.WrapperException import WrapperException
 from src.utilities.database import metadata, engine
 from src.utilities.logging import get_logger
@@ -13,7 +12,7 @@ from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
 from src.utilities.wrappers.StrandApiClientWrapper import StrandApiClientWrapper
 
 
-def handle_slack_integration_exception(error):
+def handle_local_exception(error):
     logger = get_logger('Flask')
     response = jsonify({'error': error.message if error.message else repr(error)})
     response.status_code = HTTPStatus.INTERNAL_SERVER_ERROR
@@ -29,14 +28,6 @@ def handle_validation_exception(error):
     return response
 
 
-def handle_authorization_exception(error):
-    logger = get_logger('Flask')
-    response = jsonify({'error': error.message if error.message else repr(error)})
-    response.status_code = HTTPStatus.UNAUTHORIZED
-    logger.error(response.data)
-    return response
-
-
 def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token):
     app = Flask(__name__)
 
@@ -45,10 +36,9 @@ def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, s
 
     app.add_url_rule('/health', None, lambda: 'Ok')
 
-    app.register_error_handler(UnauthorizedException, handle_authorization_exception)
     app.register_error_handler(ValidationError, handle_validation_exception)
-    app.register_error_handler(SlackCommunicationException, handle_slack_integration_exception)
-    app.register_error_handler(WrapperException, handle_slack_integration_exception)
+    app.register_error_handler(SLAException, handle_local_exception)
+    app.register_error_handler(WrapperException, handle_local_exception)
 
     init_wrappers(app=app, strand_api_client=strand_api_client, SlackClientClass=SlackClientClass)
     init_authentication(app=app, slack_verification_tokens=slack_verification_tokens,
@@ -69,5 +59,4 @@ def init_authentication(app, slack_verification_tokens, strand_api_verification_
 
 
 def init_database():
-    import src.models.domain  # noqa: F401  | Run to attach all the models to engine
     metadata.create_all(engine)

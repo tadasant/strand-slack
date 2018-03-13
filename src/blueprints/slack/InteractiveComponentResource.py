@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import request
 
 from src.blueprints.slack.SlackResource import SlackResource
-from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
+from src.models.exceptions.exceptions import SlackCommunicationException
 from src.models.slack.requests.SlackInteractiveComponentRequest import InteractiveComponentRequestSchema
 
 

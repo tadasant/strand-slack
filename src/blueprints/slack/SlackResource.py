@@ -2,7 +2,7 @@ from flask import current_app
 from flask_restful import Resource
 
 from src.utilities.logging import get_logger
-from src.models.exceptions.SlackCommunicationException import SlackCommunicationException
+from src.models.exceptions.exceptions import SlackCommunicationException
 
 
 class SlackResource(Resource):
