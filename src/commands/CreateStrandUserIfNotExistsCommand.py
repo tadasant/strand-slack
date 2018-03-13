@@ -28,10 +28,11 @@ class CreateStrandUserIfNotExistsCommand(Command):
         strand_user = self.strand_api_client_wrapper.get_user_by_email(email=slack_user.profile.email)
         if not strand_user:
             # Strand API has not seen this user email before
-            strand_user = self.strand_api_client_wrapper.create_user(email=slack_user.profile.email,
-                                                                     username=slack_user.profile.display_name,
-                                                                     first_name=first_name,
-                                                                     last_name=last_name)
+            strand_user = self.strand_api_client_wrapper.create_user_with_team(email=slack_user.profile.email,
+                                                                               username=slack_user.profile.display_name,
+                                                                               first_name=first_name,
+                                                                               last_name=last_name,
+                                                                               team_id=self.strand_team_id)
         self._update_user(slack_user_id=self.slack_user_id, strand_user_id=strand_user.id, session=session)
 
     @staticmethod
