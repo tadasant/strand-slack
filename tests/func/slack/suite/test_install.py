@@ -18,6 +18,7 @@ class TestInstall(TestInstallFixtures):
 
     def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access, client, slack_client_class,
                                                         strand_api_client, db_session, mocker, baseline_thread_count):
+        # `slack_oauth_access` sets up state
         target_url = url_for(endpoint=self.target_endpoint)
         f = slack_oauth_access  # faked data
         payload = {'code': f.code}
@@ -41,15 +42,33 @@ class TestInstall(TestInstallFixtures):
         assert db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
 
-    def test_install_existing_agent_new_user_with_valid_code(self):
-        # fixtures: seed DB with existing agent, Slack w/ code response
+    def test_install_existing_agent_new_user_with_valid_code(self, slack_oauth_response_and_agent_in_db, client,
+                                                             slack_client_class, strand_api_client, db_session, mocker,
+                                                             baseline_thread_count):
+        # `slack_oauth_access_and_agent_in_db` sets up state with one existing installation
+        target_url = url_for(endpoint=self.target_endpoint)
+        f = slack_oauth_response_and_agent_in_db  # faked data
+        payload = {'code': f.code}
+        mocker.spy(slack_client_class, 'api_call')
+        mocker.spy(strand_api_client, 'mutate')
 
-        # hit /install endpoint with a code
-        # assert that the slack handshake happens
-        # assert that API is NOT hit with a new team (already exists)
-        # assert that a new agent is NOT added to DB
-        # assert that new installer is added to DB
-        pass
+        client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
+
+        assert wait_for_extra_threads_to_die(baseline_count=baseline_thread_count), 'Extra threads timed out'
+        assert_values_in_call_args_list(
+            params_to_expecteds=[
+                {'method': 'oauth.access', 'code': f.code},  # Call Slack OAuth
+                {'method': 'chat.postMessage'},  # DM user with welcome message
+            ],
+            call_args_list=slack_client_class.api_call.call_args_list
+        )
+        assert 'createUser' in strand_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert len(strand_api_client.mutate.call_args_list) == 1  # No team creation
+        assert db_session.query(Agent).filter(Agent.slack_team_id == f.slack_oauth_access_response.team_id).one()
+        assert len(
+            db_session.query(User).filter(User.agent_slack_team_id == f.slack_oauth_access_response.team_id).all()) == 2
+        assert len(db_session.query(Installation).filter(
+            Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).all()) == 2
 
     @pytest.mark.skip('TODO (nice-to-have): Don\'t allow users to re-install if they\'re already installed')
     def test_install_existing_agent_existing_user_existing_scope_with_valid_code(self):

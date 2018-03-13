@@ -61,7 +61,9 @@ def app(strand_api_client_factory, slack_client_class):
 @pytest.fixture(scope='function', autouse=True)
 def db_session():
     metadata.create_all(engine)
-    yield Session()
+    session = Session()
+    yield session
+    session.close()
     metadata.drop_all(engine)
 
 

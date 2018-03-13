@@ -86,7 +86,7 @@ class InstallApplicationCommand(Command):
         bot = Bot(access_token=slack_oauth_access_response.bot.bot_access_token,
                   user_id=slack_oauth_access_response.bot.bot_user_id,
                   agent_slack_team_id=slack_oauth_access_response.team_id)
-        agent = Agent(slack_team_id=slack_oauth_access_response.team_id, status=AgentStatus.ACTIVE, bot=bot)
+        agent = Agent(slack_team_id=slack_oauth_access_response.team_id, status=AgentStatus.ACTIVE.name, bot=bot)
         session.add_all([bot, agent])
 
     @staticmethod
