@@ -1,9 +1,10 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
+from src.models.exceptions.WrapperException import WrapperException
+from src.models.strand.StrandUser import StrandUserSchema
+from src.models.strand.utils import dict_keys_camel_case_to_underscores
 from src.utilities.clients.StrandApiClient import StrandApiClientException
 from src.utilities.logging import get_logger
-from src.models.exceptions.WrapperException import WrapperException
-from src.models.strand.utils import dict_keys_camel_case_to_underscores
 
 
 class StrandApiClientWrapper:
@@ -39,8 +40,24 @@ class StrandApiClientWrapper:
         )
 
     def create_user(self, email, username, first_name, last_name):
-        # TODO
-        pass
+        operation_definition = f'''
+                {{
+                    createUser(input: {{email: "{email}",
+                                        username: "{username}",
+                                        first_name: "{first_name}",
+                                        last_name: "{last_name}"}}) {{
+                      user {{
+                        id
+                      }}
+                    }}
+                }}
+                '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=StrandUserSchema,
+            path_to_object=['data', 'createUser', 'user']
+        )
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""

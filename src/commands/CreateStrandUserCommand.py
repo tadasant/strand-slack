@@ -1,4 +1,5 @@
 from src.commands.Command import Command
+from src.models.domain.User import User
 from src.utilities.database import db_session
 
 
@@ -24,6 +25,13 @@ class CreateStrandUserCommand(Command):
         real_name_tokens = slack_user.profile.real_name.split(' ')
         first_name = real_name_tokens[0]
         last_name = real_name_tokens[-1] if len(real_name_tokens) > 1 else ''
-        self.strand_api_client_wrapper.create_user(email=slack_user.profile.email,
-                                                   username=slack_user.profile.display_name, first_name=first_name,
-                                                   last_name=last_name)
+        strand_user = self.strand_api_client_wrapper.create_user(email=slack_user.profile.email,
+                                                                 username=slack_user.profile.display_name,
+                                                                 first_name=first_name,
+                                                                 last_name=last_name)
+        self._update_user(slack_user_id=self.slack_user_id, strand_user_id=strand_user.id, session=session)
+
+    @staticmethod
+    def _update_user(slack_user_id, strand_user_id, session):
+        user = session.query(User).filter(User.slack_user_id == slack_user_id).one()
+        user.strand_user_id = strand_user_id
