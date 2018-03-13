@@ -54,7 +54,8 @@ class InstallApplicationCommand(Command):
             command = CreateStrandTeamAndUserCommand(slack_team_id=slack_oauth_access_response.team_id,
                                                      slack_team_name=slack_oauth_access_response.team_name,
                                                      slack_user_id=slack_oauth_access_response.user_id,
-                                                     strand_api_client_wrapper=self.strand_api_client_wrapper)
+                                                     strand_api_client_wrapper=self.strand_api_client_wrapper,
+                                                     slack_client_wrapper=self.slack_client_wrapper)
             Thread(target=command.execute, daemon=True).start()
             pass
         elif send_installer_to_strand:
@@ -63,7 +64,8 @@ class InstallApplicationCommand(Command):
                 slack_user_id=slack_oauth_access_response.user_id,
                 strand_team_id=self._get_strand_team_id(slack_oauth_access_response=slack_oauth_access_response,
                                                         session=session),
-                strand_api_client_wrapper=self.strand_api_client_wrapper
+                strand_api_client_wrapper=self.strand_api_client_wrapper,
+                slack_client_wrapper=self.slack_client_wrapper
             )
             Thread(target=command.execute, daemon=True).start()
         self._send_installer_welcome_message(slack_oauth_access_response=slack_oauth_access_response)

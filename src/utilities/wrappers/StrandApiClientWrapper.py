@@ -38,6 +38,10 @@ class StrandApiClientWrapper:
             path_to_object=['data', 'createDiscussion', 'discussion']
         )
 
+    def create_user(self, email, username, first_name, last_name):
+        # TODO
+        pass
+
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""
         self._validate_no_response_body_errors(response_body=response_body)

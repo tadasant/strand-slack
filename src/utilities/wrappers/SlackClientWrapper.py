@@ -2,11 +2,11 @@ import requests
 from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type
 
 from src.config import config
-from src.models.slack.elements.SlackMessage import SlackMessageSchema
+from src.models.exceptions.WrapperException import WrapperException
+from src.models.slack.elements.SlackUser import SlackUserSchema
 from src.models.slack.responses import SlackOauthAccessResponse
 from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponseSchema
 from src.utilities.logging import get_logger
-from src.models.exceptions.WrapperException import WrapperException
 
 
 # TODO move deserialization to this class instead of in Commands
@@ -61,7 +61,8 @@ class SlackClientWrapper:
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)
         response = self.standard_retrier.call(slack_client.api_call, method='users.info', user=slack_user_id)
         self._validate_response_ok(response, 'get_user_info', slack_team_id, slack_user_id)
-        return response['user']
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackUserSchema,
+                                               path_to_object=['user'])
 
     def send_message(self, slack_team_id, slack_channel_id, text, attachments=None):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)

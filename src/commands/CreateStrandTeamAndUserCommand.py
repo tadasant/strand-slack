@@ -9,8 +9,8 @@ class CreateStrandTeamAndUserCommand(Command):
         3) Delegate to wrapper to create user with the new `strand_team_id`
     """
 
-    def __init__(self, slack_team_id, slack_team_name, slack_user_id, strand_api_client_wrapper):
-        super().__init__(strand_api_client_wrapper=strand_api_client_wrapper)
+    def __init__(self, slack_team_id, slack_team_name, slack_user_id, strand_api_client_wrapper, slack_client_wrapper):
+        super().__init__(strand_api_client_wrapper=strand_api_client_wrapper, slack_client_wrapper=slack_client_wrapper)
         self.slack_team_id = slack_team_id
         self.slack_user_id = slack_user_id
         self.slack_team_name = slack_team_name
