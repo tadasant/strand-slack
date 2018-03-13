@@ -139,14 +139,19 @@ class SlashCommandRequestFactory(factory.Factory):
     channel_id = factory.Faker('bban')
 
 
-class EventRequestFactory(factory.Factory):
+class SlackEventRequestFactory(factory.Factory):
     class Meta:
         model = SlackEventRequest
 
     type = factory.Faker('word')
+    token = factory.Faker('md5')
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
     event = factory.SubFactory(EventFactory)
+    api_app_id = factory.Faker('bban')
+    event_id = factory.Faker('bban')
+    event_time = factory.Faker('ean8')
+    authed_users = factory.List([SlackUserFactory.build()])
 
 
 class SlackOauthAccessResponseFactory(factory.Factory):
