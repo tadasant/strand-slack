@@ -16,8 +16,12 @@ class TestInstall(TestInstallFixtures):
     target_endpoint = 'configure.installresource'
     default_headers = {'Content-Type': 'application/json'}
 
-    def test_install_new_agent_new_user_with_valid_code(self, slack_oauth_access, client, slack_client_class,
-                                                        strand_api_client, db_session, mocker, baseline_thread_count):
+    def test_install_new_agent_new_user(self, slack_oauth_access, client, slack_client_class, strand_api_client,
+                                        db_session, mocker, baseline_thread_count):
+        """
+            GIVEN: new agent, new user
+            OUTPUT: new Agent, new User, new Installation, new StrandTeam, new StrandUser
+        """
         # `slack_oauth_access` sets up state
         target_url = url_for(endpoint=self.target_endpoint)
         f = slack_oauth_access  # faked data
@@ -43,9 +47,12 @@ class TestInstall(TestInstallFixtures):
         assert db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
 
-    def test_install_existing_agent_new_user_with_valid_code(self, slack_oauth_response_and_agent_in_db, client,
-                                                             slack_client_class, strand_api_client, db_session, mocker,
-                                                             baseline_thread_count):
+    def test_install_existing_agent_new_user(self, slack_oauth_response_and_agent_in_db, client, slack_client_class,
+                                             strand_api_client, db_session, mocker, baseline_thread_count):
+        """
+            GIVEN: existing agent, new user, existing strand team
+            OUTPUT: new User, new Installation, new StrandUser
+        """
         # `slack_oauth_access_and_agent_in_db` sets up state with one existing installation
         target_url = url_for(endpoint=self.target_endpoint)
         f = slack_oauth_response_and_agent_in_db  # faked data
@@ -71,9 +78,13 @@ class TestInstall(TestInstallFixtures):
         assert len(db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).all()) == 2
 
-    def test_install_new_agent_existing_strand_user_with_valid_code(self, slack_oauth_response_and_user_in_strand,
-                                                                    client, slack_client_class, strand_api_client,
-                                                                    db_session, mocker, baseline_thread_count):
+    def test_install_new_agent_new_user_existing_strand_user(self, slack_oauth_response_and_user_in_strand, client,
+                                                             slack_client_class, strand_api_client, db_session, mocker,
+                                                             baseline_thread_count):
+        """
+            GIVEN: new agent, new user, existing strand user
+            OUTPUT: new Agent, new User, new Installation, new StrandTeam
+        """
         # `slack_oauth_response_and_user_in_strand` sets up state with an existing strand user
         target_url = url_for(endpoint=self.target_endpoint)
         f = slack_oauth_response_and_user_in_strand  # faked data
