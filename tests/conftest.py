@@ -5,7 +5,7 @@ from pytest_factoryboy import register
 
 from src import create_app
 from src.config import config
-from src.utilities.database import metadata, engine
+from src.utilities.database import metadata, engine, Session
 from src.utilities.logging import get_logger
 from tests.factories.slackfactories import SlackOauthAccessResponseFactory
 from tests.testresources.TestSlackClient import TestSlackClient
@@ -42,6 +42,11 @@ def log_test_start():
     logger.info('******** TEST END ********')
 
 
+@pytest.fixture(scope='function')
+def baseline_thread_count():
+    return threading.active_count()
+
+
 # Core
 
 @pytest.fixture(scope='session')
@@ -54,9 +59,9 @@ def app(strand_api_client_factory, slack_client_class):
 
 
 @pytest.fixture(scope='function', autouse=True)
-def clear_database():
+def db_session():
     metadata.create_all(engine)
-    yield
+    yield Session()
     metadata.drop_all(engine)
 
 
@@ -69,9 +74,7 @@ def strand_api_client_factory():
 
 @pytest.fixture
 def strand_api_client(strand_api_client_factory):
-    strand_api_client_factory.clear_responses()
     yield strand_api_client_factory
-    strand_api_client_factory.clear_responses()
 
 
 @pytest.fixture(scope='session')

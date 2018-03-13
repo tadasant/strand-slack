@@ -7,6 +7,9 @@ SlackRepository = {
 }
 
 
+# TODO Optimization: use factories instead of hardcoded shapes in responses
+
+
 def clear_slack_state(keys):
     for key in keys:
         SlackRepository[key] = {}
@@ -28,6 +31,18 @@ class TestSlackClient:
                 'ok': True,
                 'channel': {
                     'id': 'SOMEID'
+                }
+            }
+        elif method == 'users.info':
+            return {
+                'ok': True,
+                'user': {
+                    'id': 'SOMEID',
+                    'profile': {
+                        'real_name': 'Jimmy Immortalized',
+                        'display_name': 'jimbo',
+                        'email': 'jimbo@trystrand.com',
+                    }
                 }
             }
         return {'ok': True}

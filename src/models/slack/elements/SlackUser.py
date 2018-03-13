@@ -5,7 +5,7 @@ from src.models.slack.elements.SlackProfile import SlackProfileSchema
 
 
 class SlackUser(Model):
-    def __init__(self, id, profile):
+    def __init__(self, id, profile=None):
         self.id = id
         self.profile = profile
 

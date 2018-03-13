@@ -12,7 +12,7 @@ def wait_until(condition, interval=0.1, timeout=2, *args, **kwargs):
     return result
 
 
-def wait_for_extra_threads_to_die(baseline_count=4, timeout=5):
+def wait_for_extra_threads_to_die(baseline_count=1, timeout=5):
     return wait_until(condition=lambda: len(threading.enumerate()) <= baseline_count, timeout=timeout)
 
 
