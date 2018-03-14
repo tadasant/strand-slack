@@ -1,8 +1,11 @@
-from collections import namedtuple
-
 from marshmallow import Schema, fields, post_load
 
-SlackOption = namedtuple(typename='Option', field_names='value')
+from src.models.Model import Model
+
+
+class SlackOption(Model):
+    def __init__(self, value):
+        self.value = value
 
 
 class SlackOptionSchema(Schema):

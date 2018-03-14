@@ -1,7 +1,7 @@
 from threading import Thread
 
-from src.commands.ForwardSavedStrandAndPromptUserForMetadataCommand import \
-    ForwardSavedStrandAndPromptUserForMetadataCommand
+from src.commands.ForwardSavedStrandAndInformUserCommand import \
+    ForwardSavedStrandAndInformUserCommand
 from src.commands.SendPleaseInstallMessageCommand import SendPleaseInstallMessageCommand
 from src.models.domain.Agent import Agent
 from src.models.domain.User import User
@@ -28,15 +28,17 @@ class InitiateSaveStrandService(Service):
                                                     slack_client_wrapper=self.slack_client_wrapper).execute()
             strand_team_id = self._get_strand_team_id(session)
             saver_strand_user_id = self._get_saver_strand_user_id(session)
-            command = ForwardSavedStrandAndPromptUserForMetadataCommand(
+            command = ForwardSavedStrandAndInformUserCommand(
                 slack_client_wrapper=self.slack_client_wrapper,
                 strand_api_client_wrapper=self.strand_api_client_wrapper,
                 strand_team_id=strand_team_id,
+                slack_team_id=self.slack_team_id,
                 saver_strand_user_id=saver_strand_user_id,
-                body=markdown_body
+                body=markdown_body,
+                slack_channel_id=self.slack_channel_id,
+                slack_user_id=self.slack_user_id,
             )
             Thread(target=command.execute, daemon=True).start()
-            pass
         else:
             command = SendPleaseInstallMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                       slack_team_id=self.slack_team_id,

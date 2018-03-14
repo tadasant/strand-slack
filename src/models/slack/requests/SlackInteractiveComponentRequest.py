@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.slack.outgoing.formats.dialogs import POST_TOPIC_DIALOG
+from src.models.slack.outgoing.dialogs import POST_TOPIC_DIALOG
 from src.models.Model import Model
 from src.models.slack.elements.SlackChannel import SlackChannelSchema
 from src.models.slack.elements.SlackTeam import SlackTeamSchema

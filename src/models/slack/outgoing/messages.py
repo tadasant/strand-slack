@@ -1,9 +1,10 @@
 from textwrap import dedent
 
 from src.models.slack.elements.SlackMessage import SlackMessage
+from src.models.slack.outgoing.attachments import EditMetadataButtonAttachment
 
 
-class SlackMessageHelp(SlackMessage):
+class HelpSlackMessage(SlackMessage):
     def __init__(self):
         super().__init__(
             text=self._format_text(),
@@ -20,7 +21,7 @@ class SlackMessageHelp(SlackMessage):
         ''')
 
 
-class SlackMessagePleaseInstall(SlackMessage):
+class PleaseInstallSlackMessage(SlackMessage):
     def __init__(self):
         super().__init__(
             text=self._format_text(),
@@ -38,3 +39,18 @@ class SlackMessagePleaseInstall(SlackMessage):
 
             Take a look at what your team has saved at app.trystrand.com, or get started by installing the app.
         ''')
+
+
+class SavedStrandSlackMessage(SlackMessage):
+    def __init__(self, strand_id):
+        self.strand_id = strand_id
+
+        self.text = self._format_text()
+        self.attachments = self._format_attachments()
+        super().__init__(text=self.text, attachments=self.attachments)
+
+    def _format_text(self):
+        return f'Your strand has been saved. Would you like to edit its title and tags?'
+
+    def _format_attachments(self):
+        return [EditMetadataButtonAttachment(strand_id=self.strand_id).to_json()]

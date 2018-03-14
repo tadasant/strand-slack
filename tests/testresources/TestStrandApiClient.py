@@ -40,6 +40,10 @@ class TestStrandApiClient:
             return {'data': {'createUserWithTeam': {'user': {
                 'id': '84338',
             }}}}
+        elif 'createStrand' in operation_definition:
+            return {'data': {'createStrand': {'strand': {
+                'id': '23589348',
+            }}}}
         return {'errors': [{'message': 'Some other error'}]}
 
 
