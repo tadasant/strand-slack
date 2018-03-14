@@ -1,4 +1,9 @@
+from threading import Thread
+
+from src.commands.SendPleaseInstallMessageCommand import SendPleaseInstallMessageCommand
+from src.models.domain.User import User
 from src.services.Service import Service
+from src.utilities.database import db_session
 
 
 class InitiateSaveStrandService(Service):
@@ -9,13 +14,16 @@ class InitiateSaveStrandService(Service):
         self.slack_channel_id = slack_channel_id
         self.text = text
 
-    def execute(self):
+    @db_session
+    def execute(self, session):
         log_msg = f'Saving Strand with body {self.text} for user {self.slack_user_id} on team {self.slack_team_id}'
         self.logger.debug(log_msg)
-
-        # install_application_command = InstallApplicationCommand(
-        #     code=self.code,
-        #     slack_client_wrapper=self.slack_client_wrapper,
-        #     strand_api_client_wrapper=self.strand_api_client_wrapper
-        # )
-        # Thread(target=install_application_command.execute, daemon=True).start()
+        if User.is_installer(session, self.slack_user_id, self.slack_team_id):
+            # TODO implement saving strands
+            pass
+        else:
+            command = SendPleaseInstallMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
+                                                      slack_team_id=self.slack_team_id,
+                                                      slack_user_id=self.slack_user_id,
+                                                      slack_channel_id=self.slack_channel_id)
+            Thread(target=command.execute, daemon=True).start()
