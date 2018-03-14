@@ -4,7 +4,6 @@ from http import HTTPStatus
 import pytest
 from flask import url_for
 
-from src.config import config
 from src.models.domain.User import User
 from tests.func.slack.TestHelpDmFixtures import TestHelpDmFixtures
 from tests.utils.asserting import wait_for_extra_threads_to_die
@@ -22,7 +21,6 @@ class TestHelpDm(TestHelpDmFixtures):
         """Ensure we send a help message to users who have the app installed when they DM 'help'"""
         target_url = url_for(endpoint=self.target_endpoint)
         fake_slack_event_request = slack_event_request_factory()
-        fake_slack_event_request.token = config['SLACK_VERIFICATION_TOKENS'][0]
         fake_slack_event_request.event.user = installed_user.slack_user_id
         fake_slack_event_request.team_id = installed_user.agent_slack_team_id
         payload = json.loads(fake_slack_event_request.to_json())

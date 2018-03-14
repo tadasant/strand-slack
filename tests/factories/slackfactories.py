@@ -1,5 +1,6 @@
 import factory.fuzzy
 
+from src.config import config
 from src.models.slack.elements.SlackAction import SlackAction
 from src.models.slack.elements.SlackBot import SlackBot
 from src.models.slack.elements.SlackChannel import SlackChannel
@@ -144,7 +145,7 @@ class SlackEventRequestFactory(factory.Factory):
         model = SlackEventRequest
 
     type = factory.Faker('word')
-    token = factory.Faker('md5')
+    token = config['SLACK_VERIFICATION_TOKENS'][0]
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
     event = factory.SubFactory(EventFactory)
