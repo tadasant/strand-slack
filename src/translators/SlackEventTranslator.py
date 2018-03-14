@@ -26,6 +26,7 @@ class SlackEventTranslator(Translator):
             else:
                 text = self.slack_event_request.event.text
                 service = InitiateSaveStrandService(slack_client_wrapper=self.slack_client_wrapper,
+                                                    strand_api_client_wrapper=self.strand_api_client_wrapper,
                                                     text=text,
                                                     slack_team_id=slack_team_id,
                                                     slack_user_id=slack_user_id,

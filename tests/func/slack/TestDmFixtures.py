@@ -5,7 +5,7 @@ from src.models.domain.User import User
 from tests.utils.create_in_db import insert_agent_user_installation
 
 
-class TestHelpDmFixtures:
+class TestDmFixtures:
     @pytest.fixture(scope='function')
     def installed_user(self, db_session) -> User:
         """Inserts Agent, User, and Installation, returning the inserted user"""

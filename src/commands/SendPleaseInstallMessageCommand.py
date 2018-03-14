@@ -1,5 +1,5 @@
 from src.commands.Command import Command
-from src.models.slack.outgoing.formats.messages import SlackMessagePleaseInstall
+from src.models.slack.outgoing.messages import PleaseInstallSlackMessage
 
 
 class SendPleaseInstallMessageCommand(Command):
@@ -15,4 +15,4 @@ class SendPleaseInstallMessageCommand(Command):
         self.slack_client_wrapper.send_ephemeral_message(slack_team_id=self.slack_team_id,
                                                          slack_channel_id=self.slack_channel_id,
                                                          slack_user_id=self.slack_user_id,
-                                                         text=SlackMessagePleaseInstall().text)
+                                                         text=PleaseInstallSlackMessage().text)

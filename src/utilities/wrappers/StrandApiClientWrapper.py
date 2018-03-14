@@ -1,6 +1,7 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.models.exceptions.WrapperException import WrapperException
+from src.models.strand.StrandStrand import StrandStrandSchema
 from src.models.strand.StrandTeam import StrandTeamSchema
 from src.models.strand.StrandUser import StrandUserSchema
 from src.models.strand.utils import dict_keys_camel_case_to_underscores
@@ -13,7 +14,7 @@ class StrandApiClientWrapper:
 
     def __init__(self, strand_api_client):
         self.strand_api_client = strand_api_client
-        self.logger = get_logger('CoreApiClientWrapper')
+        self.logger = get_logger('StrandApiClientWrapper')
         self.standard_retrier = Retrying(
             reraise=True,
             wait=wait_fixed(2),
@@ -87,12 +88,31 @@ class StrandApiClientWrapper:
                       }}
                     }}
                 }}
-                '''
+        '''
         response_body = self.standard_retrier.call(self.strand_api_client.mutate,
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandTeamSchema,
             path_to_object=['data', 'createTeam', 'team']
+        )
+
+    def create_strand(self, team_id, saver_user_id, body):
+        operation_definition = f'''
+                {{
+                    createStrand(input: {{owner_id: "{team_id}",
+                                        saver_id: "{saver_user_id}",
+                                        body: "{body}"}}) {{
+                      strand {{
+                        id
+                      }}
+                    }}
+                }}
+        '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        return self._deserialize_response_body(
+            response_body=response_body, ObjectSchema=StrandStrandSchema,
+            path_to_object=['data', 'createStrand', 'strand']
         )
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
@@ -110,5 +130,5 @@ class StrandApiClientWrapper:
     def _validate_no_response_body_errors(self, response_body):
         """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
-            message = f'Errors when calling CoreApiClient. Body: {response_body}'
-            raise WrapperException(wrapper_name='CoreApiClient', message=message, errors=response_body['errors'])
+            message = f'Errors when calling StrandApiClient. Body: {response_body}'
+            raise WrapperException(wrapper_name='StrandApiClient', message=message, errors=response_body['errors'])

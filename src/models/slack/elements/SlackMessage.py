@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields, post_load
 
-from src.models.slack.outgoing.SlackMessageModel import SlackMessageModel
+from src.models.Model import Model
 
 
-class SlackMessage(SlackMessageModel):
+class SlackMessage(Model):
     """Subset of Event from requests"""
 
     def __init__(self, file_url=None, attachments=None, **kwargs):
@@ -23,11 +23,6 @@ class SlackMessage(SlackMessageModel):
     @property
     def is_join_message(self):
         return self.subtype == 'channel_join'
-
-    def as_dict(self):
-        result = super().as_dict()
-        result['attachments'] = [attachment.as_dict() for attachment in self.attachments]
-        return result
 
 
 class SlackMessageSchema(Schema):
