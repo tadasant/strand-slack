@@ -22,5 +22,6 @@ class SlackResource(Resource):
                 message = 'Invalid slack verification token'
                 get_logger('Flask').error(message)
                 raise UnauthorizedException(message=message)
+            return func(*args, **kwargs)
 
         return wrapper

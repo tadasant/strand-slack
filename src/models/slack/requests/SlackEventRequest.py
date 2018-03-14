@@ -8,7 +8,7 @@ from src.models.slack.elements.SlackEvent import SlackEventSchema, SlackEvent
 
 
 class SlackEventRequest(Model):
-    def __init__(self, type, token, challenge=None, team_id=None, event=None):
+    def __init__(self, type, token, challenge=None, team_id=None, event=None, **kwargs):
         self.type = type
         self.token = token
         self.challenge = challenge
@@ -27,7 +27,7 @@ class SlackEventRequest(Model):
 
 class SlackEventRequestSchema(Schema):
     type = fields.String(required=True)
-    challenge = fields.String()
+    challenge = fields.String(allow_none=True)
     team_id = fields.String()
     event = fields.Nested(SlackEventSchema)
     token = fields.String(required=True)

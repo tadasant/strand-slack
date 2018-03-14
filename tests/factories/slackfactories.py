@@ -83,7 +83,7 @@ class SubmissionFactory(factory.Factory):
     share_with_current_channel = False
 
 
-class FileFactory(factory.Factory):
+class SlackFileFactory(factory.Factory):
     class Meta:
         model = SlackFile
 
@@ -92,7 +92,7 @@ class FileFactory(factory.Factory):
     permalink_public = False
 
 
-class EventFactory(factory.Factory):
+class SlackEventFactory(factory.Factory):
     class Meta:
         model = SlackEvent
 
@@ -102,7 +102,7 @@ class EventFactory(factory.Factory):
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
     subtype = factory.Faker('word')
-    file = factory.SubFactory(FileFactory)
+    file = factory.SubFactory(SlackFileFactory)
 
 
 class SlackBotFactory(factory.Factory):
@@ -148,7 +148,7 @@ class SlackEventRequestFactory(factory.Factory):
     token = config['SLACK_VERIFICATION_TOKENS'][0]
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
-    event = factory.SubFactory(EventFactory)
+    event = factory.SubFactory(SlackEventFactory)
     api_app_id = factory.Faker('bban')
     event_id = factory.Faker('bban')
     event_time = factory.Faker('ean8')

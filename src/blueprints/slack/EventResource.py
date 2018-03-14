@@ -19,13 +19,17 @@ class EventResource(SlackResource):
             payload = request.get_json()
             slack_event_request = SlackEventRequestSchema().load(payload).data
             if slack_event_request.is_verification_request:
+                # Checking here because Slack needs immediate response
                 result = ({'challenge': slack_event_request.challenge}, HTTPStatus.OK)
-            elif slack_event_request.event and slack_event_request.event.is_message_dm_event:
-                self.logger.info('Processing DM')
+            else:
+                self.logger.info('Processing Slack Event')
                 translator = SlackEventTranslator(slack_event_request=slack_event_request,
                                                   slack_client_wrapper=current_app.slack_client_wrapper,
                                                   strand_api_client_wrapper=current_app.strand_api_client_wrapper)
                 Thread(target=translator.translate, daemon=True).start()
+        except Exception as e:
+            self.logger.error(e)
+            raise e
         finally:
             # Slack will keep re-sending if we don't respond 200 OK, even in exception case on our end
             return result

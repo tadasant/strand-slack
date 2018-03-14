@@ -4,7 +4,8 @@ from src.models.slack.outgoing.formats.messages import SlackMessageHelp
 
 class SendHelpMessageCommand(Command):
     def __init__(self, slack_client_wrapper, slack_team_id, slack_user_id, slack_channel_id):
-        super().__init__(slack_client_wrapper=slack_client_wrapper, slack_team_id=slack_team_id)
+        super().__init__(slack_client_wrapper=slack_client_wrapper)
+        self.slack_team_id = slack_team_id
         self.slack_user_id = slack_user_id
         self.slack_channel_id = slack_channel_id
 

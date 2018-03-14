@@ -43,6 +43,10 @@ class SlackEvent(Model):
         return False
 
     @property
+    def is_help_dm_event(self):
+        return self.is_message_dm_event and self.text.lower().strip() == 'help'
+
+    @property
     def is_message(self):
         return self.type == 'message'
 
@@ -68,12 +72,12 @@ class SlackEventSchema(Schema):
     channel = fields.String()
     text = fields.String()
     ts = fields.String()
-    thread_ts = fields.String()
+    thread_ts = fields.String(allow_none=True)
     file = fields.Nested(SlackFileSchema)
     subtype = fields.String()
-    item = fields.Nested(SlackItemSchema)
-    item_user = fields.String()
-    reaction = fields.String()
+    item = fields.Nested(SlackItemSchema, allow_none=True)
+    item_user = fields.String(allow_none=True)
+    reaction = fields.String(allow_none=True)
 
     @post_load
     def make_event(self, data):
