@@ -12,8 +12,8 @@ class SlackFile(Model):
 
 class SlackFileSchema(Schema):
     id = fields.String(required=True)
-    public_url_shared = fields.Boolean(allow_none=True)
-    permalink_public = fields.String()
+    public_url_shared = fields.String()
+    permalink_public = fields.Boolean(allow_none=True)
 
     @post_load
     def make_file(self, data):

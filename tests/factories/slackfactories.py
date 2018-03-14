@@ -1,5 +1,6 @@
 import factory.fuzzy
 
+from src.config import config
 from src.models.slack.elements.SlackAction import SlackAction
 from src.models.slack.elements.SlackBot import SlackBot
 from src.models.slack.elements.SlackChannel import SlackChannel
@@ -82,7 +83,7 @@ class SubmissionFactory(factory.Factory):
     share_with_current_channel = False
 
 
-class FileFactory(factory.Factory):
+class SlackFileFactory(factory.Factory):
     class Meta:
         model = SlackFile
 
@@ -91,7 +92,7 @@ class FileFactory(factory.Factory):
     permalink_public = False
 
 
-class EventFactory(factory.Factory):
+class SlackEventFactory(factory.Factory):
     class Meta:
         model = SlackEvent
 
@@ -101,7 +102,7 @@ class EventFactory(factory.Factory):
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
     subtype = factory.Faker('word')
-    file = factory.SubFactory(FileFactory)
+    file = factory.SubFactory(SlackFileFactory)
 
 
 class SlackBotFactory(factory.Factory):
@@ -139,14 +140,19 @@ class SlashCommandRequestFactory(factory.Factory):
     channel_id = factory.Faker('bban')
 
 
-class EventRequestFactory(factory.Factory):
+class SlackEventRequestFactory(factory.Factory):
     class Meta:
         model = SlackEventRequest
 
     type = factory.Faker('word')
+    token = config['SLACK_VERIFICATION_TOKENS'][0]
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
-    event = factory.SubFactory(EventFactory)
+    event = factory.SubFactory(SlackEventFactory)
+    api_app_id = factory.Faker('bban')
+    event_id = factory.Faker('bban')
+    event_time = factory.Faker('ean8')
+    authed_users = factory.List([SlackUserFactory.build()])
 
 
 class SlackOauthAccessResponseFactory(factory.Factory):

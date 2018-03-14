@@ -9,5 +9,5 @@ class Service:
         self.strand_api_client_wrapper = strand_api_client_wrapper
         self.logger = get_logger(self.__class__.__name__)
 
-    def execute(self):
+    def execute(self, **kwargs):
         raise NotImplementedError

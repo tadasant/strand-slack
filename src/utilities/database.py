@@ -69,6 +69,6 @@ def db_session(func):
 
     def decorated_function(*args, **kwargs):
         with session_scope() as session:
-            func(*args, **kwargs, session=session)
+            return func(*args, **kwargs, session=session)
 
     return decorated_function

@@ -1,8 +1,11 @@
+import json
+from copy import deepcopy
+
 from marshmallow import Schema, fields, post_load
 
 from src.models.Model import Model
-from src.models.slack.elements.SlackFile import SlackFileSchema
-from src.models.slack.elements.SlackItem import SlackItemSchema
+from src.models.slack.elements.SlackFile import SlackFileSchema, SlackFile
+from src.models.slack.elements.SlackItem import SlackItemSchema, SlackItem
 
 
 class SlackEvent(Model):
@@ -15,11 +18,17 @@ class SlackEvent(Model):
         self.text = text
         self.ts = ts
         self.thread_ts = thread_ts
-        self.file = file
+        self.file: SlackFile = file
         self.subtype = subtype
-        self.item = item
+        self.item: SlackItem = item
         self.item_user = item_user
         self.reaction = reaction
+
+    def to_json(self):
+        result = deepcopy(vars(self))
+        result['file'] = json.loads(self.file.to_json()) if self.file else None
+        result['item'] = json.loads(self.item.to_json()) if self.item else None
+        return json.dumps(result)
 
     @property
     def is_message_channels_event(self):
@@ -32,6 +41,10 @@ class SlackEvent(Model):
         if self.type == 'message' and self.channel:
             return self.user and self.text and self.ts and self.channel.startswith('D')
         return False
+
+    @property
+    def is_help_dm_event(self):
+        return self.is_message_dm_event and self.text.lower().strip() == 'help'
 
     @property
     def is_message(self):
@@ -59,12 +72,12 @@ class SlackEventSchema(Schema):
     channel = fields.String()
     text = fields.String()
     ts = fields.String()
-    thread_ts = fields.String()
+    thread_ts = fields.String(allow_none=True)
     file = fields.Nested(SlackFileSchema)
     subtype = fields.String()
-    item = fields.Nested(SlackItemSchema)
-    item_user = fields.String()
-    reaction = fields.String()
+    item = fields.Nested(SlackItemSchema, allow_none=True)
+    item_user = fields.String(allow_none=True)
+    reaction = fields.String(allow_none=True)
 
     @post_load
     def make_event(self, data):

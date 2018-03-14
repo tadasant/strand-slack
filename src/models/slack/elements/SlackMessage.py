@@ -8,7 +8,7 @@ class SlackMessage(SlackMessageModel):
 
     def __init__(self, file_url=None, attachments=None, **kwargs):
         """Can construct kwargs by unpacking an Event dict"""
-        non_nullables = ['ts', 'text']
+        non_nullables = ['text']
         assert all(x in kwargs for x in non_nullables), f'Expected {non_nullables} in SlackMessage constructor'
 
         self.attachments = [] if attachments is None else attachments
