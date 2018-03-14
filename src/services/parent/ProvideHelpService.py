@@ -14,9 +14,10 @@ class ProvideHelpService(Service):
         self.slack_user_id = slack_user_id
         self.slack_channel_id = slack_channel_id
 
-    def execute(self):
+    @db_session
+    def execute(self, session):
         self.logger.debug(f'Providing help to user {self.slack_user_id} on team {self.slack_team_id}')
-        if self._is_installed():
+        if User.is_installer(session, self.slack_user_id, self.slack_team_id):
             command = SendHelpMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                              slack_team_id=self.slack_team_id, slack_user_id=self.slack_user_id,
                                              slack_channel_id=self.slack_channel_id)
@@ -27,11 +28,3 @@ class ProvideHelpService(Service):
                                                       slack_user_id=self.slack_user_id,
                                                       slack_channel_id=self.slack_channel_id)
             Thread(target=command.execute, daemon=True).start()
-
-    @db_session
-    def _is_installed(self, session):
-        user = session.query(User).filter(
-            User.slack_user_id == self.slack_user_id,
-            User.agent_slack_team_id == self.slack_team_id
-        ).one_or_none()
-        return bool(user.installation if user else False)

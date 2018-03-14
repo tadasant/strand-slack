@@ -16,3 +16,11 @@ class User(Base):
 
     # 1 <--> 0..1
     installation = relationship('Installation', back_populates='installer', cascade='all, delete-orphan')
+
+    @staticmethod
+    def is_installer(session, slack_user_id, slack_team_id):
+        user = session.query(User).filter(
+            User.slack_user_id == slack_user_id,
+            User.agent_slack_team_id == slack_team_id
+        ).one_or_none()
+        return bool(user.installation if user else False)
