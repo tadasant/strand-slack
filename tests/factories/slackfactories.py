@@ -73,14 +73,12 @@ class ChannelFactory(factory.Factory):
     name = factory.Faker('word')
 
 
-class SubmissionFactory(factory.Factory):
+class SlackSubmissionFactory(factory.Factory):
     class Meta:
         model = SlackSubmission
 
-    title = factory.Faker('paragraph')
-    description = factory.Faker('paragraph')
+    title = factory.Faker('sentence')
     tags = factory.Faker('paragraph')
-    share_with_current_channel = False
 
 
 class SlackFileFactory(factory.Factory):
@@ -127,6 +125,7 @@ class SlackInteractiveComponentRequestFactory(factory.Factory):
     channel = factory.SubFactory(ChannelFactory)
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')
+    submission = factory.SubFactory(SlackSubmissionFactory)
 
 
 class SlashCommandRequestFactory(factory.Factory):

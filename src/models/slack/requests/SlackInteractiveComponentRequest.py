@@ -44,6 +44,11 @@ class SlackInteractiveComponentRequest(Model):
         callback_id_prefix = self.callback_id.split('-')[0]
         return self.type == 'dialog_submission' and callback_id_prefix == EditMetadataDialog.callback_id_prefix
 
+    def get_strand_id(self):
+        """Extract strand ID from callback_id of the form"""
+        assert '-' in self.callback_id, 'No delimiter found in callback_id. Did you confirm this is an edit dialog?'
+        return self.callback_id.split('-')[1]
+
     @property
     def is_edit_metadata_button(self):
         return self.actions and self.actions[0].name == EditMetadataButton().name
@@ -52,7 +57,7 @@ class SlackInteractiveComponentRequest(Model):
 class InteractiveComponentRequestSchema(Schema):
     type = fields.String()
     token = fields.String(required=True)
-    actions = fields.Nested(SlackActionSchema, many=True)
+    actions = fields.Nested(SlackActionSchema, many=True, allow_none=True)
     callback_id = fields.String(required=True)
     team = fields.Nested(SlackTeamSchema, required=True)
     original_message = fields.Nested(SlackMessageSchema, allow_none=True)

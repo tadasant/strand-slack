@@ -41,6 +41,16 @@ class PleaseInstallSlackMessage(SlackMessage):
         ''')
 
 
+class MetadataUpdatedSlackMessage(SlackMessage):
+    def __init__(self):
+        super().__init__(
+            text=self._format_text(),
+        )
+
+    def _format_text(self):
+        return 'Your strand\'s metadata was successfully updated!'
+
+
 class SavedStrandSlackMessage(SlackMessage):
     def __init__(self, strand_id):
         self.strand_id = strand_id

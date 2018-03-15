@@ -23,3 +23,7 @@ class Agent(Base):
     bot = relationship('Bot', uselist=False, back_populates='agent', cascade='all, delete-orphan')
     # 1 <--> 0..*
     users = relationship('User', back_populates='agent', cascade='all, delete-orphan')
+
+    @staticmethod
+    def get_strand_team_id(session, slack_team_id):
+        return session.query(Agent).filter(Agent.slack_team_id == slack_team_id).one().strand_team_id

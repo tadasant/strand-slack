@@ -1,7 +1,7 @@
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
 from src.models.exceptions.WrapperException import WrapperException
-from src.models.strand.StrandStrand import StrandStrandSchema
+from src.models.strand.StrandStrand import StrandStrandSchema, StrandStrand
 from src.models.strand.StrandTeam import StrandTeamSchema
 from src.models.strand.StrandUser import StrandUserSchema
 from src.models.strand.utils import dict_keys_camel_case_to_underscores
@@ -114,6 +114,23 @@ class StrandApiClientWrapper:
             response_body=response_body, ObjectSchema=StrandStrandSchema,
             path_to_object=['data', 'createStrand', 'strand']
         )
+
+    def update_strand(self, strand: StrandStrand):
+        operation_definition = f'''
+                {{
+                    updateStrand(input: {{title: {strand.title},
+                                          id: {strand.id},
+                                          tags: [{','.join([f'{{name: {tag.name}}}' for tag in strand.tags])}]
+                                        }})
+                      strand {{
+                        id
+                      }}
+                    }}
+                }}
+        '''
+        response_body = self.standard_retrier.call(self.strand_api_client.mutate,
+                                                   operation_definition=operation_definition)
+        self._validate_no_response_body_errors(response_body=response_body)
 
     def _deserialize_response_body(self, response_body, ObjectSchema, path_to_object, many=False):
         """Deserializes response_body[**path_to_object] using ObjectSchema"""

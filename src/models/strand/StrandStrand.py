@@ -1,11 +1,16 @@
+from typing import List
+
 from marshmallow import Schema, fields, post_load
 
 from src.models.Model import Model
+from src.models.strand.StrandTag import StrandTag
 
 
 class StrandStrand(Model):
-    def __init__(self, id):
+    def __init__(self, id, title=None, tags=None):
         self.id = id
+        self.title = title
+        self.tags: List[StrandTag] = tags
 
 
 class StrandStrandSchema(Schema):
