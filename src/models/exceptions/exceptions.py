@@ -5,7 +5,7 @@ class SlackCommunicationException(SLAException):
     """Raise when there's an over-the-wire issue receiving a request/response from Slack"""
 
 
-class SlackUnexpectedPayloadException(SLAException):
+class SlackTranslationException(SLAException):
     """Raise when there's a payload-related issue receiving a request/response from Slack"""
 
 
@@ -13,7 +13,7 @@ class StrandCommunicationException(SLAException):
     """Raise when there's an over-the-wire issue receiving a request/response from Strand"""
 
 
-class StrandUnexpectedPayloadException(SLAException):
+class StrandTranslationException(SLAException):
     """Raise when there's a payload-related issue receiving a request/response from Strand"""
 
 
@@ -22,4 +22,4 @@ class UnexpectedStateException(SLAException):
 
 
 class UnauthorizedException(SLAException):
-    """Raised when caller is not an authenticated user with appropriate authorization"""
+    """Raise when caller is not an authenticated user with appropriate authorization"""
