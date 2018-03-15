@@ -33,7 +33,7 @@ class OptionFactory(factory.Factory):
     value = factory.Faker('word')
 
 
-class ActionFactory(factory.Factory):
+class SlackActionFactory(factory.Factory):
     class Meta:
         model = SlackAction
 
@@ -41,7 +41,7 @@ class ActionFactory(factory.Factory):
     selected_options = factory.List([OptionFactory.build()])
 
 
-class TeamFactory(factory.Factory):
+class SlackTeamFactory(factory.Factory):
     class Meta:
         model = SlackTeam
 
@@ -115,13 +115,14 @@ class SlackBotFactory(factory.Factory):
 
 #  TOP LEVEL
 
-class InteractiveComponentRequestFactory(factory.Factory):
+class SlackInteractiveComponentRequestFactory(factory.Factory):
     class Meta:
         model = SlackInteractiveComponentRequest
 
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
-    team = factory.SubFactory(TeamFactory)
+    token = config['SLACK_VERIFICATION_TOKENS'][0]
+    team = factory.SubFactory(SlackTeamFactory)
     user = factory.SubFactory(SlackUserFactory)
     channel = factory.SubFactory(ChannelFactory)
     response_url = factory.Faker('url')

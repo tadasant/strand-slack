@@ -8,12 +8,12 @@ from src.models.domain.Agent import Agent
 from src.models.domain.User import User
 from tests.common.PrimitiveFaker import PrimitiveFaker
 from tests.factories.slackfactories import SlackEventFactory
-from tests.func.slack.TestDmFixtures import TestDmFixtures
+from tests.func.slack.TestSlackFixtures import TestSlackFixtures
 from tests.utils.asserting import wait_for_extra_threads_to_die, assert_values_in_call_args_list
 
 
 @pytest.mark.usefixtures('app')
-class TestHelpDm(TestDmFixtures):
+class TestHelpDm(TestSlackFixtures):
     """Test the flows for a user receiving an ephemeral Help message"""
 
     target_endpoint = 'slack.eventresource'

@@ -7,7 +7,8 @@ from src import create_app
 from src.config import config
 from src.utilities.database import metadata, engine, Session
 from src.utilities.logging import get_logger
-from tests.factories.slackfactories import SlackOauthAccessResponseFactory, SlackUserFactory, SlackEventRequestFactory
+from tests.factories.slackfactories import SlackOauthAccessResponseFactory, SlackUserFactory, SlackEventRequestFactory,\
+    SlackInteractiveComponentRequestFactory
 from tests.testresources.TestSlackClient import TestSlackClient
 from tests.testresources.TestStrandApiClient import TestStrandApiClient
 from tests.utils.asserting import wait_until
@@ -15,6 +16,7 @@ from tests.utils.asserting import wait_until
 register(SlackOauthAccessResponseFactory)
 register(SlackUserFactory)
 register(SlackEventRequestFactory)
+register(SlackInteractiveComponentRequestFactory)
 
 
 # Maintenance

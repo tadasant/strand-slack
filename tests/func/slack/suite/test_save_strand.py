@@ -6,12 +6,12 @@ from flask import url_for
 
 from src.models.domain.User import User
 from tests.factories.slackfactories import SlackEventFactory
-from tests.func.slack.TestDmFixtures import TestDmFixtures
+from tests.func.slack.TestSlackFixtures import TestSlackFixtures
 from tests.utils.asserting import wait_for_extra_threads_to_die
 
 
 @pytest.mark.usefixtures('app')
-class TestSaveStrand(TestDmFixtures):
+class TestSaveStrand(TestSlackFixtures):
     """Test the flow for a user copy/pasting a strand into DM"""
 
     target_endpoint = 'slack.eventresource'

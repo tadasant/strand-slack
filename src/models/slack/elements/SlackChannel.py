@@ -1,8 +1,12 @@
-from collections import namedtuple
-
 from marshmallow import Schema, fields, post_load
 
-SlackChannel = namedtuple(typename='Channel', field_names='id name')
+from src.models.Model import Model
+
+
+class SlackChannel(Model):
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
 
 
 class SlackChannelSchema(Schema):
