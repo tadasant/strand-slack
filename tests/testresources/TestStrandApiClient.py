@@ -44,6 +44,10 @@ class TestStrandApiClient:
             return {'data': {'createStrand': {'strand': {
                 'id': '23589348',
             }}}}
+        elif 'updateStrand' in operation_definition:
+            return {'data': {'updateStrand': {'strand': {
+                'id': '4782783',
+            }}}}
         return {'errors': [{'message': 'Some other error'}]}
 
 
