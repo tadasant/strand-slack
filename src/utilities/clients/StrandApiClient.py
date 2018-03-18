@@ -19,6 +19,7 @@ class StrandApiClient:
         self.headers = {'Authorization': f'Token {token}'}
 
     def query(self, operation_definition):
+        print("a change here")
         full_definition = f'query {operation_definition}'
         response = requests.post(url=self.graphql_url, data={'query': full_definition}, headers=self.headers)
         if response.status_code != 200:
