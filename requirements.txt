@@ -17,6 +17,7 @@ factory-boy==2.8.1
 Faker==0.8.10
 flake8==3.5.0
 Flask==0.12.2
+Flask-Cors==3.0.3
 Flask-RESTful==0.3.6
 idna==2.6
 inflection==0.3.1

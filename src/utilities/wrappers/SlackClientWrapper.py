@@ -2,10 +2,13 @@ import requests
 from tenacity import Retrying, wait_fixed, stop_after_attempt, after_log, retry_if_exception_type
 
 from src.config import config
+from src.models.domain.Bot import Bot
+from src.models.domain.Installation import Installation
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.slack.elements.SlackUser import SlackUserSchema
 from src.models.slack.responses import SlackOauthAccessResponse
 from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponseSchema
+from src.utilities.database import db_session
 from src.utilities.logging import get_logger
 
 
@@ -89,11 +92,22 @@ class SlackClientWrapper:
             return [ObjectSchema().load(dict(**x, **kwargs)).data for x in result_json]
         return ObjectSchema().load(dict(**result_json, **kwargs)).data
 
-    def _get_slack_client(self, slack_team_id, is_bot=True):
+    @db_session
+    def _get_slack_client(self, session, slack_team_id, slack_user_id=None, is_bot=True):
         """Using slack_team_id's tokens from the in-memory repo, wires up a slack_client"""
-        # TODO [SLA-36] pull the token from DB
-        token = None if is_bot else None  # get tokens from repo
+        assert slack_user_id or is_bot, 'Need slack_user_id to get token is is_bot is false'
+        token = self._get_bot_token(slack_team_id, session) if is_bot else self._get_user_token(slack_team_id,
+                                                                                                slack_user_id, session)
         return self.SlackClientClass(token=token)
+
+    def _get_bot_token(self, slack_team_id, session):
+        return session.query(Bot).filter(Bot.agent_slack_team_id == slack_team_id).one().access_token
+
+    def _get_user_token(self, slack_team_id, slack_user_id, session):
+        return session.query(Installation).filter(
+            Installation.installer_agent_slack_team_id == slack_team_id,
+            Installation.installer_slack_user_id == slack_user_id
+        ).one().access_token
 
     def _validate_response_ok(self, response, *args):
         """All variables in *args are dumped to logger output"""

@@ -21,6 +21,7 @@ if __name__ == '__main__':
                                           password=config['STRAND_API_USER_PASSWORD']),
         SlackClientClass=SlackClient,
         slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
-        strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN']
+        strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN'],
+        ui_host=config['STRAND_UI_HOST'],
     )
     app.run(debug=config['FLASK_DEBUG'], host=config['HOST'], port=config['PORT'])

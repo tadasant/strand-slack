@@ -1,10 +1,11 @@
 from http.__init__ import HTTPStatus
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 from marshmallow import ValidationError
 
-from src.models.exceptions.SLAException import SLAException
 from src.blueprints import slack, configure
+from src.models.exceptions.SLAException import SLAException
 from src.models.exceptions.WrapperException import WrapperException
 from src.utilities.database import metadata, engine
 from src.utilities.logging import get_logger
@@ -28,8 +29,9 @@ def handle_validation_exception(error):
     return response
 
 
-def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token):
+def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token, ui_host):
     app = Flask(__name__)
+    CORS(app=app, origins=[ui_host])
 
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
     app.register_blueprint(configure.blueprint, url_prefix='/configure')
