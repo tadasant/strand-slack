@@ -43,11 +43,11 @@ class StrandApiClientWrapper:
     def create_user_with_team(self, email, username, first_name, last_name, team_id):
         operation_definition = f'''
                 {{
-                    createUserWithTeam(input: {{email: "{email}",
+                    createUserWithTeams(input: {{email: "{email}",
                                         username: "{username}",
-                                        first_name: "{first_name}",
-                                        last_name: "{last_name}",
-                                        team_id: "{team_id}"}}) {{
+                                        firstName: "{first_name}",
+                                        lastName: "{last_name}",
+                                        teamIds: [{team_id}]}}) {{
                       user {{
                         id
                       }}
@@ -61,11 +61,11 @@ class StrandApiClientWrapper:
             path_to_object=['data', 'createUserWithTeam', 'user']
         )
 
-    def add_user_to_team(self, id, team_id):
+    def add_user_to_team(self, user_id, team_id):
         operation_definition = f'''
                 {{
-                    addUserToTeam(input: {{id: "{id}",
-                                           team_id: "{team_id}"}}) {{
+                    addMembersToTeam(input: {{id: "{team_id}",
+                                              memberIds: [{user_id}]}}) {{
                       user {{
                         id
                       }}
@@ -99,8 +99,8 @@ class StrandApiClientWrapper:
     def create_strand(self, team_id, saver_user_id, body):
         operation_definition = f'''
                 {{
-                    createStrand(input: {{owner_id: "{team_id}",
-                                        saver_id: "{saver_user_id}",
+                    createStrand(input: {{ownerId: "{team_id}",
+                                        saverId: "{saver_user_id}",
                                         body: "{body}"}}) {{
                       strand {{
                         id

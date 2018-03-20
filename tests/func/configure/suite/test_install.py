@@ -104,7 +104,7 @@ class TestInstall(TestInstallFixtures):
             call_args_list=slack_client_class.api_call.call_args_list
         )
         assert 'createTeam' in strand_api_client.mutate.call_args_list[0][1]['operation_definition']
-        assert 'addUserToTeam' in strand_api_client.mutate.call_args_list[1][1]['operation_definition']
+        assert 'addMembersToTeam' in strand_api_client.mutate.call_args_list[1][1]['operation_definition']
         assert len(strand_api_client.mutate.call_args_list) == 2
         assert db_session.query(Agent).filter(Agent.slack_team_id == f.slack_oauth_access_response.team_id).one()
         assert db_session.query(User).filter(User.agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
@@ -135,7 +135,7 @@ class TestInstall(TestInstallFixtures):
             ],
             call_args_list=slack_client_class.api_call.call_args_list
         )
-        assert 'addUserToTeam' in strand_api_client.mutate.call_args_list[0][1]['operation_definition']
+        assert 'addMembersToTeam' in strand_api_client.mutate.call_args_list[0][1]['operation_definition']
         assert len(strand_api_client.mutate.call_args_list) == 1
         assert db_session.query(Agent).filter(Agent.slack_team_id == f.slack_oauth_access_response.team_id).one()
         assert len(
