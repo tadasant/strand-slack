@@ -7,6 +7,7 @@ from src.models.domain.Agent import Agent, AgentStatus
 from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
 from src.models.domain.User import User
+from src.models.slack.outgoing.messages import WelcomeSlackMessage
 from src.utilities.database import db_session
 
 
@@ -136,4 +137,4 @@ class InstallApplicationCommand(Command):
         slack_team_id = slack_oauth_access_response.team_id
         slack_user_id = slack_oauth_access_response.user_id
         self.slack_client_wrapper.send_dm_to_user(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
-                                                  text='Successfully installed Strand!')
+                                                  text=WelcomeSlackMessage().text)
