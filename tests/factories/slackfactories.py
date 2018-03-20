@@ -38,6 +38,8 @@ class SlackActionFactory(factory.Factory):
         model = SlackAction
 
     name = factory.Faker('word')
+    type = factory.Faker('word')
+    value = factory.Faker('ean8')
     selected_options = factory.List([OptionFactory.build()])
 
 

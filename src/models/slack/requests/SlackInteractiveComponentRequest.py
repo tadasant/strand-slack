@@ -42,7 +42,11 @@ class SlackInteractiveComponentRequest(Model):
     @property
     def is_edit_metadata_dialog_submission(self):
         callback_id_prefix = self.callback_id.split('-')[0]
-        return self.type == 'dialog_submission' and callback_id_prefix == EditMetadataDialog.callback_id_prefix
+        return self.is_dialog and callback_id_prefix == EditMetadataDialog.callback_id_prefix
+
+    @property
+    def is_dialog(self):
+        return self.type == 'dialog_submission'
 
     def get_strand_id(self):
         """Extract strand ID from callback_id of the form"""

@@ -29,9 +29,9 @@ def handle_validation_exception(error):
     return response
 
 
-def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token, ui_host):
+def create_app(strand_api_client, SlackClientClass, slack_verification_tokens, strand_api_verification_token):
     app = Flask(__name__)
-    CORS(app=app, origins=[ui_host])
+    CORS(app=app)
 
     app.register_blueprint(slack.blueprint, url_prefix='/slack')
     app.register_blueprint(configure.blueprint, url_prefix='/configure')

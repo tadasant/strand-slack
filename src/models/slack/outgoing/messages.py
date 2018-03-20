@@ -1,4 +1,4 @@
-from textwrap import dedent
+import json
 
 from src.models.slack.elements.SlackMessage import SlackMessage
 from src.models.slack.outgoing.attachments import EditMetadataButtonAttachment
@@ -11,14 +11,11 @@ class HelpSlackMessage(SlackMessage):
         )
 
     def _format_text(self):
-        return dedent(f'''
-            Strand lets you save anything from Slack to your team’s shared knowledge-base. Make it easy for you and\
-            your team to find important conversations by saving them from any channel or DM to Strand. You can see\
-            what your team has saved so far right here: app.trystrand.com
-
-            Want to save something? Simply copy it and send it as a direct message to me in this window - I’ll figure\
-            out the rest.
-        ''')
+        return 'Strand lets you save anything from Slack to your team’s shared knowledge-base. Make it easy for ' +\
+            'you and your team to find important conversations by saving them from any channel or DM to Strand. ' +\
+            'You can see what your team has saved so far right here: app.trystrand.com ' +\
+            'Want to save something? Simply copy it and send it as a direct message to me in this window ' +\
+            '- I\'ll figure out the rest.'
 
 
 class PleaseInstallSlackMessage(SlackMessage):
@@ -28,17 +25,14 @@ class PleaseInstallSlackMessage(SlackMessage):
         )
 
     def _format_text(self):
-        return dedent(f'''
-            Someone on your team has approved Strand. To use it, install it yourself here: www.trystrand.com/teams
-
-            Haven’t heard of Strand? Strand helps teams save any information that is exchanged to a shared\
-            knowledge-base. You can save anything from public channels, private channels, or DMs. By pooling insights\
-            from the entire team, you’ll be able to make more informed decisions, spend less time looking for them,\
-            and bother your colleagues less. Saving information is simple - just install the app, and then send\
-            anything you want to share to me as a direct message.
-
-            Take a look at what your team has saved at app.trystrand.com, or get started by installing the app.
-        ''')
+        return 'Someone on your team has approved Strand. To use it, install it yourself here: ' + \
+               'www.trystrand.com/teams\n' + \
+               'Haven’t heard of Strand? Strand helps teams save any information that is exchanged to a shared ' + \
+               'knowledge-base. You can save anything from public channels, private channels, or DMs. By pooling ' + \
+               'insights from the entire team, you’ll be able to make more informed decisions, spend less time ' + \
+               'looking for them, and bother your colleagues less. Saving information is simple - just install the ' + \
+               'app, and then send anything you want to share to me as a direct message.' + \
+               '\nTake a look at what your team has saved at app.trystrand.com, or get started by installing the app.'
 
 
 class MetadataUpdatedSlackMessage(SlackMessage):
@@ -60,14 +54,12 @@ class SavedStrandSlackMessage(SlackMessage):
         super().__init__(text=self.text, attachments=self.attachments)
 
     def _format_text(self):
-        return dedent(f'''
-            Your content has been saved to app.trystrand.com. If you did not create an account before,\
-            check your email for instructions on how to register. To edit the title and tags of your\
-            strand, click below.
-        ''')
+        return 'Your content has been saved to app.trystrand.com. If you did not create an account before, ' + \
+               'check your email for instructions on how to register. To edit the title and tags of your ' + \
+               'strand, click below.'
 
     def _format_attachments(self):
-        return [EditMetadataButtonAttachment(strand_id=self.strand_id).to_json()]
+        return [json.loads(EditMetadataButtonAttachment(strand_id=self.strand_id).to_json())]
 
 
 class WelcomeSlackMessage(SlackMessage):
@@ -77,8 +69,6 @@ class WelcomeSlackMessage(SlackMessage):
         )
 
     def _format_text(self):
-        return dedent(f'''
-            Successfully installed Strand! You can now save anything important to your team's shared\
-            knowledge-base. Want to save something? Simply copy it and send it as a direct message to\
-            me in this window - I'll figure out the rest.
-        ''')
+        return 'Successfully installed Strand! You can now save anything important to your team\'s shared ' + \
+               'knowledge-base. Want to save something? Simply copy it and send it as a direct message to ' + \
+               'me in this window - I\'ll figure out the rest.'

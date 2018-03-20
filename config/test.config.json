@@ -3,7 +3,6 @@
   "LOG_LEVEL": "DEBUG",
   "LOG_FILE": "pytest-tmp/log.txt",
   "STRAND_API_HOST": "http://localhost:8000/",
-  "STRAND_UI_HOST": "http://localhost:3000",
   "STRAND_API_GRAPHQL_ENDPOINT": "graphql",
   "HOST": "0.0.0.0",
   "PORT": 5004,

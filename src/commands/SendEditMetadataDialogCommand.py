@@ -1,3 +1,5 @@
+import json
+
 from src.commands.Command import Command
 from src.models.slack.outgoing.dialogs import EditMetadataDialog
 
@@ -13,4 +15,4 @@ class SendEditMetadataDialogCommand(Command):
         log_msg = f'Executing SendEditMetadataDialogCommand for {self.slack_team_id} with trigger {self.trigger_id}'
         self.logger.info(log_msg)
         self.slack_client_wrapper.send_dialog(trigger_id=self.trigger_id, slack_team_id=self.slack_team_id,
-                                              dialog=EditMetadataDialog(strand_id=self.strand_id))
+                                              dialog=json.loads(EditMetadataDialog(strand_id=self.strand_id).to_json()))
