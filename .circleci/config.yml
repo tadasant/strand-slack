@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build --tag slack-app-staging .
+            docker build --tag slack-staging .
 
       - run:
           name: Login to aws
@@ -62,8 +62,8 @@ jobs:
           name: Push to ECR
           command: |
             repo_url=037670161673.dkr.ecr.us-east-1.amazonaws.com
-            docker tag slack-app-staging:latest $repo_url/slack-app-staging:latest
-            docker push $repo_url/slack-app-staging:latest
+            docker tag slack-staging:latest $repo_url/slack-staging:latest
+            docker push $repo_url/slack-staging:latest
 
   push-to-production:
     docker:
@@ -79,7 +79,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build --tag slack-app-production .
+            docker build --tag slack-production .
 
       - run:
           name: Login to aws
@@ -91,8 +91,8 @@ jobs:
           name: Push to ECR
           command: |
             repo_url=037670161673.dkr.ecr.us-east-1.amazonaws.com
-            docker tag slack-app-production:latest $repo_url/slack-app-production:latest
-            docker push $repo_url/slack-app-production:latest
+            docker tag slack-production:latest $repo_url/slack-production:latest
+            docker push $repo_url/slack-production:latest
 
 workflows:
   version: 2
