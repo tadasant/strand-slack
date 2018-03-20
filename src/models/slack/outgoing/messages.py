@@ -60,7 +60,25 @@ class SavedStrandSlackMessage(SlackMessage):
         super().__init__(text=self.text, attachments=self.attachments)
 
     def _format_text(self):
-        return f'Your strand has been saved. Would you like to edit its title and tags?'
+        return dedent(f'''
+            Your content has been saved to app.trystrand.com. If you did not create an account before,\
+            check your email for instructions on how to register. To edit the title and tags of your\
+            strand, click below.
+        ''')
 
     def _format_attachments(self):
         return [EditMetadataButtonAttachment(strand_id=self.strand_id).to_json()]
+
+
+class WelcomeSlackMessage(SlackMessage):
+    def __init__(self):
+        super().__init__(
+            text=self._format_text(),
+        )
+
+    def _format_text(self):
+        return dedent(f'''
+            Successfully installed Strand! You can now save anything important to your team's shared\
+            knowledge-base. Want to save something? Simply copy it and send it as a direct message to\
+            me in this window - I'll figure out the rest.
+        ''')
