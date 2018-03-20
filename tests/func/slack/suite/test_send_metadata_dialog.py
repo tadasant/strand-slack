@@ -27,7 +27,11 @@ class TestSendMetadataDialog(TestSlackFixtures):
         fake_slack_interactive_component_request = slack_interactive_component_request_factory(
             team=SlackTeamFactory.create(id=installed_user.agent_slack_team_id),
             user=SlackUserFactory.create(id=installed_user.slack_user_id),
-            actions=[SlackActionFactory.create(name=EditMetadataButton(value=fake_strand_id).name)]
+            actions=[SlackActionFactory.create(
+                name=EditMetadataButton(value=fake_strand_id).name,
+                type='dialog_submission',
+                value=fake_strand_id
+            )]
         )
         fake_trigger_id = fake_slack_interactive_component_request.trigger_id
         payload = json.loads(fake_slack_interactive_component_request.to_json())

@@ -8,7 +8,5 @@ class EditMetadataButtonAttachment(SlackAttachment):
             callback_id='edit_metadata_button',
             color='#3AA3E3',
             attachment_type='default',
-            type='button',
-            value='edit',
             actions=[EditMetadataButton(value=strand_id)]
         )

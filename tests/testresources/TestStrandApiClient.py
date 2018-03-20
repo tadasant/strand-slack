@@ -19,7 +19,7 @@ class TestStrandApiClient:
 
     def query(self, operation_definition):
         self.logger.info(f'Query call: {operation_definition}')
-        if 'getUserByEmail' in operation_definition:
+        if 'user' in operation_definition:
             email = get_email_value(operation_definition)
             if email in StrandRepository['users_by_email']:
                 return {'data': {'user': StrandRepository['users_by_email'][email]}}
@@ -32,12 +32,12 @@ class TestStrandApiClient:
             return {'data': {'createTeam': {'team': {
                 'id': '3249838',
             }}}}
-        elif 'addUserToTeam' in operation_definition:
-            return {'data': {'addUserToTeam': {'user': {
-                'id': '482782',
+        elif 'addMembersToTeam' in operation_definition:
+            return {'data': {'addMembersToTeam': {'team': {
+                'members': [{'id': '348382'}],
             }}}}
-        elif 'createUserWithTeam' in operation_definition:
-            return {'data': {'createUserWithTeam': {'user': {
+        elif 'createUserWithTeams' in operation_definition:
+            return {'data': {'createUserWithTeams': {'user': {
                 'id': '84338',
             }}}}
         elif 'createStrand' in operation_definition:

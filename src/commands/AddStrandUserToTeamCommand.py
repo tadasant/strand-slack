@@ -28,7 +28,7 @@ class AddStrandUserToTeamCommand(Command):
         strand_user = self.strand_api_client_wrapper.get_user_by_email(email=slack_user.profile.email)
         if strand_user:
             # Strand API has seen this user email before
-            strand_user = self.strand_api_client_wrapper.add_user_to_team(user_id=strand_user.id,
+            self.strand_api_client_wrapper.add_user_to_team(user_id=strand_user.id,
                                                                           team_id=self.strand_team_id)
         else:
             strand_user = self.strand_api_client_wrapper.create_user_with_team(email=slack_user.profile.email,

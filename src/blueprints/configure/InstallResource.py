@@ -4,13 +4,18 @@ from threading import Thread
 from flask import request, current_app
 from flask_restful import Resource
 
+from src.utilities.logging import get_logger
 from src.translators.InstallTranslator import InstallTranslator
 
 
 class InstallResource(Resource):
+    def __init__(self):
+        self.logger = get_logger(self.__class__.__name__)
+
     def post(self):
         """Receive installation requests from the Strand UI"""
         args = request.get_json()
+        self.logger.debug(f'Received Install request: {args}')
         # Intentional: Omitting schema validation due to simplicity
         if 'code' in args:
             translator = InstallTranslator(code=args['code'],

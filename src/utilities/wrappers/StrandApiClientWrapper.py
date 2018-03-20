@@ -1,6 +1,8 @@
+import json
+
 from tenacity import Retrying, wait_fixed, stop_after_attempt, retry_if_exception_type, after_log
 
-from src.models.exceptions.WrapperException import WrapperException
+from src.models.exceptions.exceptions import StrandTranslationException
 from src.models.strand.StrandStrand import StrandStrandSchema, StrandStrand
 from src.models.strand.StrandTeam import StrandTeamSchema
 from src.models.strand.StrandUser import StrandUserSchema
@@ -26,15 +28,15 @@ class StrandApiClientWrapper:
     def get_user_by_email(self, email):
         operation_definition = f'''
         {{
-            getUserByEmail(email: "{email}") {{
-              user {{
-                id
-              }}
+            user(email: "{email}") {{
+              id
             }}
         }}
         '''
         response_body = self.standard_retrier.call(self.strand_api_client.query,
                                                    operation_definition=operation_definition)
+        if self._did_return_not_exists(response_body=response_body):
+            return None
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandUserSchema,
             path_to_object=['data', 'user']
@@ -58,26 +60,25 @@ class StrandApiClientWrapper:
                                                    operation_definition=operation_definition)
         return self._deserialize_response_body(
             response_body=response_body, ObjectSchema=StrandUserSchema,
-            path_to_object=['data', 'createUserWithTeam', 'user']
+            path_to_object=['data', 'createUserWithTeams', 'user']
         )
 
     def add_user_to_team(self, user_id, team_id):
         operation_definition = f'''
                 {{
-                    addMembersToTeam(input: {{id: "{team_id}",
+                    addMembersToTeam(input: {{  id: {team_id},
                                               memberIds: [{user_id}]}}) {{
-                      user {{
-                        id
+                      team {{
+                        members {{
+                          id
+                        }}
                       }}
                     }}
                 }}
                 '''
         response_body = self.standard_retrier.call(self.strand_api_client.mutate,
                                                    operation_definition=operation_definition)
-        return self._deserialize_response_body(
-            response_body=response_body, ObjectSchema=StrandUserSchema,
-            path_to_object=['data', 'addUserToTeam', 'user']
-        )
+        self._validate_no_response_body_errors(response_body=response_body)
 
     def create_team(self, name):
         operation_definition = f'''
@@ -97,11 +98,12 @@ class StrandApiClientWrapper:
         )
 
     def create_strand(self, team_id, saver_user_id, body):
+        body = json.dumps(body)
         operation_definition = f'''
                 {{
-                    createStrand(input: {{ownerId: "{team_id}",
-                                        saverId: "{saver_user_id}",
-                                        body: "{body}"}}) {{
+                    createStrand(input: {{ownerId: {team_id},
+                                        saverId: {saver_user_id},
+                                        body: {body}}}) {{
                       strand {{
                         id
                       }}
@@ -116,12 +118,13 @@ class StrandApiClientWrapper:
         )
 
     def update_strand(self, strand: StrandStrand):
+        title = json.dumps(strand.title)
         operation_definition = f'''
                 {{
-                    updateStrand(input: {{title: {strand.title},
+                    updateStrand(input: {{title: {title},
                                           id: {strand.id},
-                                          tags: [{','.join([f'{{name: {tag.name}}}' for tag in strand.tags])}]
-                                        }})
+                                          tags: [{','.join([f'{{name: "{tag.name}"}}' for tag in strand.tags])}]
+                                        }}){{
                       strand {{
                         id
                       }}
@@ -148,4 +151,11 @@ class StrandApiClientWrapper:
         """Raises an exception if there are any errors in response_body"""
         if 'errors' in response_body:
             message = f'Errors when calling StrandApiClient. Body: {response_body}'
-            raise WrapperException(wrapper_name='StrandApiClient', message=message, errors=response_body['errors'])
+            self.logger.error(message)
+            raise StrandTranslationException(message)
+
+    def _did_return_not_exists(self, response_body):
+        """Returns true if the errors exists but it looks like it's only because there's no result"""
+        if 'errors' in response_body and len(response_body['errors']) == 1:
+            return 'matching query does not exist' in response_body['errors'][0]['message']
+        return False

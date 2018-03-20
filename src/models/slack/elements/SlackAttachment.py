@@ -18,8 +18,10 @@ class SlackAttachment(Model):
         self.ts = ts
         self.callback_id = callback_id
         self.attachment_type = attachment_type
-        self.type = type
-        self.value = value
+        if type:
+            self.type = type
+        if value:
+            self.value = value
         self.actions: List[SlackAction] = actions
 
     def to_json(self):
