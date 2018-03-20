@@ -51,7 +51,8 @@ def baseline_thread_count():
 def app(strand_api_client_factory, slack_client_class):
     app = create_app(strand_api_client=strand_api_client_factory, SlackClientClass=slack_client_class,
                      slack_verification_tokens=config['SLACK_VERIFICATION_TOKENS'],
-                     strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN'])
+                     strand_api_verification_token=config['STRAND_API_VERIFICATION_TOKEN'],
+                     ui_host=config['STRAND_UI_HOST'])
     app.testing = True
     return app
 

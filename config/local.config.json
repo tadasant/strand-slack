@@ -6,10 +6,13 @@
   "STRAND_API_GRAPHQL_ENDPOINT": "graphql",
   "STRAND_API_USER_EMAIL": "ccs@solutionloft.com",
   "STRAND_API_USER_PASSWORD": "randomPassword",
+  "STRAND_UI_HOST": "http://localhost:3000",
   "HOST": "0.0.0.0",
   "PORT": 4000,
   "SLACK_VERIFICATION_TOKENS": ["NkbCRv4Xt0SWJt5MDbktJmwQ", "randomCombo"],
   "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo",
+  "CLIENT_ID": "319694506422.319705404998",
+  "CLIENT_SECRET": "6d78f8dc3bb99ce00bb172ef662a8389",
   "DB": {
     "DIALECT": "sqlite",
     "DATABASE": "local.db"
