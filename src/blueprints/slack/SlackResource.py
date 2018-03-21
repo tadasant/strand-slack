@@ -1,19 +1,32 @@
-from flask import current_app
+import json
+
+from flask import current_app, request
 from flask_restful import Resource
 
-from src.common.logging import get_logger
-from src.domain.models.exceptions.UnexpectedSlackException import UnexpectedSlackException
+from src.models.exceptions.exceptions import UnauthorizedException
+from src.utilities.logging import get_logger
 
 
 class SlackResource(Resource):
     """Parent for all Slack callback resources"""
+
     def __init__(self):
         self.logger = get_logger(self.__class__.__name__)
 
-    def _authenticate(self, payload):
+    @classmethod
+    def authenticate(cls, func):
         """Check if the Slack payload has the verification token"""
-        self.logger.debug(f'Request payload: {payload}')
-        if payload['token'] != current_app.slack_verification_token:
-            message = 'Invalid slack verification token'
-            self.logger.error(message)
-            raise UnexpectedSlackException(message=message)
+
+        def wrapper(*args, **kwargs):
+            get_logger('Flask').debug(f'Request args: {request.get_json()}')
+            payload = {
+                'application/json': lambda: request.get_json(),
+                'application/x-www-form-urlencoded': lambda: json.loads(request.form['payload'])
+            }[request.headers.environ.get('CONTENT_TYPE')]()
+            if payload['token'] not in current_app.slack_verification_tokens:
+                message = 'Invalid slack verification token'
+                get_logger('Flask').error(message)
+                raise UnauthorizedException(message=message)
+            return func(*args, **kwargs)
+
+        return wrapper

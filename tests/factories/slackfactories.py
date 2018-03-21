@@ -1,22 +1,26 @@
 import factory.fuzzy
 
-from src.domain.models.slack.Channel import Channel
-from src.domain.models.slack.Team import Team
-from src.domain.models.slack.User import User
-from src.domain.models.slack.requests.EventRequest import EventRequest
-from src.domain.models.slack.requests.InteractiveComponentRequest import InteractiveComponentRequest
-from src.domain.models.slack.requests.SlashCommandRequest import SlashCommandRequest
-from src.domain.models.slack.requests.elements.Action import Action
-from src.domain.models.slack.requests.elements.Event import Event
-from src.domain.models.slack.requests.elements.File import File
-from src.domain.models.slack.requests.elements.Message import Message
-from src.domain.models.slack.requests.elements.Option import Option
-from src.domain.models.slack.requests.elements.Submission import Submission
+from src.config import config
+from src.models.slack.elements.SlackAction import SlackAction
+from src.models.slack.elements.SlackBot import SlackBot
+from src.models.slack.elements.SlackChannel import SlackChannel
+from src.models.slack.elements.SlackEvent import SlackEvent
+from src.models.slack.elements.SlackFile import SlackFile
+from src.models.slack.elements.SlackMessage import SlackMessage
+from src.models.slack.elements.SlackOption import SlackOption
+from src.models.slack.elements.SlackProfile import SlackProfile
+from src.models.slack.elements.SlackSubmission import SlackSubmission
+from src.models.slack.elements.SlackTeam import SlackTeam
+from src.models.slack.elements.SlackUser import SlackUser
+from src.models.slack.requests.SlackEventRequest import SlackEventRequest
+from src.models.slack.requests.SlackInteractiveComponentRequest import SlackInteractiveComponentRequest
+from src.models.slack.requests.SlackSlashCommandRequest import SlackSlashCommandRequest
+from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponse
 
 
 class MessageFactory(factory.Factory):
     class Meta:
-        model = Message
+        model = SlackMessage
 
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
@@ -24,63 +28,73 @@ class MessageFactory(factory.Factory):
 
 class OptionFactory(factory.Factory):
     class Meta:
-        model = Option
+        model = SlackOption
 
     value = factory.Faker('word')
 
 
-class ActionFactory(factory.Factory):
+class SlackActionFactory(factory.Factory):
     class Meta:
-        model = Action
+        model = SlackAction
 
     name = factory.Faker('word')
+    type = factory.Faker('word')
+    value = factory.Faker('ean8')
     selected_options = factory.List([OptionFactory.build()])
 
 
-class TeamFactory(factory.Factory):
+class SlackTeamFactory(factory.Factory):
     class Meta:
-        model = Team
+        model = SlackTeam
 
     id = factory.Faker('bban')
 
 
-class UserFactory(factory.Factory):
+class SlackProfileFactory(factory.Factory):
     class Meta:
-        model = User
+        model = SlackProfile
+
+    real_name = factory.Faker('name')
+    display_name = factory.Faker('name')
+    email = factory.Faker('free_email')
+
+
+class SlackUserFactory(factory.Factory):
+    class Meta:
+        model = SlackUser
 
     id = factory.Faker('bban')
+    profile = factory.SubFactory(SlackProfileFactory)
 
 
 class ChannelFactory(factory.Factory):
     class Meta:
-        model = Channel
+        model = SlackChannel
 
     id = factory.fuzzy.FuzzyText(length=9, prefix='C')
     name = factory.Faker('word')
 
 
-class SubmissionFactory(factory.Factory):
+class SlackSubmissionFactory(factory.Factory):
     class Meta:
-        model = Submission
+        model = SlackSubmission
 
-    title = factory.Faker('paragraph')
-    description = factory.Faker('paragraph')
+    title = factory.Faker('sentence')
     tags = factory.Faker('paragraph')
-    share_with_current_channel = False
 
 
-class FileFactory(factory.Factory):
+class SlackFileFactory(factory.Factory):
     class Meta:
-        model = File
+        model = SlackFile
 
     id = factory.Faker('bban')
     public_url_shared = factory.Faker('url')
     permalink_public = False
 
 
-class EventFactory(factory.Factory):
+class SlackEventFactory(factory.Factory):
     class Meta:
-        model = Event
+        model = SlackEvent
 
     type = factory.Faker('word')
     user = factory.Faker('bban')
@@ -88,27 +102,37 @@ class EventFactory(factory.Factory):
     text = factory.Faker('paragraph')
     ts = factory.Faker('msisdn')
     subtype = factory.Faker('word')
-    file = factory.SubFactory(FileFactory)
+    file = factory.SubFactory(SlackFileFactory)
+
+
+class SlackBotFactory(factory.Factory):
+    class Meta:
+        model = SlackBot
+
+    bot_user_id = factory.Faker('bban')
+    bot_access_token = factory.Faker('md5')
 
 
 #  TOP LEVEL
 
-class InteractiveComponentRequestFactory(factory.Factory):
+class SlackInteractiveComponentRequestFactory(factory.Factory):
     class Meta:
-        model = InteractiveComponentRequest
+        model = SlackInteractiveComponentRequest
 
     type = factory.Faker('word')
     callback_id = factory.Faker('word')
-    team = factory.SubFactory(TeamFactory)
-    user = factory.SubFactory(UserFactory)
+    token = config['SLACK_VERIFICATION_TOKENS'][0]
+    team = factory.SubFactory(SlackTeamFactory)
+    user = factory.SubFactory(SlackUserFactory)
     channel = factory.SubFactory(ChannelFactory)
     response_url = factory.Faker('url')
     trigger_id = factory.Faker('md5')
+    submission = factory.SubFactory(SlackSubmissionFactory)
 
 
 class SlashCommandRequestFactory(factory.Factory):
     class Meta:
-        model = SlashCommandRequest
+        model = SlackSlashCommandRequest
 
     team_id = factory.Faker('bban')
     user_id = factory.Faker('bban')
@@ -118,11 +142,28 @@ class SlashCommandRequestFactory(factory.Factory):
     channel_id = factory.Faker('bban')
 
 
-class EventRequestFactory(factory.Factory):
+class SlackEventRequestFactory(factory.Factory):
     class Meta:
-        model = EventRequest
+        model = SlackEventRequest
 
     type = factory.Faker('word')
+    token = config['SLACK_VERIFICATION_TOKENS'][0]
     challenge = factory.Faker('md5')
     team_id = factory.Faker('bban')
-    event = factory.SubFactory(EventFactory)
+    event = factory.SubFactory(SlackEventFactory)
+    api_app_id = factory.Faker('bban')
+    event_id = factory.Faker('bban')
+    event_time = factory.Faker('ean8')
+    authed_users = factory.List([SlackUserFactory.build()])
+
+
+class SlackOauthAccessResponseFactory(factory.Factory):
+    class Meta:
+        model = SlackOauthAccessResponse
+
+    access_token = factory.Faker('md5')
+    scope = factory.Faker('sentence')
+    team_name = factory.Faker('last_name')
+    team_id = factory.Faker('bban')
+    bot = factory.SubFactory(SlackBotFactory)
+    user_id = factory.Faker('bban')

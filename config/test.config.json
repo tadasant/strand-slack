@@ -1,11 +1,17 @@
 {
-  "FLASK_DEBUG": true,
+  "FLASK_DEBUG": false,
   "LOG_LEVEL": "DEBUG",
   "LOG_FILE": "pytest-tmp/log.txt",
-  "PORTAL_HOST": "http://localhost:8000/",
-  "PORTAL_GRAPHQL_ENDPOINT": "graphql",
+  "STRAND_API_HOST": "http://localhost:8000/",
+  "STRAND_API_GRAPHQL_ENDPOINT": "graphql",
   "HOST": "0.0.0.0",
   "PORT": 5004,
-  "SLACK_VERIFICATION_TOKEN": "sOmERAndOMComBoOfLettERSAND7UMB3rs",
-  "PORTAL_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo"
+  "SLACK_VERIFICATION_TOKENS": ["sOmERAndOMComBoOfLettERSAND7UMB3rs", "raNdomCombo"],
+  "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo",
+  "CLIENT_ID": "some_random_id",
+  "CLIENT_SECRET": "some_random_secret",
+  "DB": {
+    "DIALECT": "sqlite",
+    "DATABASE": "pytest-tmp/local.db"
+  }
 }
