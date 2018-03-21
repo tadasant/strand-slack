@@ -65,6 +65,11 @@ jobs:
             docker tag slack-staging:latest $repo_url/slack-staging:latest
             docker push $repo_url/slack-staging:latest
 
+      - run:
+          name: Update ECS service
+          command: |
+             aws ecs update-service --cluster slack-staging --service slack-staging-service --desired-count 1 --force-new-deployment
+
   push-to-production:
     docker:
       - image: circleci/python:3.6.1
@@ -82,7 +87,7 @@ jobs:
             docker build --tag slack-production .
 
       - run:
-          name: Login to aws
+          name: Login to AWS
           command: |
             sudo pip install awscli==1.14.36
             eval $(aws ecr get-login --no-include-email --region us-east-1)
@@ -93,6 +98,12 @@ jobs:
             repo_url=037670161673.dkr.ecr.us-east-1.amazonaws.com
             docker tag slack-production:latest $repo_url/slack-production:latest
             docker push $repo_url/slack-production:latest
+
+      - run:
+          name: Update ECS service
+          command: |
+             aws ecs update-service --cluster slack-production --service slack-production-service --desired-count 1 --force-new-deployment
+
 
 workflows:
   version: 2

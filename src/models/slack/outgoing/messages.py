@@ -11,11 +11,11 @@ class HelpSlackMessage(SlackMessage):
         )
 
     def _format_text(self):
-        return 'Strand lets you save anything from Slack to your team’s shared knowledge-base. Make it easy for ' +\
-            'you and your team to find important conversations by saving them from any channel or DM to Strand. ' +\
-            'You can see what your team has saved so far right here: app.trystrand.com ' +\
-            'Want to save something? Simply copy it and send it as a direct message to me in this window ' +\
-            '- I\'ll figure out the rest.'
+        return 'Strand lets you save anything from Slack to your team’s shared knowledge-base. Make it easy for ' + \
+               'you and your team to find important conversations by saving them from any channel or DM to Strand. ' + \
+               'You can see what your team has saved so far right here: app.trystrand.com ' + \
+               'Want to save something? Simply copy it and send it as a direct message to me in this window ' + \
+               '- I\'ll figure out the rest.'
 
 
 class PleaseInstallSlackMessage(SlackMessage):
@@ -25,14 +25,15 @@ class PleaseInstallSlackMessage(SlackMessage):
         )
 
     def _format_text(self):
-        return 'Someone on your team has approved Strand. To use it, install it yourself here: ' + \
-               'www.trystrand.com/teams\n' + \
+        return 'Someone on your team has installed the Strand app on this workspace. However, each ' + \
+               'user must install it themselves to use it. Please visit the following site: ' + \
+               'https://app.trystrand.com/install\n\n' + \
                'Haven’t heard of Strand? Strand helps teams save any information that is exchanged to a shared ' + \
                'knowledge-base. You can save anything from public channels, private channels, or DMs. By pooling ' + \
                'insights from the entire team, you’ll be able to make more informed decisions, spend less time ' + \
                'looking for them, and bother your colleagues less. Saving information is simple - just install the ' + \
-               'app, and then send anything you want to share to me as a direct message.' + \
-               '\nTake a look at what your team has saved at app.trystrand.com, or get started by installing the app.'
+               'app, and then send anything you want to share to me as a direct message.\n\n' + \
+               'Take a look at what your team has saved at app.trystrand.com, or get started by installing the app.'
 
 
 class MetadataUpdatedSlackMessage(SlackMessage):

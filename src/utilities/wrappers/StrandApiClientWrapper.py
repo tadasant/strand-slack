@@ -42,11 +42,10 @@ class StrandApiClientWrapper:
             path_to_object=['data', 'user']
         )
 
-    def create_user_with_team(self, email, username, first_name, last_name, team_id):
+    def create_user_with_team(self, email, first_name, last_name, team_id):
         operation_definition = f'''
                 {{
                     createUserWithTeams(input: {{email: "{email}",
-                                        username: "{username}",
                                         firstName: "{first_name}",
                                         lastName: "{last_name}",
                                         teamIds: [{team_id}]}}) {{

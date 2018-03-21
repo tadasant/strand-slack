@@ -32,7 +32,6 @@ class AddStrandUserToTeamCommand(Command):
                                                                           team_id=self.strand_team_id)
         else:
             strand_user = self.strand_api_client_wrapper.create_user_with_team(email=slack_user.profile.email,
-                                                                               username=slack_user.profile.display_name,
                                                                                first_name=first_name,
                                                                                last_name=last_name,
                                                                                team_id=self.strand_team_id)
