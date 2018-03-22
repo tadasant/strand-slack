@@ -3,6 +3,6 @@ version: '2'
 services:
   project:
     build: .
-    entrypoint: python run.py
+    entrypoint: ./run.sh
     ports:
       - "5000"
