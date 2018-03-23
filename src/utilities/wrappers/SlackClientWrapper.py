@@ -57,16 +57,17 @@ class SlackClientWrapper:
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments, as_user=False)
 
-    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None):
+    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None,
+                               use_bot_token=False):
         if not attachments:
             attachments = []
 
-        try:
+        if use_bot_token:
+            slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
+        else:
             # If this is a DM to a non-installer, we will need to use the bot token
             slack_client = self._get_slack_client(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
                                                   is_bot=False)
-        except:
-            slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=True)
 
         response = self.standard_retrier.call(slack_client.api_call, method='chat.postEphemeral',
                                               channel=slack_channel_id, user=slack_user_id, text=text,
