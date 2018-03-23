@@ -4,13 +4,15 @@ from copy import deepcopy
 from marshmallow import Schema, fields, post_load
 
 from src.models.Model import Model
+from src.models.slack.elements import SlackTokens
 from src.models.slack.elements.SlackFile import SlackFileSchema, SlackFile
 from src.models.slack.elements.SlackItem import SlackItemSchema, SlackItem
+from src.models.slack.elements.SlackTokens import SlackTokensSchema
 
 
 class SlackEvent(Model):
     def __init__(self, type, user, hidden=False, channel=None, text=None, ts=None, thread_ts=None, file=None,
-                 subtype=None, item=None, item_user=None, reaction=None):
+                 subtype=None, item=None, item_user=None, reaction=None, tokens=None):
         self.type = type
         self.user = user
         self.hidden = hidden
@@ -23,11 +25,15 @@ class SlackEvent(Model):
         self.item: SlackItem = item
         self.item_user = item_user
         self.reaction = reaction
+        if tokens:
+            self.tokens: SlackTokens = tokens
 
     def to_json(self):
         result = deepcopy(vars(self))
         result['file'] = json.loads(self.file.to_json()) if self.file else None
         result['item'] = json.loads(self.item.to_json()) if self.item else None
+        if hasattr(self, 'tokens'):
+            result['tokens'] = json.loads(self.tokens.to_json())
         return json.dumps(result)
 
     @property
@@ -45,6 +51,14 @@ class SlackEvent(Model):
     @property
     def is_help_dm_event(self):
         return self.is_message_dm_event and self.text.lower().strip() == 'help'
+
+    @property
+    def is_tokens_revoked_event(self):
+        return self.type == 'tokens_revoked'
+
+    @property
+    def is_app_uninstalled_event(self):
+        return self.type == 'app_uninstalled'
 
     @property
     def is_message(self):
@@ -78,6 +92,7 @@ class SlackEventSchema(Schema):
     item = fields.Nested(SlackItemSchema, allow_none=True)
     item_user = fields.String(allow_none=True)
     reaction = fields.String(allow_none=True)
+    tokens = fields.Nested(SlackTokensSchema)
 
     @post_load
     def make_event(self, data):
