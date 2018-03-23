@@ -4,6 +4,7 @@ import pytest
 from flask import url_for
 
 from src.models.domain.Agent import Agent
+from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
 from src.models.domain.User import User
 from tests.func.configure.TestInstallFixtures import TestInstallFixtures
@@ -48,11 +49,12 @@ class TestInstall(TestInstallFixtures):
         assert db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).one()
 
-    def test_install_existing_agent_new_user(self, slack_oauth_response_and_agent_in_db, client, slack_client_class,
-                                             strand_api_client, db_session, mocker, baseline_thread_count):
+    def test_install_just_existing_agent_new_user(self, slack_oauth_response_and_agent_in_db, client,
+                                                  slack_client_class, strand_api_client, db_session, mocker,
+                                                  baseline_thread_count):
         """
-            GIVEN: existing agent, new user, existing strand team
-            OUTPUT: new User, new Installation, new StrandUser
+            GIVEN: existing agent, new user, existing strand team, new bot
+            OUTPUT: new User, new Installation, new StrandUser, updated bot
         """
         # `slack_oauth_access_and_agent_in_db` sets up state with one existing installation
         target_url = url_for(endpoint=self.target_endpoint)
@@ -60,6 +62,7 @@ class TestInstall(TestInstallFixtures):
         payload = {'code': f.code}
         mocker.spy(slack_client_class, 'api_call')
         mocker.spy(strand_api_client, 'mutate')
+        current_bot_access_token = db_session.query(Bot).one().access_token
 
         client.post(path=target_url, headers=self.default_headers, data=json.dumps(payload))
 
@@ -78,6 +81,8 @@ class TestInstall(TestInstallFixtures):
             db_session.query(User).filter(User.agent_slack_team_id == f.slack_oauth_access_response.team_id).all()) == 2
         assert len(db_session.query(Installation).filter(
             Installation.installer_agent_slack_team_id == f.slack_oauth_access_response.team_id).all()) == 2
+        print(current_bot_access_token)
+        assert current_bot_access_token != db_session.query(Bot).one().access_token, 'Bot token should be updated'
 
     def test_install_new_agent_new_user_existing_strand_user(self, slack_oauth_response_and_user_in_strand, client,
                                                              slack_client_class, strand_api_client, db_session, mocker,
