@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 from src.blueprints import slack, configure
 from src.models.exceptions.SLAException import SLAException
 from src.models.exceptions.WrapperException import WrapperException
-from src.utilities.database import metadata, engine
+from src.utilities.database import metadata, db_engine
 from src.utilities.logging import get_logger
 from src.utilities.wrappers.SlackClientWrapper import SlackClientWrapper
 from src.utilities.wrappers.StrandApiClientWrapper import StrandApiClientWrapper
@@ -61,4 +61,4 @@ def init_authentication(app, slack_verification_tokens, strand_api_verification_
 
 
 def init_database():
-    metadata.create_all(engine)
+    metadata.create_all(db_engine)
