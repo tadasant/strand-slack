@@ -1,15 +1,14 @@
 import json
-from http import HTTPStatus
 
 import pytest
 from flask import url_for
 
+from src.config import config
 from src.models.domain.Agent import Agent
 from src.models.domain.Installation import Installation
 from src.models.domain.User import User
 from tests.func.configure.TestInstallFixtures import TestInstallFixtures
 from tests.utils.asserting import wait_for_extra_threads_to_die, assert_values_in_call_args_list
-from src.config import config
 
 
 @pytest.mark.usefixtures('app')
@@ -23,7 +22,7 @@ class TestInstall(TestInstallFixtures):
         """Redirect to Slack OAuth flow when GET request sent"""
         target_url = url_for(endpoint=self.target_endpoint)
         response = client.get(path=target_url)
-        assert HTTPStatus.PERMANENT_REDIRECT == response.status_code
+        assert 302 == response.status_code  # Slack wants a 302
         assert all(x in response.location for x in ['slack.com', 'oauth', config['SCOPES'], config['CLIENT_ID']])
 
     def test_install_new_agent_new_user(self, slack_oauth_access, client, slack_client_class, strand_api_client,
