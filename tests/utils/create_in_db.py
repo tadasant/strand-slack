@@ -5,7 +5,7 @@ from src.models.domain.User import User
 from tests.common.PrimitiveFaker import PrimitiveFaker
 
 
-def insert_agent_user_installation(db_session, access_token='', scope='',
+def insert_agent_user_installation(db_session, access_token=str(PrimitiveFaker('md5')), scope='',
                                    slack_team_id=str(PrimitiveFaker('bban'))) -> Agent:
     """Creates Agent, User, and Installation from provided arguments. Returns Agent aggregate."""
     agent = Agent(slack_team_id=slack_team_id, strand_team_id=int(str(PrimitiveFaker('ean8'))),

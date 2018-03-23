@@ -1,14 +1,17 @@
 from threading import Thread
 
+from src.models.slack.requests.SlackEventRequest import SlackEventRequest
 from src.services.parent.InitiateSaveStrandService import InitiateSaveStrandService
 from src.services.parent.ProvideHelpService import ProvideHelpService
+from src.services.parent.RevokeTokensService import RevokeTokensService
+from src.services.parent.UninstallAppService import UninstallAppService
 from src.translators.Translator import Translator
 
 
 class SlackEventTranslator(Translator):
     def __init__(self, slack_event_request, slack_client_wrapper, strand_api_client_wrapper):
         super().__init__(slack_client_wrapper=slack_client_wrapper, strand_api_client_wrapper=strand_api_client_wrapper)
-        self.slack_event_request = slack_event_request
+        self.slack_event_request: SlackEventRequest = slack_event_request
 
     def translate(self):
         self.logger.debug(f'Translating slack_event_request {self.slack_event_request}')
@@ -32,5 +35,13 @@ class SlackEventTranslator(Translator):
                                                     slack_user_id=slack_user_id,
                                                     slack_channel_id=slack_channel_id)
                 Thread(target=service.execute, daemon=True).start()
+        elif self.slack_event_request.event and self.slack_event_request.event.is_tokens_revoked_event:
+            service = RevokeTokensService(slack_team_id=self.slack_event_request.team_id,
+                                          oauth_tokens=self.slack_event_request.event.tokens.oauth,
+                                          bot_tokens=self.slack_event_request.event.tokens.bot)
+            Thread(target=service.execute, daemon=True).start()
+        elif self.slack_event_request.event and self.slack_event_request.event.is_app_uninstalled_event:
+            service = UninstallAppService(slack_team_id=self.slack_event_request.team_id)
+            Thread(target=service.execute, daemon=True).start()
         else:
             self.logger.debug('Ignoring event.')
