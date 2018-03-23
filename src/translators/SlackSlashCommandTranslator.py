@@ -2,6 +2,7 @@ from threading import Thread
 
 from src.translators.Translator import Translator
 from src.services.parent.InitiateSaveStrandViaSlashCommandService import InitiateSaveStrandViaSlashCommandService
+from src.services.parent.ProvideHelpService import ProvideHelpService
 
 
 class SlackSlashCommandTranslator(Translator):
@@ -16,13 +17,20 @@ class SlackSlashCommandTranslator(Translator):
         slack_user_id = self.slack_slash_command_request.user_id
         slack_channel_id = self.slack_slash_command_request.channel_id
 
-        if self.slack_slash_command_request.is_save_command:
-            service = InitiateSaveStrandViaSlashCommandService(slack_team_id=slack_team_id,
-                                                               slack_user_id=slack_user_id,
-                                                               slack_channel_id=slack_channel_id,
-                                                               start_phrase=text,
-                                                               slack_client_wrapper=self.slack_client_wrapper,
-                                                               strand_api_client_wrapper=self.strand_api_client_wrapper)
-            Thread(target=service.execute, daemon=True).start()
+        if self.slack_slash_command_request.is_strand_command:
+            if self.slack_slash_command_request.is_save_command:
+                service = InitiateSaveStrandViaSlashCommandService(slack_team_id=slack_team_id,
+                                                                   slack_user_id=slack_user_id,
+                                                                   slack_channel_id=slack_channel_id,
+                                                                   start_phrase=text[4:].strip(),
+                                                                   slack_client_wrapper=self.slack_client_wrapper,
+                                                                   strand_api_client_wrapper=self.strand_api_client_wrapper)
+                Thread(target=service.execute, daemon=True).start()
+            else:
+                service = ProvideHelpService(slack_client_wrapper=self.slack_client_wrapper,
+                                             slack_team_id=slack_team_id,
+                                             slack_user_id=slack_user_id,
+                                             slack_channel_id=slack_channel_id)
+                Thread(target=service.execute, daemon=True).start()
         else:
             self.logger.debug('Ignoring slash command request.')

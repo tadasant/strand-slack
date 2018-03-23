@@ -16,18 +16,14 @@ class SlackSlashCommandRequest(Model):
         self.trigger_id = trigger_id
         self.channel_id = channel_id
 
-    def to_json(self):
-        result = deepcopy(vars(self))
-        return json.dumps(result)
-
     @property
     def is_strand_command(self):
         """Checks if command is one of registered strand commands"""
-        return self.command == '/save'
+        return self.command == '/strand'
 
     @property
     def is_save_command(self):
-        return self.command == '/save' and self.channel_id.startswith('C')
+        return self.command == '/save' and self.channel_id.startswith('C') and self.text.startswith('save')
 
 
 class SlashCommandRequestSchema(Schema):
