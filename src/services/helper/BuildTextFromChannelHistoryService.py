@@ -45,7 +45,7 @@ class BuildTextFromChannelHistoryService(Service):
             if fuzz.ratio(message.text[:len(start_phrase)].lower(), start_phrase) > 85:
                 return reversed(messages[:idx + 1])
 
-        raise InvalidSlashCommandException(message=f'Cannot find message matching start phrase "{start_phrase}"')
+        raise InvalidSlashCommandException(message=f'Cannot find message matching start phrase: {start_phrase}')
 
     def _format_message(self, message):
         """Takes a message object and returns a formatted body resembling copy-and-pasting."""

@@ -1,6 +1,7 @@
 from threading import Thread
 
 from src.commands.ForwardSavedStrandAndInformUserCommand import ForwardSavedStrandAndInformUserCommand
+from src.commands.SendErrorMessageCommand import SendErrorMessageCommand
 from src.commands.SendPleaseInstallMessageCommand import SendPleaseInstallMessageCommand
 from src.models.exceptions.exceptions import InvalidSlashCommandException
 from src.models.domain.Agent import Agent
@@ -46,8 +47,15 @@ class InitiateSaveStrandViaSlashCommandService(Service):
                 )
                 Thread(target=command.execute, daemon=True).start()
             except InvalidSlashCommandException as e:
-                # TODO: [SLA-185] Send error message that messages could not be pulled for whatever reason
                 self.logger.error(e)
+
+                command = SendErrorMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
+                                                  slack_team_id=self.slack_team_id,
+                                                  slack_user_id=self.slack_user_id,
+                                                  slack_channel_id=self.slack_channel_id,
+                                                  error_title='Slash command error',
+                                                  error_text=e.message)
+                Thread(target=command.execute, daemon=True).start()
         else:
             command = SendPleaseInstallMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                       slack_team_id=self.slack_team_id,

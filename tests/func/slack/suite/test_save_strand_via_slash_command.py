@@ -12,11 +12,11 @@ class TestSaveStrandViaSlashCommand(TestSlackFixtures):
         pass
 
     def test_save_installed_user_start_phrase(self):
-        """Extract channel history, splice by start phrase, forward to Strand API, send user epehmeral message"""
+        """Extract channel history, splice by start phrase, forward to Strand API, send user ephemeral message"""
         pass
 
     def test_save_installed_user_invalid_start_phrase(self):
-        """Fail quietly"""
+        """Extract channel history, splice by start phrase, raise exception, send user ephemeral message"""
         pass
 
     def test_save_installed_user_invalid_channel(self):
