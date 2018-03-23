@@ -50,23 +50,18 @@ class SlackClientWrapper:
         if not attachments:
             attachments = []
 
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
         response = self.standard_retrier.call(slack_client.api_call, method='im.open', user=slack_user_id)
         self._validate_response_ok(response, 'send_dm_to_user', slack_team_id, slack_user_id, text)
         slack_channel_id = response['channel']['id']
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments)
 
-    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None,
-                               use_bot_token=True):
+    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None):
         if not attachments:
             attachments = []
 
-        if use_bot_token:
-            slack_client = self._get_slack_client(slack_team_id=slack_team_id)
-        else:
-            slack_client = self._get_slack_client(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
-                                                  is_bot=False)
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, slack_user_id=slack_user_id, is_bot=False)
         response = self.standard_retrier.call(slack_client.api_call, method='chat.postEphemeral',
                                               channel=slack_channel_id, user=slack_user_id, text=text,
                                               attachments=attachments, as_user=False)

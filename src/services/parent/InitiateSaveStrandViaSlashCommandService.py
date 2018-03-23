@@ -44,7 +44,6 @@ class InitiateSaveStrandViaSlashCommandService(Service):
                     slack_channel_id=self.slack_channel_id,
                     slack_user_id=self.slack_user_id,
                     use_ephemeral=True,
-                    use_bot_token=False
                 )
                 Thread(target=command.execute, daemon=True).start()
             except InvalidSlashCommandException as e:
@@ -55,15 +54,13 @@ class InitiateSaveStrandViaSlashCommandService(Service):
                                                   slack_user_id=self.slack_user_id,
                                                   slack_channel_id=self.slack_channel_id,
                                                   error_title='Slash command error',
-                                                  error_text=e.message,
-                                                  use_bot_token=False)
+                                                  error_text=e.message)
                 Thread(target=command.execute, daemon=True).start()
         else:
             command = SendPleaseInstallMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                       slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
-                                                      slack_channel_id=self.slack_channel_id,
-                                                      use_bot_token=False)
+                                                      slack_channel_id=self.slack_channel_id)
             Thread(target=command.execute, daemon=True).start()
 
     def _get_saver_strand_user_id(self, session):

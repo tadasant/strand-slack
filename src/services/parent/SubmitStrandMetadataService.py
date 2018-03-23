@@ -23,6 +23,5 @@ class SubmitStrandMetadataService(Service):
                                                            slack_team_id=self.slack_team_id,
                                                            slack_user_id=self.slack_user_id,
                                                            slack_channel_id=self.slack_channel_id,
-                                                           strand=self.strand,
-                                                           use_bot_token=False)
+                                                           strand=self.strand)
         Thread(target=command.execute, daemon=True).start()
