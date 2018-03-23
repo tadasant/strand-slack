@@ -41,7 +41,6 @@ class BuildTextFromChannelHistoryService(Service):
             return reversed(messages[:default])
 
         for idx, message in enumerate(messages):
-            print(message.text[:len(start_phrase)].lower(), start_phrase.lower())
             if fuzz.ratio(message.text[:len(start_phrase)].lower(), start_phrase.lower()) > 85:
                 return reversed(messages[:idx + 1])
 
