@@ -10,6 +10,6 @@ class ConvertTextToGFMService(Service):
 
     def execute(self):
         """Return the converted markdown"""
-        self.logger.debug(f'Converting text to GFM: {self.text}')
+        self.logger.debug(f'Converting text to GFM: {repr(self.text)}')
         # TODO Vikas to implement
         return self.text
