@@ -32,9 +32,24 @@ class SlackClientWrapper:
     def get_channel_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
         response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
-                                              channel=slack_channel_id, inclusive=True,
-                                              count=count)
+                                              channel=slack_channel_id, inclusive=True, count=count)
         self._validate_response_ok(response, 'get_channel_history', slack_team_id, slack_channel_id, count)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
+                                               path_to_object=['messages'], many=True)
+
+    def get_group_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='groups.history', channel=slack_channel_id,
+                                              inclusive=True, count=count)
+        self._validate_response_ok(response, 'get_group_history', slack_team_id, slack_channel_id, count)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
+                                               path_to_object=['messages'], many=True)
+
+    def get_im_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='im.history', channel=slack_channel_id,
+                                              inclusive=True, count=count)
+        self._validate_response_ok(response, 'get_im_history', slack_team_id, slack_channel_id, count)
         return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
                                                path_to_object=['messages'], many=True)
 
@@ -49,13 +64,21 @@ class SlackClientWrapper:
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
                                    text=text, attachments=attachments)
 
-    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None):
+    def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None,
+                               use_bot_token=True):
         if not attachments:
             attachments = []
 
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
-        self.standard_retrier.call(slack_client.api_call, method='chat.postEphemeral', channel=slack_channel_id,
-                                   user=slack_user_id, text=text, attachments=attachments)
+        if use_bot_token:
+            slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        else:
+            slack_client = self._get_slack_client(slack_team_id=slack_team_id, slack_user_id=slack_user_id,
+                                                  is_bot=False)
+        response = self.standard_retrier.call(slack_client.api_call, method='chat.postEphemeral',
+                                              channel=slack_channel_id, user=slack_user_id, text=text,
+                                              attachments=attachments, as_user=False)
+        self._validate_response_ok(response, 'send_ephemeral_message', slack_team_id, slack_channel_id,
+                                   slack_user_id, text)
 
     def post_to_response_url(self, response_url, payload):
         response_retrier = self.standard_retrier.copy(wait=wait_fixed(0.5), stop=stop_after_attempt(4))
