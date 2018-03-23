@@ -24,7 +24,8 @@ class SlackSlashCommandTranslator(Translator):
                                                                    slack_channel_id=slack_channel_id,
                                                                    start_phrase=text[4:].strip(),
                                                                    slack_client_wrapper=self.slack_client_wrapper,
-                                                                   strand_api_client_wrapper=self.strand_api_client_wrapper)
+                                                                   strand_api_client_wrapper=self.
+                                                                   strand_api_client_wrapper)
                 Thread(target=service.execute, daemon=True).start()
             else:
                 service = ProvideHelpService(slack_client_wrapper=self.slack_client_wrapper,
