@@ -3,6 +3,7 @@ import json
 import pytest
 from flask import url_for
 
+from src.config import config
 from src.models.domain.Agent import Agent
 from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
@@ -17,6 +18,13 @@ class TestInstall(TestInstallFixtures):
 
     target_endpoint = 'configure.installresource'
     default_headers = {'Content-Type': 'application/json'}
+
+    def test_oauth_redirect(self, client):
+        """Redirect to Slack OAuth flow when GET request sent"""
+        target_url = url_for(endpoint=self.target_endpoint)
+        response = client.get(path=target_url)
+        assert 302 == response.status_code  # Slack wants a 302
+        assert all(x in response.location for x in ['slack.com', 'oauth', config['SCOPES'], config['CLIENT_ID']])
 
     def test_install_new_agent_new_user(self, slack_oauth_access, client, slack_client_class, strand_api_client,
                                         db_session, mocker, baseline_thread_count):
