@@ -23,3 +23,7 @@ class UnexpectedStateException(SLAException):
 
 class UnauthorizedException(SLAException):
     """Raise when caller is not an authenticated user with appropriate authorization"""
+
+
+class InvalidSlashCommandException(SLAException):
+    """Raise whenever SLA encounters an invalid slash command"""

@@ -1,3 +1,6 @@
+import json
+from copy import deepcopy
+
 from marshmallow import Schema, fields, post_load
 
 from src.models.Model import Model
@@ -13,17 +16,18 @@ class SlackSlashCommandRequest(Model):
         self.trigger_id = trigger_id
         self.channel_id = channel_id
 
+    def to_json(self):
+        result = deepcopy(vars(self))
+        return json.dumps(result)
+
     @property
     def is_strand_command(self):
-        return self.command == '/strand'
+        """Checks if command is one of registered strand commands"""
+        return self.command == '/save'
 
     @property
-    def is_post_topic(self):
-        return self.command == '/strand' and self.text == 'post'
-
-    @property
-    def is_close_discussion(self):
-        return self.command == '/strand' and self.text == 'close'
+    def is_save_command(self):
+        return self.command == '/save'
 
 
 class SlashCommandRequestSchema(Schema):

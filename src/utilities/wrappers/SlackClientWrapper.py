@@ -6,6 +6,7 @@ from src.models.domain.Bot import Bot
 from src.models.domain.Installation import Installation
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.slack.elements.SlackUser import SlackUserSchema
+from src.models.slack.elements.SlackMessage import SlackMessageSchema
 from src.models.slack.responses import SlackOauthAccessResponse
 from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponseSchema
 from src.utilities.database import db_session
@@ -27,6 +28,15 @@ class SlackClientWrapper:
             after=after_log(logger=self.logger, log_level=self.logger.getEffectiveLevel()),
             retry=(retry_if_exception_type(ConnectionError))
         )
+
+    def get_channel_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
+                                              channel=slack_channel_id, inclusive=True,
+                                              count=count)
+        self._validate_response_ok(response, 'get_channel_history', slack_team_id, slack_channel_id, count)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
+                                               path_to_object=['messages'], many=True)
 
     def send_dm_to_user(self, slack_team_id, slack_user_id, text, attachments=None):
         if not attachments:
