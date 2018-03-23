@@ -20,7 +20,7 @@ class SlackSlashCommandTranslator(Translator):
             service = InitiateSaveStrandViaSlashCommandService(slack_team_id=slack_team_id,
                                                                slack_user_id=slack_user_id,
                                                                slack_channel_id=slack_channel_id,
-                                                               text=text,
+                                                               start_phrase=text,
                                                                slack_client_wrapper=self.slack_client_wrapper,
                                                                strand_api_client_wrapper=self.strand_api_client_wrapper)
             Thread(target=service.execute, daemon=True).start()

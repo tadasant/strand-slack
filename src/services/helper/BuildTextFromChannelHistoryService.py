@@ -27,22 +27,29 @@ class BuildTextFromChannelHistoryService(Service):
         return text
 
     def _splice_messages(self, messages, start_phrase=None, default=10):
+        """Take full channel history and splice into the intended subset.
+
+        If no start phrase is provided, the default number of latest messages are returned.
+
+        If a start phrase is provided and a message matches with > 85% accuracy, we return
+        all messages corresponding messages including the matching message.
+
+        If a start phrase is provided and no messages matches with a > 85% accuracy, we raise
+        an InvalidSlashCommandException that explains that the start phrase given does not
+        match any available messages in the current channel.
+        """
         if not start_phrase:
-            # If there is no start phrase provided, return the default number of messages
             return reversed(messages[:default])
 
         for idx, message in enumerate(messages):
-            # If there is a fuzzy match of 85% or more, return all messages including that message
             if fuzz.ratio(message.text[:len(start_phrase)].lower(), start_phrase) > 85:
                 return reversed(messages[:idx + 1])
 
-        # If there was no message with a fuzzy match of 85% or more, raise an InvalidSlashCommandException
         raise InvalidSlashCommandException(message=f'Cannot find message matching start phrase "{start_phrase}"')
 
     def _format_message(self, message):
-        # Convert timestamp to time (e.g. "2:47 PM")
-        time = datetime.fromtimestamp(int(message.ts.split('.')[0])).strftime('%l:%M %p').strip()
-        # Create placeholder header
+        """Takes a message object and returns a formatted body resembling copy-and-pasting."""
+        time = datetime.fromtimestamp(int(message.ts.split('.')[0])).strftime('%l:%M %p').strip()  # (e.g. "2:47 PM")
         header = f'USERNAME [{time}]'
         body = message.text
         return f'{header}\n{body}'

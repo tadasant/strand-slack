@@ -12,19 +12,19 @@ from src.utilities.database import db_session
 
 
 class InitiateSaveStrandViaSlashCommandService(Service):
-    def __init__(self, slack_team_id, slack_user_id, slack_channel_id, text, start_phrase,
+    def __init__(self, slack_team_id, slack_user_id, slack_channel_id, start_phrase,
                  slack_client_wrapper, strand_api_client_wrapper):
         super().__init__(slack_client_wrapper=slack_client_wrapper, strand_api_client_wrapper=strand_api_client_wrapper)
         self.slack_team_id = slack_team_id
         self.slack_user_id = slack_user_id
         self.slack_channel_id = slack_channel_id
-        self.text = text
+        self.start_phrase = start_phrase
 
     @db_session
     def execute(self, session):
         if User.is_installer(session, self.slack_user_id, self.slack_team_id):
             try:
-                text = BuildTextFromChannelHistoryService(start_phrase=self.text,
+                text = BuildTextFromChannelHistoryService(start_phrase=self.start_phrase,
                                                           slack_channel_id=self.slack_channel_id,
                                                           slack_team_id=self.slack_team_id,
                                                           slack_user_id=self.slack_user_id,
