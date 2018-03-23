@@ -55,7 +55,7 @@ class SlackClientWrapper:
         self._validate_response_ok(response, 'send_dm_to_user', slack_team_id, slack_user_id, text)
         slack_channel_id = response['channel']['id']
         self.standard_retrier.call(slack_client.api_call, method='chat.postMessage', channel=slack_channel_id,
-                                   text=text, attachments=attachments)
+                                   text=text, attachments=attachments, as_user=False)
 
     def send_ephemeral_message(self, slack_team_id, slack_channel_id, slack_user_id, text, attachments=None):
         if not attachments:
