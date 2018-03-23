@@ -10,6 +10,7 @@
   "STRAND_API_VERIFICATION_TOKEN": "anoTH3rRANDoMCOmbo",
   "CLIENT_ID": "some_random_id",
   "CLIENT_SECRET": "some_random_secret",
+  "SCOPES": "bot",
   "DB": {
     "DIALECT": "sqlite",
     "DATABASE": "pytest-tmp/local.db"
