@@ -11,6 +11,7 @@ from src.models.slack.elements.SlackOption import SlackOption
 from src.models.slack.elements.SlackProfile import SlackProfile
 from src.models.slack.elements.SlackSubmission import SlackSubmission
 from src.models.slack.elements.SlackTeam import SlackTeam
+from src.models.slack.elements.SlackTokens import SlackTokens
 from src.models.slack.elements.SlackUser import SlackUser
 from src.models.slack.requests.SlackEventRequest import SlackEventRequest
 from src.models.slack.requests.SlackInteractiveComponentRequest import SlackInteractiveComponentRequest
@@ -92,6 +93,14 @@ class SlackFileFactory(factory.Factory):
     permalink_public = False
 
 
+class SlackTokensFactory(factory.Factory):
+    class Meta:
+        model = SlackTokens
+
+    oauth = factory.List([factory.Faker('md5')])
+    bot = factory.List([factory.Faker('md5')])
+
+
 class SlackEventFactory(factory.Factory):
     class Meta:
         model = SlackEvent
@@ -103,6 +112,7 @@ class SlackEventFactory(factory.Factory):
     ts = factory.Faker('msisdn')
     subtype = factory.Faker('word')
     file = factory.SubFactory(SlackFileFactory)
+    tokens = factory.SubFactory(SlackTokensFactory)
 
 
 class SlackBotFactory(factory.Factory):
