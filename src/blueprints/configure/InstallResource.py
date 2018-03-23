@@ -1,16 +1,21 @@
 from http import HTTPStatus
 from threading import Thread
 
-from flask import request, current_app
+from flask import request, current_app, redirect
 from flask_restful import Resource
 
-from src.utilities.logging import get_logger
+from src.config import config
 from src.translators.InstallTranslator import InstallTranslator
+from src.utilities.logging import get_logger
 
 
 class InstallResource(Resource):
     def __init__(self):
         self.logger = get_logger(self.__class__.__name__)
+
+    def get(self):
+        """Redirect the user to the Slack OAuth flow"""
+        return redirect(f'https://slack.com/oauth/authorize?client_id={config["CLIENT_ID"]}&scope={config["SCOPES"]}')
 
     def post(self):
         """Receive installation requests from the Strand UI"""
