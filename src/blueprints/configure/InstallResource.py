@@ -15,8 +15,7 @@ class InstallResource(Resource):
 
     def get(self):
         """Redirect the user to the Slack OAuth flow"""
-        return redirect(f'https://slack.com/oauth/authorize?client_id={config["CLIENT_ID"]}&scope={config["SCOPES"]}',
-                        code=HTTPStatus.PERMANENT_REDIRECT)
+        return redirect(f'https://slack.com/oauth/authorize?client_id={config["CLIENT_ID"]}&scope={config["SCOPES"]}')
 
     def post(self):
         """Receive installation requests from the Strand UI"""
