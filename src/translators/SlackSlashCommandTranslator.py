@@ -30,7 +30,8 @@ class SlackSlashCommandTranslator(Translator):
                 service = ProvideHelpService(slack_client_wrapper=self.slack_client_wrapper,
                                              slack_team_id=slack_team_id,
                                              slack_user_id=slack_user_id,
-                                             slack_channel_id=slack_channel_id)
+                                             slack_channel_id=slack_channel_id,
+                                             use_bot_token=False)
                 Thread(target=service.execute, daemon=True).start()
         else:
             self.logger.debug('Ignoring slash command request.')

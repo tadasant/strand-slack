@@ -8,11 +8,12 @@ from src.utilities.database import db_session
 
 
 class ProvideHelpService(Service):
-    def __init__(self, slack_team_id, slack_user_id, slack_channel_id, slack_client_wrapper):
+    def __init__(self, slack_team_id, slack_user_id, slack_channel_id, slack_client_wrapper, use_bot_token=True):
         super().__init__(slack_client_wrapper=slack_client_wrapper)
         self.slack_team_id = slack_team_id
         self.slack_user_id = slack_user_id
         self.slack_channel_id = slack_channel_id
+        self.use_bot_token = use_bot_token
 
     @db_session
     def execute(self, session):
@@ -20,11 +21,13 @@ class ProvideHelpService(Service):
         if User.is_installer(session, self.slack_user_id, self.slack_team_id):
             command = SendHelpMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                              slack_team_id=self.slack_team_id, slack_user_id=self.slack_user_id,
-                                             slack_channel_id=self.slack_channel_id)
+                                             slack_channel_id=self.slack_channel_id,
+                                             use_bot_token=self.use_bot_token)
             Thread(target=command.execute, daemon=True).start()
         else:
             command = SendPleaseInstallMessageCommand(slack_client_wrapper=self.slack_client_wrapper,
                                                       slack_team_id=self.slack_team_id,
                                                       slack_user_id=self.slack_user_id,
-                                                      slack_channel_id=self.slack_channel_id)
+                                                      slack_channel_id=self.slack_channel_id,
+                                                      use_bot_token=self.use_bot_token)
             Thread(target=command.execute, daemon=True).start()
