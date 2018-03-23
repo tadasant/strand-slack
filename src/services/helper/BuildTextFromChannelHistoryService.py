@@ -18,19 +18,9 @@ class BuildTextFromChannelHistoryService(Service):
 
     def execute(self):
         """Parse command text, pull messages in range, return as body of text"""
-        if self.slack_channel_id.startswith('C'):
-            messages = self.slack_client_wrapper.get_channel_history(slack_channel_id=self.slack_channel_id,
-                                                                     slack_team_id=self.slack_team_id,
-                                                                     slack_user_id=self.slack_user_id)
-        elif self.slack_channel_id.startswith('D'):
-            messages = self.slack_client_wrapper.get_im_history(slack_channel_id=self.slack_channel_id,
-                                                                slack_team_id=self.slack_team_id,
-                                                                slack_user_id=self.slack_user_id)
-        else:
-            # Technically there is a difference between groups and MPIM
-            messages = self.slack_client_wrapper.get_group_history(slack_channel_id=self.slack_channel_id,
-                                                                   slack_team_id=self.slack_team_id,
-                                                                   slack_user_id=self.slack_user_id)
+        messages = self.slack_client_wrapper.get_channel_history(slack_channel_id=self.slack_channel_id,
+                                                                 slack_team_id=self.slack_team_id,
+                                                                 slack_user_id=self.slack_user_id)
         messages = self._splice_messages(messages, start_phrase=self.start_phrase, default=10)
         text = '\n\n'.join([self._format_message(message) for message in messages])
         return text

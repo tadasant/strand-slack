@@ -31,25 +31,18 @@ class SlackClientWrapper:
 
     def get_channel_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
-        response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
-                                              channel=slack_channel_id, inclusive=True, count=count)
+
+        if slack_channel_id.startswith('C'):
+            response = self.standard_retrier.call(slack_client.api_call, method='channels.history',
+                                                  channel=slack_channel_id, inclusive=True, count=count)
+        elif slack_channel_id.startswith('D'):
+            response = self.standard_retrier.call(slack_client.api_call, method='im.history',
+                                                  channel=slack_channel_id, inclusive=True, count=count)
+        else:
+            response = self.standard_retrier.call(slack_client.api_call, method='groups.history',
+                                                  channel=slack_channel_id, inclusive=True, count=count)
+
         self._validate_response_ok(response, 'get_channel_history', slack_team_id, slack_channel_id, count)
-        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
-                                               path_to_object=['messages'], many=True)
-
-    def get_group_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
-        response = self.standard_retrier.call(slack_client.api_call, method='groups.history', channel=slack_channel_id,
-                                              inclusive=True, count=count)
-        self._validate_response_ok(response, 'get_group_history', slack_team_id, slack_channel_id, count)
-        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
-                                               path_to_object=['messages'], many=True)
-
-    def get_im_history(self, slack_user_id, slack_team_id, slack_channel_id, count=1000):
-        slack_client = self._get_slack_client(slack_team_id=slack_team_id, is_bot=False, slack_user_id=slack_user_id)
-        response = self.standard_retrier.call(slack_client.api_call, method='im.history', channel=slack_channel_id,
-                                              inclusive=True, count=count)
-        self._validate_response_ok(response, 'get_im_history', slack_team_id, slack_channel_id, count)
         return self._deserialize_response_body(response_body=response, ObjectSchema=SlackMessageSchema,
                                                path_to_object=['messages'], many=True)
 
