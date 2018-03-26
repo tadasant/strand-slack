@@ -4,7 +4,7 @@ from src.models.Model import Model
 
 
 class SlackProfile(Model):
-    def __init__(self, real_name, display_name, email):
+    def __init__(self, real_name, display_name, email=None):
         self.real_name = real_name
         self.display_name = display_name
         self.email = email
@@ -13,7 +13,7 @@ class SlackProfile(Model):
 class SlackProfileSchema(Schema):
     real_name = fields.String(required=True)
     display_name = fields.String(required=True)
-    email = fields.String(required=True)
+    email = fields.String()
 
     @post_load
     def make_slack_profile(self, data):
