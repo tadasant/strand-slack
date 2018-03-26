@@ -18,7 +18,6 @@ class BuildTextFromChannelHistoryService(Service):
 
     def execute(self):
         """Parse command text, pull messages in range, return as body of text"""
-        # TODO: [SLA-184] Handle IMs, groups, MPIMs
         messages = self.slack_client_wrapper.get_channel_history(slack_channel_id=self.slack_channel_id,
                                                                  slack_team_id=self.slack_team_id,
                                                                  slack_user_id=self.slack_user_id)
@@ -42,7 +41,7 @@ class BuildTextFromChannelHistoryService(Service):
             return reversed(messages[:default])
 
         for idx, message in enumerate(messages):
-            if fuzz.ratio(message.text[:len(start_phrase)].lower(), start_phrase) > 85:
+            if fuzz.ratio(message.text[:len(start_phrase)].lower(), start_phrase.lower()) > 85:
                 return reversed(messages[:idx + 1])
 
         raise InvalidSlashCommandException(message=f'Cannot find message matching start phrase: {start_phrase}')

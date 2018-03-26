@@ -10,9 +10,10 @@ class SendPleaseInstallMessageCommand(Command):
         self.slack_channel_id = slack_channel_id
 
     def execute(self):
-        log_msg = f'Executing SendPleaseInstallMessageCommand for {self.slack_team_id} with user {self.slack_user_id}'
-        self.logger.info(log_msg)
+        self.logger.info(f'Executing SendPleaseInstallMessageCommand for {self.slack_team_id} '
+                         f'with user {self.slack_user_id}')
         self.slack_client_wrapper.send_ephemeral_message(slack_team_id=self.slack_team_id,
                                                          slack_channel_id=self.slack_channel_id,
                                                          slack_user_id=self.slack_user_id,
-                                                         text=PleaseInstallSlackMessage().text)
+                                                         text=PleaseInstallSlackMessage().text,
+                                                         use_bot_token=True)

@@ -20,7 +20,7 @@ class SlackSlashCommandRequest(Model):
 
     @property
     def is_save_command(self):
-        return self.command == '/save' and self.channel_id.startswith('C') and self.text.startswith('save')
+        return self.command == '/strand' and self.text.startswith('save')
 
 
 class SlashCommandRequestSchema(Schema):
