@@ -7,6 +7,7 @@ from src.models.domain.Installation import Installation
 from src.models.exceptions.WrapperException import WrapperException
 from src.models.slack.elements.SlackUser import SlackUserSchema
 from src.models.slack.elements.SlackMessage import SlackMessageSchema
+from src.models.slack.elements.SlackChannel import SlackChannelSchema
 from src.models.slack.responses import SlackOauthAccessResponse
 from src.models.slack.responses.SlackOauthAccessResponse import SlackOauthAccessResponseSchema
 from src.utilities.database import db_session
@@ -76,6 +77,13 @@ class SlackClientWrapper:
         self._validate_response_ok(response, 'get_user_info', slack_team_id, slack_user_id)
         return self._deserialize_response_body(response_body=response, ObjectSchema=SlackUserSchema,
                                                path_to_object=['user'])
+
+    def get_channel_info(self, slack_team_id, slack_channel_id):
+        slack_client = self._get_slack_client(slack_team_id=slack_team_id)
+        response = self.standard_retrier.call(slack_client.api_call, method='channels.info', channel=slack_channel_id)
+        self._validate_response_ok(response, 'get_channel_info', slack_team_id, slack_channel_id)
+        return self._deserialize_response_body(response_body=response, ObjectSchema=SlackChannelSchema,
+                                               path_to_object=['channel'])
 
     def send_message(self, slack_team_id, slack_channel_id, text, attachments=None):
         slack_client = self._get_slack_client(slack_team_id=slack_team_id)

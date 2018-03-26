@@ -24,7 +24,7 @@ class InitiateSaveStrandService(Service):
         log_msg = f'Saving Strand with body {self.text} for user {self.slack_user_id} on team {self.slack_team_id}'
         self.logger.debug(log_msg)
         if User.is_installer(session, self.slack_user_id, self.slack_team_id):
-            markdown_body = ConvertTextToGFMService(text=self.text,
+            markdown_body = ConvertTextToGFMService(text=self.text, slack_team_id=self.slack_team_id,
                                                     slack_client_wrapper=self.slack_client_wrapper).execute()
             strand_team_id = Agent.get_strand_team_id(session, self.slack_team_id)
             saver_strand_user_id = self._get_saver_strand_user_id(session)
