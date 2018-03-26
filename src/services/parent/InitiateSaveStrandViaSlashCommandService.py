@@ -30,7 +30,7 @@ class InitiateSaveStrandViaSlashCommandService(Service):
                                                           slack_team_id=self.slack_team_id,
                                                           slack_user_id=self.slack_user_id,
                                                           slack_client_wrapper=self.slack_client_wrapper).execute()
-                markdown_body = ConvertTextToGFMService(text=text,
+                markdown_body = ConvertTextToGFMService(text=text, slack_team_id=self.slack_team_id,
                                                         slack_client_wrapper=self.slack_client_wrapper).execute()
                 strand_team_id = Agent.get_strand_team_id(session, self.slack_team_id)
                 saver_strand_user_id = self._get_saver_strand_user_id(session)
