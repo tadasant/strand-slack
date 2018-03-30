@@ -1,4 +1,6 @@
+import os
 import re
+import json
 import time
 
 from src.services.Service import Service
@@ -27,7 +29,10 @@ class ConvertTextToGFMService(Service):
         # 4. Convert Links and Commands
         ghm = re.sub('<(.*?)>', self.convert_links_and_commands, ghm)
 
-        # 5. Replace newline (\n) character with two newline chracters
+        # 5. Convert Emojis
+        ghm = re.sub(':(.*?):', self.convert_emojis, ghm)
+
+        # 6. Replace newline (\n) character with two newline chracters
         ghm = ghm.replace('\n', '\n\n')
 
         return ghm
@@ -66,3 +71,17 @@ class ConvertTextToGFMService(Service):
             return '[{}]({})'.format(link_name, link_url)
         else:
             return matchtext
+
+    def convert_emojis(self, matchgroup):
+        emojitext = matchgroup.group(1)
+
+        with open(os.path.join(os.getcwd(), 'src/services/helper/emoji_pretty.json'), 'r', encoding='utf-8') as f:
+            emoji_json = json.load(f)
+        try:
+            emoji_dict = next(edict for edict in emoji_json if edict['short_name'] == emojitext)
+            emoji_codepoints = emoji_dict['unified'].split('-')
+            emoji_codepoints = [int(codepoint, 16) for codepoint in emoji_codepoints]
+            emoji = u''.join([chr(codepoint) for codepoint in emoji_codepoints])
+            return emoji
+        except StopIteration:
+            return matchgroup.group(0)
