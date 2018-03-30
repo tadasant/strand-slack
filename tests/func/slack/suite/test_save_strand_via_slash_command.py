@@ -19,8 +19,16 @@ class TestSaveStrandViaSlashCommand(TestSlackFixtures):
         """Extract channel history, splice by start phrase, raise exception, send user ephemeral message"""
         pass
 
-    def test_save_installed_user_invalid_channel(self):
-        """Fail quietly"""
+    def test_save_installed_user_group(self):
+        """Extract group history, splice by start phrase, forward to Strand API, send user ephemeral message"""
+        pass
+
+    def test_save_installed_user_mpim(self):
+        """Extract mpim history, splice by start phrase, forward to Strand API, send user ephemeral message"""
+        pass
+
+    def test_save_installed_user_im(self):
+        """Extract im history, splice by start phrase, forward to Strand API, send user ephemeral message"""
         pass
 
     def test_save_uninstalled_user(self):

@@ -17,7 +17,7 @@ class ForwardSavedStrandAndInformUserCommand(Command):
         self.body = body
         self.slack_channel_id = slack_channel_id
         self.slack_user_id = slack_user_id
-        self.use_ephemeral = use_ephemeral
+        self.use_ephemeral = use_ephemeral  # Should be True if via Slash command
 
     def execute(self):
         self.logger.info(f'Executing Forwa...Command for {self.strand_team_id} with user {self.saver_strand_user_id}')
