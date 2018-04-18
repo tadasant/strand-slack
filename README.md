@@ -9,11 +9,20 @@ This Slack integration was built using:
 * Python Slack Client 1.1
 * SQLAlchemy 1.2.5
 
-It was hosted on Amazon ECS, gated by Amazon CloudFront as the CDN.
+This app was hosted on Amazon ECS.
+
+[strand-api](https://github.com/Audace/strand-api) was the companion backend API
+
+[strand-ui](https://github.com/tadasant/strand-ui) was the companion Web UI
 
 Contributors: [@tadasant](https://github.com/tadasant) and [@Audace](https://github.com/audace)
 
-![screenshot]()
+![domain](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Domain.png)
+![installed](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Installed.png)
+![saving](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Saving.png)
+![editing](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Editing.png)
+![edited](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Edited.png)
+![viewing](https://raw.githubusercontent.com/tadasant/strand-slack/master/media/Viewing.png)
 
 ## Getting Started
 To start, clone the repository locally and create a virtual environment. Install the dependencies from the requirements file into your virtual environment.
