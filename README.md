@@ -1,6 +1,19 @@
-# Strand Slack
+# This project is retired. No further development or maintenance is planned. Feel free to fork and re-use.
 
-[![CodeFactor](https://www.codefactor.io/repository/github/solutionloft/code-clippy-slack/badge)](https://www.codefactor.io/repository/github/solutionloft/strand-slack)
+## Overview
+
+This Slack integration was built using:
+* Flask 0.12
+* Python 3.6
+* pytest 3.3
+* Python Slack Client 1.1
+* SQLAlchemy 1.2.5
+
+It was hosted on Amazon ECS, gated by Amazon CloudFront as the CDN.
+
+Contributors: [@tadasant](https://github.com/tadasant) and [@Audace](https://github.com/audace)
+
+![screenshot]()
 
 ## Getting Started
 To start, clone the repository locally and create a virtual environment. Install the dependencies from the requirements file into your virtual environment.
