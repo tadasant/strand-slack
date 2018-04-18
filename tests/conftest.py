@@ -5,7 +5,7 @@ from pytest_factoryboy import register
 
 from src import create_app
 from src.config import config
-from src.utilities.database import metadata, engine, Session
+from src.utilities.database import metadata, db_engine, Session
 from src.utilities.logging import get_logger
 from tests.factories.slackfactories import SlackOauthAccessResponseFactory, SlackUserFactory, SlackEventRequestFactory,\
     SlackInteractiveComponentRequestFactory
@@ -64,11 +64,11 @@ def client(app):
 
 @pytest.fixture(scope='function', autouse=True)
 def db_session():
-    metadata.create_all(engine)
+    metadata.create_all(db_engine)
     session = Session()
     yield session
     session.close()
-    metadata.drop_all(engine)
+    metadata.drop_all(db_engine)
 
 
 # Wrappers & Clients

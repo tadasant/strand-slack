@@ -1,7 +1,7 @@
 import json
 
 from src.models.slack.elements.SlackMessage import SlackMessage
-from src.models.slack.outgoing.attachments import EditMetadataButtonAttachment
+from src.models.slack.outgoing.attachments import EditMetadataButtonAttachment, ErrorMessageAttachment
 
 
 class HelpSlackMessage(SlackMessage):
@@ -16,6 +16,22 @@ class HelpSlackMessage(SlackMessage):
                'You can see what your team has saved so far right here: app.trystrand.com ' + \
                'Want to save something? Simply copy it and send it as a direct message to me in this window ' + \
                '- I\'ll figure out the rest.'
+
+
+class ErrorSlackMessage(SlackMessage):
+    def __init__(self, error_title, error_text):
+        self.error_title = error_title
+        self.error_text = error_text
+
+        self.text = self._format_text()
+        self.attachments = self._format_attachments()
+        super().__init__(text=self.text, attachments=self.attachments)
+
+    def _format_text(self):
+        return ''
+
+    def _format_attachments(self):
+        return [json.loads(ErrorMessageAttachment(title=self.error_title, text=self.error_text).to_json())]
 
 
 class PleaseInstallSlackMessage(SlackMessage):

@@ -10,3 +10,15 @@ class EditMetadataButtonAttachment(SlackAttachment):
             attachment_type='default',
             actions=[EditMetadataButton(value=strand_id)]
         )
+
+
+class ErrorMessageAttachment(SlackAttachment):
+    def __init__(self, title, text):
+        super().__init__(
+            color='#C70039',
+            pretext='An error has occurred',
+            title=title,
+            text=text,
+            attachment_type='default',
+            actions=[]
+        )

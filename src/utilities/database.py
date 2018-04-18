@@ -37,9 +37,9 @@ __engine_url = __construct_engine_url(dialect=__db_cfg('DIALECT'), driver=__db_c
 
 # Import metadata, engine for creating tables (app startup)
 metadata = MetaData()
-engine = create_engine(__engine_url)
+db_engine = create_engine(__engine_url)
 
-__session_factory = sessionmaker(bind=engine)
+__session_factory = sessionmaker(bind=db_engine)
 
 # Import Base for defining tables (pre-app startup)
 Base = declarative_base(metadata=metadata)

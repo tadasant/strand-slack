@@ -15,15 +15,12 @@ class SlackSlashCommandRequest(Model):
 
     @property
     def is_strand_command(self):
+        """Checks if command is one of registered strand commands"""
         return self.command == '/strand'
 
     @property
-    def is_post_topic(self):
-        return self.command == '/strand' and self.text == 'post'
-
-    @property
-    def is_close_discussion(self):
-        return self.command == '/strand' and self.text == 'close'
+    def is_save_command(self):
+        return self.command == '/strand' and self.text.startswith('save')
 
 
 class SlashCommandRequestSchema(Schema):
