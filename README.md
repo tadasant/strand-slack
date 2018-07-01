@@ -11,7 +11,7 @@ This Slack integration was built using:
 
 This app was hosted on Amazon ECS.
 
-[strand-api](https://github.com/Audace/strand-api) was the companion backend API
+[strand-api](https://github.com/tadasant/strand-api) was the companion backend API
 
 [strand-ui](https://github.com/tadasant/strand-ui) was the companion Web UI
 
