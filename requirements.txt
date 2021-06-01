@@ -63,7 +63,7 @@ slackclient==1.1.0
 SQLAlchemy==1.2.5
 tenacity==4.8.0
 text-unidecode==1.1
-urllib3==1.22
+urllib3==1.26.5
 watchdog==0.8.3
 websocket-client==0.46.0
 Werkzeug==0.14.1
